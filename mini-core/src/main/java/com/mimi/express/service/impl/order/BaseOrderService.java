@@ -4,17 +4,19 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mimi.common.superpackage.service.impl.TenantServiceImpl;
 import com.mimi.express.entity.order.BaseOrder;
-import com.mimi.express.entity.order.param.BaseOrderParam;
+import com.mimi.express.entity.order.param.OrderParam;
 import com.mimi.express.mapper.order.OrderMapper;
 import com.mimi.express.service.IBaseOrderService;
 
 import java.util.List;
 
-public abstract class BaseOrderService<M extends OrderMapper<T,P>, T extends BaseOrder
-        ,P extends BaseOrderParam> extends TenantServiceImpl<M,T> implements IBaseOrderService<T,P> {
+public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseOrder> extends TenantServiceImpl<M,T> implements IBaseOrderService<T> {
+
+
 
     @Override
-    public IPage<T> findPage(P param){
+    public IPage<T> findPage(OrderParam<T> param){
+        param.getBusinessData().setSchoolId(userInfoUtil.getSchoolId());
         List<T> data = baseMapper.findPage(param);
         long cnt = baseMapper.findCount(param);
         long pages = 0;

@@ -19,7 +19,7 @@ import java.util.List;
 public abstract class TenantServiceImpl<M extends SuperMapper<T>, T extends TenantEntity> extends SuperServiceImpl<M, T>{
 
     @Autowired
-    private UserInfoUtil userInfoUtil;
+    protected UserInfoUtil userInfoUtil;
 
     private Filter addSchool(Filter filter) {
         String schoolId = userInfoUtil.getSchoolId();

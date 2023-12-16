@@ -19,7 +19,7 @@ spring:
     ehcache:
       config: classpath:ehcache.xml
   redis:
-    host: localhost
+    host: 47.98.203.215
     port: 6379
 #    password: root123
 mybatis-plus:

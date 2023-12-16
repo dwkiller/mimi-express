@@ -1,7 +1,6 @@
 package com.mimi.express.controller.order;
 
 import com.mimi.express.entity.order.OrderQuestion;
-import com.mimi.express.entity.order.param.OrderQuestionParam;
 import com.mimi.express.service.impl.order.OrderQuestionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -12,5 +11,5 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "投诉运单")
 @RestController
 @RequestMapping("/orderQuestion")
-public class OrderQuestionController extends BaseOrderController<OrderQuestionService, OrderQuestion, OrderQuestionParam> {
+public class OrderQuestionController extends BaseOrderController<OrderQuestionService, OrderQuestion> {
 }

@@ -1,23 +1,27 @@
 package com.mimi.express.mapper.order;
 
 import com.mimi.express.entity.order.OrderIn;
-import com.mimi.express.entity.order.param.OrderInParam;
+import com.mimi.express.entity.order.param.OrderParam;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
 @Mapper
-public interface OrderInMapper extends OrderMapper<OrderIn, OrderInParam>{
-    @Select({
+public interface OrderInMapper extends OrderMapper<OrderIn>{
+    @Select({"<script>",
             "SELECT * FROM t_order_in",
-            BASE_CONDITION,EXPRESS_DELIVERY_CONDITION
+            BASE_CONDITION,
+            "</script>"
     })
     @Override
-    public List<OrderIn> findPage(OrderInParam param);
+    public List<OrderIn> findPage(OrderParam<OrderIn> param);
 
-    @Select({"SELECT count(0) FROM t_order_in",
-            BASE_CONDITION,EXPRESS_DELIVERY_CONDITION})
+    @Select({"<script>",
+            "SELECT count(0) FROM t_order_in",
+            BASE_CONDITION,
+            "</script>"
+    })
     @Override
-    public long findCount(OrderInParam param);
+    public long findCount(OrderParam<OrderIn> param);
 }

@@ -1,24 +1,28 @@
 package com.mimi.express.mapper.order;
 
 import com.mimi.express.entity.order.OrderComplaint;
-import com.mimi.express.entity.order.param.OrderComplaintParam;
+import com.mimi.express.entity.order.param.OrderParam;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
 @Mapper
-public interface OrderComplaintMapper extends OrderMapper<OrderComplaint, OrderComplaintParam>{
+public interface OrderComplaintMapper extends OrderMapper<OrderComplaint>{
 
-    @Select({
+    @Select({"<script>",
             "SELECT * FROM t_order_complaint",
-            BASE_CONDITION,DONE_CONDITION,EXPRESS_DELIVERY_CONDITION
+            BASE_CONDITION,
+            "</script>"
     })
     @Override
-    public List<OrderComplaint> findPage(OrderComplaintParam param);
+    public List<OrderComplaint> findPage(OrderParam<OrderComplaint> param);
 
-    @Select({"SELECT count(0) FROM t_order_complaint",
-            BASE_CONDITION,DONE_CONDITION,EXPRESS_DELIVERY_CONDITION})
+    @Select({"<script>",
+            "SELECT count(0) FROM t_order_complaint",
+            BASE_CONDITION,
+            "</script>"
+    })
     @Override
-    public long findCount(OrderComplaintParam param);
+    public long findCount(OrderParam<OrderComplaint> param);
 }

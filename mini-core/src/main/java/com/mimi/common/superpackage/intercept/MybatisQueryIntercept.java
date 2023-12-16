@@ -1,9 +1,10 @@
 package com.mimi.common.superpackage.intercept;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.mimi.common.superpackage.base.TenantEntity;
 import com.mimi.common.superpackage.util.ObjectUtil;
 import com.mimi.express.entity.order.HasExpressDelivery;
-import com.mimi.express.entity.order.param.BaseOrderParam;
+import com.mimi.express.entity.order.param.OrderParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -14,6 +15,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 /**
@@ -39,24 +41,33 @@ public class MybatisQueryIntercept  implements Interceptor {
             return invocation.proceed();
         }
 
-        if(!(paramObject instanceof BaseOrderParam)){
+        if(!(paramObject instanceof OrderParam)){
             return invocation.proceed();
         }
 
+        OrderParam orderParam = (OrderParam)paramObject;
         String newSql = boundSql.getSql();
-        boolean isCount = newSql.indexOf(" count( ")>0;
+        boolean isCount = newSql.toLowerCase().indexOf(" count(")>0;
+        String tableName = null;
+        if(orderParam.getBusinessData().getClass().isAnnotationPresent(TableName.class)){
+            TableName tableNameAnno = orderParam.getBusinessData().getClass().getAnnotation(TableName.class);
+            tableName = tableNameAnno.value();
+        }else{
+            return invocation.proceed();
+        }
 
-        if(paramObject instanceof TenantEntity){
-            newSql = addTenantSql(newSql,(TenantEntity)paramObject,isCount);
+        newSql = newSql.replaceAll(" create_time"," "+tableName+".create_time");
+
+        if(orderParam.getBusinessData() instanceof TenantEntity){
+            newSql = addTenantSql(newSql,tableName,(TenantEntity)orderParam.getBusinessData(),isCount);
         }
 
         if(!isCount){
-            if(paramObject instanceof HasExpressDelivery){
-                newSql = addExpressDeliverySql(newSql,(HasExpressDelivery)paramObject);
+            if(orderParam.getBusinessData() instanceof HasExpressDelivery){
+                newSql = addExpressDeliverySql(newSql,tableName,(HasExpressDelivery)orderParam.getBusinessData());
             }
-            BaseOrderParam baseOrderParam = (BaseOrderParam)paramObject;
-            if(baseOrderParam.getPageNum()>0&&baseOrderParam.getPageSize()>0){
-                newSql = addPage(newSql,baseOrderParam);
+            if(orderParam.getPageNum()>0&&orderParam.getPageSize()>0){
+                newSql = addPage(newSql,orderParam);
             }
         }
 
@@ -81,9 +92,9 @@ public class MybatisQueryIntercept  implements Interceptor {
 
     }
 
-    private String addPage(String sql,BaseOrderParam baseOrderParam){
-        String startPosition=String.valueOf((baseOrderParam.getPageNum()-1)*baseOrderParam.getPageSize());
-        String count=String.valueOf(baseOrderParam.getPageSize());
+    private String addPage(String sql,OrderParam orderParam){
+        String startPosition=String.valueOf((orderParam.getPageNum()-1)*orderParam.getPageSize());
+        String count=String.valueOf(orderParam.getPageSize());
         String pageSql=sql+ " limit ";
         pageSql+= startPosition;
         pageSql+=",";
@@ -91,21 +102,17 @@ public class MybatisQueryIntercept  implements Interceptor {
         return pageSql;
     }
 
-    private String addExpressDeliverySql(String sql, HasExpressDelivery expressDelivery){
+    private String addExpressDeliverySql(String sql,String tableName, HasExpressDelivery expressDelivery){
         String upperSql = sql.toUpperCase();
         StringBuffer newSqlBuffer = new StringBuffer(sql);
 
         int insertRsLocat = upperSql.indexOf(" FROM ");
         int insertTableLocat = upperSql.indexOf(" FROM ")+" FROM ".length();
-        String tableName ="";
         boolean hasCondition = true;
         if(upperSql.indexOf("WHERE")<=0) {
-            tableName = upperSql.substring(insertTableLocat).trim();
             hasCondition = false;
-        }else{
-            tableName = upperSql.substring(insertTableLocat,upperSql.indexOf("WHERE")).trim();
         }
-        if(hasCondition){
+        if(!hasCondition){
             newSqlBuffer.append(" WHERE ");
         }else{
             newSqlBuffer.append(" AND ");
@@ -116,37 +123,32 @@ public class MybatisQueryIntercept  implements Interceptor {
         return newSqlBuffer.toString();
     }
 
-    private String addTenantSql(String sql,TenantEntity tenantEntity,boolean isCount){
+    private String addTenantSql(String sql,String tableName,TenantEntity tenantEntity,boolean isCount){
         String upperSql = sql.toUpperCase();
         StringBuffer newSqlBuffer = new StringBuffer(sql);
 
         int insertRsLocat = upperSql.indexOf(" FROM ");
         int insertTableLocat = upperSql.indexOf(" FROM ")+" FROM ".length();
-        String tableName ="";
 
         boolean hasCondition = true;
         if(upperSql.indexOf("WHERE")<=0) {
-            tableName = upperSql.substring(insertTableLocat).trim();
             hasCondition = false;
-        }else{
-            tableName = upperSql.substring(insertTableLocat,upperSql.indexOf("WHERE")).trim();
         }
 
         String schoolId = tenantEntity.getSchoolId();
-
-        if(hasCondition){
+        if(!hasCondition){
             newSqlBuffer.append(" WHERE ");
         }else{
             newSqlBuffer.append(" AND ");
         }
         if(!isCount){
-            String condition=StringUtils.isEmpty(schoolId)?"":" AND SCHOOL.ID = "+schoolId;
+            String condition=StringUtils.isEmpty(schoolId)?"":" AND SCHOOL.ID = '"+schoolId+"'";
             newSqlBuffer.append(tableName+".SCHOOL_ID = SCHOOL.ID"+condition);
             newSqlBuffer.insert(insertTableLocat,"T_SCHOOL SCHOOL,");
             newSqlBuffer.insert(insertRsLocat,",SCHOOL.NAME as SCHOOL_NAME");
         }else{
             if(!StringUtils.isEmpty(schoolId)){
-                newSqlBuffer.append(tableName+".SCHOOL_ID = "+schoolId);
+                newSqlBuffer.append(tableName+".SCHOOL_ID = '"+schoolId+"'");
             }
         }
         return newSqlBuffer.toString();

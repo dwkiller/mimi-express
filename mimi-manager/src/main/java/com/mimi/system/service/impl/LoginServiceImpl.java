@@ -26,10 +26,10 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-    //@Autowired
-    //private RedisCache redisCache;
+    @Autowired
+    private RedisCache redisCache;
 
-    public static Map<String,Object> cache = new HashMap<>();
+    //public static Map<String,Object> cache = new HashMap<>();
 
     @Override
     public Map<String,String> login(Employee user) {
@@ -43,8 +43,8 @@ public class LoginServiceImpl implements LoginService {
         String userId = loginUser.getUser().getId().toString();
         String jwt = JwtUtil.createJWT(userId);
         //authenticate存入redis
-        //redisCache.setCacheObject("login:"+userId,loginUser);
-        cache.put("login:"+userId,loginUser);
+        redisCache.setCacheObject("login:"+userId,loginUser);
+        //cache.put("login:"+userId,loginUser);
 
         //把token响应给前端
         HashMap<String,String> map = new HashMap<>();
@@ -57,8 +57,8 @@ public class LoginServiceImpl implements LoginService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         String userid = loginUser.getUser().getId();
-        //redisCache.deleteObject("login:"+userid);
-        cache.remove("login:"+userid);
+        redisCache.deleteObject("login:"+userid);
+        //cache.remove("login:"+userid);
         return "退出成功";
     }
 
