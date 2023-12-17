@@ -9,9 +9,17 @@ import java.util.List;
 
 @Mapper
 public interface OrderOnlineMapper extends OrderMapper<OrderOnline>{
+
+    static final String CONDITION="<if test='businessData.source != null'>"+
+            " AND source = #{businessData.source}"+
+            "</if>"+
+            "<if test='businessData.failReason != null'>"+
+            " AND fail_reason = #{businessData.failReason}"+
+            "</if>";
+
     @Select({"<script>",
             "SELECT * FROM t_order_online",
-            BASE_CONDITION,
+            BASE_CONDITION,CONDITION,
             "</script>"
     })
     @Override
@@ -19,7 +27,7 @@ public interface OrderOnlineMapper extends OrderMapper<OrderOnline>{
 
     @Select({"<script>",
             "SELECT count(0) FROM t_order_online",
-            BASE_CONDITION,
+            BASE_CONDITION,CONDITION,
             "</script>"
     })
     @Override

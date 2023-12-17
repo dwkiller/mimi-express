@@ -78,4 +78,10 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
 
     @Schema(name = "是否发送成功消息")
     private Short okMsg;
+
+    @Schema(name = "代取完成人名称")
+    private String agentDoneName;
+
+    @Schema(name = "代取完成人电话")
+    private String agentDoneMobile;
 }

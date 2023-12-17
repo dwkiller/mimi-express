@@ -9,17 +9,40 @@ import java.util.List;
 
 @Mapper
 public interface OrderAgentMapper extends OrderMapper<OrderAgent>{
+
+    static final String CONDITION= "<if test='businessData.agentName != null'>"+
+            " AND agent_name = #{businessData.agentName}"+
+            "</if>"+
+            "<if test='businessData.agentMobile != null'>"+
+            " AND agent_mobile = #{businessData.agentMobile}"+
+            "</if>"+
+            "<if test='businessData.agentDoneName != null'>"+
+            " AND agent_done_name = #{businessData.agentDoneName}"+
+            "</if>"+
+            "<if test='businessData.agentDoneMobile != null'>"+
+            " AND agent_done_mobile = #{businessData.agentDoneMobile}"+
+            "</if>"+
+            "<if test='businessData.handMsg != null'>"+
+            " AND hand_msg = #{businessData.handMsg}"+
+            "</if>"+
+            "<if test='businessData.okMsg != null'>"+
+            " AND ok_msg = #{businessData.okMsg}"+
+            "</if>"+
+            "<if test='businessData.doneMsg != null'>"+
+            " AND done_msg = #{businessData.doneMsg}"+
+            "</if>";
+
+
     @Select({"<script>",
             "SELECT * FROM t_order_agent",
-            BASE_CONDITION,
+            BASE_CONDITION,CONDITION,
             "</script>"
     })
-
     @Override
     public List<OrderAgent> findPage(OrderParam<OrderAgent> param);
 
     @Select({"<script>","SELECT count(0) FROM t_order_agent",
-            BASE_CONDITION,
+            BASE_CONDITION,CONDITION,
             "</script>"})
     @Override
     public long findCount(OrderParam<OrderAgent> param);

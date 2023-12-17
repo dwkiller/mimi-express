@@ -28,8 +28,16 @@ public interface OrderMapper<T extends BaseOrder>  extends SuperMapper<T> {
                     "</if>"+
                     "<if test='endTime != null'>"+
                     " AND create_time &lt; #{endTime}"+
-                    "</if>"
-            ;
+                    "</if>"+
+                    "<if test='nullMobile != null'>"+
+                    " AND mobile is null"+
+                    "</if>";
+
+    public static final String DONE_CONDITION= "<if test='businessData.done != null'>"+
+            " AND done = #{businessData.done}"+
+            "</if>";
+
+
 
     public List<T> findPage(OrderParam<T> param);
     public long findCount(OrderParam<T> param);

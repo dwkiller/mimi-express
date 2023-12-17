@@ -22,7 +22,7 @@ public class OrderQuestion extends BaseOrder implements HasExpressDelivery{
     private Short done;
 
     @Schema(name = "问题描述")
-    private String desc;
+    private String descContent;
 
     @Schema(name = "快递公司ID")
     private String expressDeliveryId;

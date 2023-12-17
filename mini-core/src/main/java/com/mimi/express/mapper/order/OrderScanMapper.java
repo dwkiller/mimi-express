@@ -9,6 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface OrderScanMapper extends OrderMapper<OrderScan>{
+
     @Select({"<script>",
             "SELECT * FROM t_order_scan",
             BASE_CONDITION,
