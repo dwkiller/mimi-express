@@ -36,4 +36,10 @@ public class SysDict extends TenantEntity {
     @Schema(description = "备注信息")
     private String remark;
 
+    /**
+     * 备注信息
+     */
+    @Schema(description = "系统内置")
+    private Short sysDict;
+
 }
