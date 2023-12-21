@@ -1,6 +1,7 @@
 package com.mimi.express.controller.order;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.mimi.common.R;
 import com.mimi.express.entity.order.BaseOrder;
 import com.mimi.express.service.IBaseOrderService;
 import com.mimi.vo.CommOrderVo;
@@ -25,7 +26,7 @@ public class CommQuery {
 
     @Operation(summary = "根据订单号查询")
     @GetMapping("/order/{orderNum}")
-    public List<CommOrderVo> findByOrderNum(@PathVariable String orderNum) throws Exception {
+    public R<List<CommOrderVo>> findByOrderNum(@PathVariable String orderNum) throws Exception {
         List<CommOrderVo> result = new ArrayList<>();
         Map<String,IBaseOrderService> beanMaps =  SpringUtil.getBeansOfType(IBaseOrderService.class);
         Iterator<IBaseOrderService> beans = beanMaps.values().iterator();
@@ -40,7 +41,7 @@ public class CommQuery {
                 result.add(orderVo);
             }
         }
-        return result;
+        return R.success(result);
     }
 
 }
