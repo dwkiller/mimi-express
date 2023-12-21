@@ -8,6 +8,10 @@ import java.util.List;
 
 public interface OrderMapper<T extends BaseOrder>  extends SuperMapper<T> {
 
+    public static final String EXPRESS_DELIVERY_CONDITION = "<if test='businessData.expressDeliveryId != null'>"+
+            " AND express_delivery_id = #{businessData.expressDeliveryId}"+
+            "</if>";
+
     public static final String BASE_CONDITION= " WHERE 1=1 <if test='businessData.orderNum != null'>"+
             " AND order_num = #{businessData.orderNum}"+
                     "</if>"+
@@ -16,12 +20,6 @@ public interface OrderMapper<T extends BaseOrder>  extends SuperMapper<T> {
                     "</if>"+
                     "<if test='businessData.mobile != null'>"+
                     " AND mobile = #{businessData.mobile}"+
-                    "</if>"+
-                    "<if test='businessData.done != null'>"+
-                    " AND done = #{businessData.done}"+
-                    "</if>"+
-                    "<if test='businessData.expressDeliveryId != null'>"+
-                    " AND express_delivery_id = #{businessData.expressDeliveryId}"+
                     "</if>"+
                     "<if test='startTime != null'>"+
                     " AND create_time &gt; #{startTime}"+

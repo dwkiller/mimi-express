@@ -7,4 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderAgentService extends BaseOrderService<OrderAgentMapper,OrderAgent>{
 
+    @Override
+    public String type() {
+        return "代取运单";
+    }
 }

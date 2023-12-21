@@ -6,4 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OrderQuestionService extends BaseOrderService<OrderQuestionMapper, OrderQuestion> {
+    @Override
+    public String type() {
+        return "问提运单";
+    }
 }

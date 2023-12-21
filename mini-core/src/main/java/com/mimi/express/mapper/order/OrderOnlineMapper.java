@@ -15,6 +15,9 @@ public interface OrderOnlineMapper extends OrderMapper<OrderOnline>{
             "</if>"+
             "<if test='businessData.failReason != null'>"+
             " AND fail_reason = #{businessData.failReason}"+
+            "</if>"+
+            "<if test='businessData.done != null'>"+
+            " AND done = #{businessData.done}"+
             "</if>";
 
     @Select({"<script>",

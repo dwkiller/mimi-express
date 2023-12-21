@@ -1,22 +1,29 @@
-package com.mimi.express.entity.order.param;
+package com.mimi.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mimi.express.entity.order.BaseOrder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 @Data
-public class OrderParam<T extends BaseOrder> {
-    private int pageNum;
-    private int pageSize;
+public class CommOrderVo {
+
+    @Schema(name = "订单号")
+    private String orderNum;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+08:00")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date startTime;
+    @Schema(name = "创建时间")
+    private Date createTime;
+
+    @Schema(name = "类型")
+    private String type;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+08:00")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date endTime;
-    private String nullMobile;
-    private T businessData;
+    @Schema(name = "最后移库时间")
+    private Date lastMoveTime;
+
 }

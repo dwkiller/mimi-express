@@ -6,4 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OrderOutService extends BaseOrderService<OrderOutMapper, OrderOut> {
+    @Override
+    public String type() {
+        return "出库单";
+    }
 }

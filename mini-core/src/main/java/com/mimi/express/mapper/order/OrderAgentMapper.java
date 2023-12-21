@@ -30,20 +30,24 @@ public interface OrderAgentMapper extends OrderMapper<OrderAgent>{
             "</if>"+
             "<if test='businessData.doneMsg != null'>"+
             " AND done_msg = #{businessData.doneMsg}"+
+            "</if>"+
+            "<if test='businessData.done != null'>"+
+            " AND done = #{businessData.done}"+
             "</if>";
 
 
     @Select({"<script>",
             "SELECT * FROM t_order_agent",
-            BASE_CONDITION,CONDITION,
+            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,
             "</script>"
     })
     @Override
     public List<OrderAgent> findPage(OrderParam<OrderAgent> param);
 
     @Select({"<script>","SELECT count(0) FROM t_order_agent",
-            BASE_CONDITION,CONDITION,
+            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,
             "</script>"})
     @Override
     public long findCount(OrderParam<OrderAgent> param);
+
 }

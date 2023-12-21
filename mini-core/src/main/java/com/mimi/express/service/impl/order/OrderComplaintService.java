@@ -6,4 +6,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OrderComplaintService extends BaseOrderService<OrderComplaintMapper, OrderComplaint>{
+    @Override
+    public String type() {
+        return "客户投诉";
+    }
 }

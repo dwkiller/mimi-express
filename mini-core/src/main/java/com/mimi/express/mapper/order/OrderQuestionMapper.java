@@ -12,11 +12,14 @@ public interface OrderQuestionMapper extends OrderMapper<OrderQuestion> {
 
     static final String CONDITION="<if test='businessData.descContent != null'>"+
             " AND desc_content = #{businessData.descContent}"+
+            "</if>"+
+            "<if test='businessData.done != null'>"+
+            " AND done = #{businessData.done}"+
             "</if>";
 
     @Select({"<script>",
             "SELECT * FROM t_order_question",
-            BASE_CONDITION,CONDITION,
+            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,
             "</script>"
     })
     @Override
@@ -24,7 +27,7 @@ public interface OrderQuestionMapper extends OrderMapper<OrderQuestion> {
 
     @Select({"<script>",
             "SELECT count(0) FROM t_order_question",
-            BASE_CONDITION,CONDITION,
+            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,
             "</script>"})
     @Override
     public long findCount(OrderParam<OrderQuestion> param);

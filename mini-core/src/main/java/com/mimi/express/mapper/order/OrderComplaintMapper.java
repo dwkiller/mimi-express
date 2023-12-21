@@ -18,11 +18,14 @@ public interface OrderComplaintMapper extends OrderMapper<OrderComplaint>{
             "</if>"+
             "<if test='businessData.doneMsg != null'>"+
             " AND done_msg = #{businessData.doneMsg}"+
+            "</if>"+
+            "<if test='businessData.done != null'>"+
+            " AND done = #{businessData.done}"+
             "</if>";
 
     @Select({"<script>",
             "SELECT * FROM t_order_complaint",
-            BASE_CONDITION,CONDITION,
+            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,
             "</script>"
     })
     @Override
@@ -30,7 +33,7 @@ public interface OrderComplaintMapper extends OrderMapper<OrderComplaint>{
 
     @Select({"<script>",
             "SELECT count(0) FROM t_order_complaint",
-            BASE_CONDITION,CONDITION,
+            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,
             "</script>"
     })
     @Override

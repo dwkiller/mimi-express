@@ -7,4 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderScanService extends BaseOrderService<OrderScanMapper, OrderScan> {
 
+    @Override
+    public String type() {
+        return "派件扫描";
+    }
 }
