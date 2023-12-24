@@ -24,7 +24,7 @@ public class PublicAccountServiceImpl extends TenantServiceImpl<PublicAccountMap
         if (null != one) {
             throw new MimiException("该学校已绑定公众号配置！");
         }
-        return save(publicAccount);
+        return super.save(publicAccount);
     }
 
     @Override
