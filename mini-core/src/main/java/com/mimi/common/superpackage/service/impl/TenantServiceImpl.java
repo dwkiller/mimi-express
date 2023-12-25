@@ -11,6 +11,7 @@ import com.mimi.common.util.UserInfoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -60,24 +61,28 @@ public abstract class TenantServiceImpl<M extends SuperMapper<T>, T extends Tena
     }
 
     @Override
+    @Transactional
     public boolean save(@Valid T t) {
         addSchool(t);
         return super.save(t);
     }
 
     @Override
+    @Transactional
     public boolean updateById(@Valid T t) {
         addSchool(t);
         return super.updateById(t);
     }
 
     @Override
+    @Transactional
     public int insertIgnore(T entity) {
         addSchool(entity);
         return superMapper.insertIgnore(entity);
     }
 
     @Override
+    @Transactional
     public int insertIgnoreBatch(List<T> entityList) {
         if(entityList!=null){
             for(T t:entityList){
@@ -88,12 +93,14 @@ public abstract class TenantServiceImpl<M extends SuperMapper<T>, T extends Tena
     }
 
     @Override
+    @Transactional
     public int replace(T entity) {
         addSchool(entity);
         return superMapper.replace(entity);
     }
 
     @Override
+    @Transactional
     public int replaceBatch(List<T> entityList) {
         if(entityList!=null){
             for(T t:entityList){

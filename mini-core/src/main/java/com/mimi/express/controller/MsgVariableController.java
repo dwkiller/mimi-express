@@ -3,6 +3,9 @@ package com.mimi.express.controller;
 
 import com.mimi.common.R;
 import com.mimi.common.superpackage.controller.SuperController;
+import com.mimi.common.superpackage.param.Filter;
+import com.mimi.common.superpackage.param.ListParam;
+import com.mimi.common.superpackage.param.Rule;
 import com.mimi.express.entity.config.MsgVariable;
 import com.mimi.express.entity.config.SysDict;
 import com.mimi.express.service.MsgVariableService;
@@ -55,13 +58,15 @@ public class MsgVariableController extends SuperController<MsgVariableService, M
      */
     @Operation(summary = "通过ID查询字典信息")
     @GetMapping("/getInnerVariable")
-    public R<List<MsgVariable>> getInnerVariable() {
-        ArrayList<MsgVariable> msgVariables = new ArrayList<>();
-        MsgVariable msgVariable = new MsgVariable();
-        msgVariable.setVariable("LOGIN_USER");
-        msgVariable.setType("INNER");
-        msgVariable.setVariable("1");
-        msgVariables.add(msgVariable);
-        return R.success(msgVariables);
+    public R<List<MsgVariable>> getInnerVariable() throws Exception {
+        Filter filter = new Filter();
+        Rule rule = new Rule();
+        rule.setData("INNER");
+        rule.setField("type");
+        rule.setOp("eq");
+        filter.addRule(rule);
+        ListParam listParam = new ListParam();
+        listParam.setFilter(filter);
+        return R.success(msgVariableService.getByParam(listParam));
     }
 }

@@ -12,6 +12,7 @@ import com.mimi.express.service.SysDictService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ public class SysDictItemServiceImpl extends ServiceImpl<SysDictItemMapper, SysDi
      * @return
      */
     @Override
+    @Transactional
     public void removeDictItem(String id) {
         // 根据ID查询字典ID
         SysDictItem dictItem = this.getById(id);
@@ -51,6 +53,7 @@ public class SysDictItemServiceImpl extends ServiceImpl<SysDictItemMapper, SysDi
      * @return
      */
     @Override
+    @Transactional
     public void updateDictItem(SysDictItem item) {
         // 查询字典
         this.updateById(item);
@@ -75,6 +78,7 @@ public class SysDictItemServiceImpl extends ServiceImpl<SysDictItemMapper, SysDi
      * @return
      */
     @Override
+    @Transactional
     public Boolean saveItem(SysDictItem sysDictItem) {
         //设置排序值
         return this.save(sysDictItem);

@@ -14,6 +14,7 @@ import com.mimi.express.service.PublicAccountService;
 import com.mimi.express.service.SchoolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class NoticeTempServiceImpl extends TenantServiceImpl<NoticeTempMapper, N
     private PublicAccountService publicAccountService;
 
     @Override
+    @Transactional
     public boolean save(NoticeTemp noticeTemp){
         School school = schoolService.getById(noticeTemp.getSchoolId());
         if (null == school){

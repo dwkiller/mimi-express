@@ -8,6 +8,7 @@ import com.mimi.express.entity.config.PublicAccount;
 import com.mimi.express.mapper.PublicAccountMapper;
 import com.mimi.express.service.PublicAccountService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -19,19 +20,19 @@ import org.springframework.stereotype.Service;
 public class PublicAccountServiceImpl extends TenantServiceImpl<PublicAccountMapper, PublicAccount> implements PublicAccountService {
 
     @Override
+    @Transactional
     public boolean save(PublicAccount publicAccount) {
-        PublicAccount one = this.getBySchoolId(publicAccount.getSchoolId());
-        if (null != one) {
-            throw new MimiException("该学校已绑定公众号配置！");
+        if (countByAppId(publicAccount.getAppId(),publicAccount.getSchoolId())>0) {
+            throw new MimiException("该公众号已经被使用！");
         }
         return super.save(publicAccount);
     }
 
     @Override
+    @Transactional
     public boolean updateById(PublicAccount publicAccount) {
-        PublicAccount one = this.getBySchoolId(publicAccount.getSchoolId());
-        if (null != one) {
-            throw new MimiException("该学校已绑定公众号配置！");
+        if (countByAppId(publicAccount.getAppId(),publicAccount.getSchoolId())>0) {
+            throw new MimiException("该公众号已经被使用！");
         }
         return super.updateById(publicAccount);
     }
@@ -41,4 +42,12 @@ public class PublicAccountServiceImpl extends TenantServiceImpl<PublicAccountMap
         publicAccountLambdaQueryWrapper.eq(PublicAccount::getSchoolId, schoolId);
         return this.getOne(publicAccountLambdaQueryWrapper);
     }
+
+    public int countByAppId(String appId,String schoolId){
+        LambdaQueryWrapper<PublicAccount> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PublicAccount::getAppId,appId);
+        wrapper.ne(PublicAccount::getSchoolId,schoolId);
+        return baseMapper.selectCount(wrapper);
+    }
+
 }

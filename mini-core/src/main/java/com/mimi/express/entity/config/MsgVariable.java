@@ -48,4 +48,10 @@ public class MsgVariable implements Serializable {
     @Schema(name = "变量值")
     private String value;
 
+    /**
+     * 中文
+     */
+    @Schema(name = "中文")
+    private String tag;
+
 }

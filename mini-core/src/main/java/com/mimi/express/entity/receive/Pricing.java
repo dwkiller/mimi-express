@@ -7,6 +7,8 @@ import com.mimi.common.superpackage.base.TenantEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @Description TODO
  * @Author RuKai
@@ -20,7 +22,10 @@ public class Pricing extends TenantEntity {
 	private Double weight;
 
 	@Schema(name = "价格")
-	private Double price;
+	private BigDecimal price;
+
+	@Schema(name = "折扣")
+	private BigDecimal discount;
 
 	@Schema(name = "备注")
 	private String note;

@@ -11,6 +11,7 @@ import com.mimi.common.superpackage.param.PageParam;
 import com.mimi.common.superpackage.service.ISuperService;
 import com.mimi.common.superpackage.util.WrapperBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.Valid;
@@ -52,6 +53,7 @@ public abstract class SuperServiceImpl<M extends SuperMapper<T>, T> extends Serv
      * @param filter
      */
     @Override
+    @Transactional
     public void deleteByParam(Filter filter) throws Exception {
         if (filter == null || CollectionUtils.isEmpty(filter.getRules())) {
             return;
@@ -71,11 +73,13 @@ public abstract class SuperServiceImpl<M extends SuperMapper<T>, T> extends Serv
     }
 
     @Override
+    @Transactional
     public boolean save(@Valid T t) {
         return super.save(t);
     }
 
     @Override
+    @Transactional
     public boolean updateById(@Valid T t) {
         return super.updateById(t);
     }
@@ -87,6 +91,7 @@ public abstract class SuperServiceImpl<M extends SuperMapper<T>, T> extends Serv
      * @return 影响条数
      */
     @Override
+    @Transactional
     public int insertIgnore(T entity) {
         return superMapper.insertIgnore(entity);
     }
@@ -98,6 +103,7 @@ public abstract class SuperServiceImpl<M extends SuperMapper<T>, T> extends Serv
      * @return 影响条数
      */
     @Override
+    @Transactional
     public int insertIgnoreBatch(List<T> entityList) {
         return superMapper.insertIgnoreBatch(entityList);
     }
@@ -110,6 +116,7 @@ public abstract class SuperServiceImpl<M extends SuperMapper<T>, T> extends Serv
      * @return 影响条数
      */
     @Override
+    @Transactional
     public int replace(T entity) {
         return superMapper.replace(entity);
     }
@@ -122,6 +129,7 @@ public abstract class SuperServiceImpl<M extends SuperMapper<T>, T> extends Serv
      * @return 影响条数
      */
     @Override
+    @Transactional
     public int replaceBatch(List<T> entityList) {
         return superMapper.replaceBatch(entityList);
     }

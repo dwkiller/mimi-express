@@ -22,6 +22,7 @@ public interface ISuperService<T> extends IService<T> {
 
     List<T> getByParam(ListParam listParam) throws Exception;
 
+
     @Override
     boolean save(T t);
 
