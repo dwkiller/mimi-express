@@ -8,4 +8,6 @@ import com.mimi.express.entity.config.NoticeTemp;
  * @author rukai
  */
 public interface NoticeTempService extends ISuperService<NoticeTemp> {
+
+    public NoticeTemp findByTemplateId(String templateId);
 }

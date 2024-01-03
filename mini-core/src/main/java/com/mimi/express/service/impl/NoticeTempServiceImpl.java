@@ -49,4 +49,10 @@ public class NoticeTempServiceImpl extends TenantServiceImpl<NoticeTempMapper, N
         return super.save(noticeTemp);
     }
 
+    @Override
+    public NoticeTemp findByTemplateId(String templateId) {
+        LambdaQueryWrapper<NoticeTemp> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(NoticeTemp::getTemplateId,templateId);
+        return baseMapper.selectOne(wrapper);
+    }
 }
