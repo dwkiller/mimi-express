@@ -27,4 +27,7 @@ public class PublicAccount extends TenantEntity implements Serializable {
 
 	@Schema(name = "应用秘钥")
 	private String appSecret;
+
+	@Schema(name = "公众号文件")
+	private String file;
 }

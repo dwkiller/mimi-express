@@ -43,6 +43,18 @@ public class LoginUtil {
         }).orElse(null);
     }
 
+    public static String getPhone() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoginUser user = (LoginUser) authentication.getPrincipal();
+        return user.getPhone();
+    }
+
+    public static String getRealName(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoginUser user = (LoginUser) authentication.getPrincipal();
+        return user.getRealName();
+    }
+
 
 
 }

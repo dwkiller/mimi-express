@@ -4,10 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mimi.common.superpackage.service.impl.TenantServiceImpl;
+import com.mimi.express.entity.config.ExpressDelivery;
 import com.mimi.express.entity.order.BaseOrder;
+import com.mimi.express.entity.order.HasExpressDelivery;
 import com.mimi.express.entity.order.param.OrderParam;
 import com.mimi.express.mapper.order.OrderMapper;
+import com.mimi.express.service.ExpressDeliveryService;
 import com.mimi.express.service.IBaseOrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -15,7 +19,21 @@ import java.util.List;
 
 public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseOrder> extends TenantServiceImpl<M,T> implements IBaseOrderService<T> {
 
+    @Autowired
+    private ExpressDeliveryService expressDeliveryService;
 
+    protected String getExpressAddress(T order){
+        if(order instanceof HasExpressDelivery){
+            HasExpressDelivery hasExpressDelivery = (HasExpressDelivery)order;
+            ExpressDelivery expressDelivery = expressDeliveryService.getById(
+                    hasExpressDelivery.getExpressDeliveryId());
+            if(expressDelivery==null){
+                return "";
+            }
+            return expressDelivery.getName();
+        }
+        return "";
+    }
 
     @Override
     public IPage<T> findPage(OrderParam<T> param){
@@ -33,6 +51,7 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
         return result;
     }
 
+    @Override
     public T findByOrderNum(String orderNum) throws Exception {
         Class<T> clazz = getEntityClazz();
         T baseOrder = clazz.newInstance();
