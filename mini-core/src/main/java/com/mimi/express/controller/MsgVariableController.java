@@ -9,6 +9,7 @@ import com.mimi.common.superpackage.param.Rule;
 import com.mimi.express.entity.config.MsgVariable;
 import com.mimi.express.entity.config.SysDict;
 import com.mimi.express.service.MsgVariableService;
+import com.mimi.express.type.InnerVariable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -52,21 +54,21 @@ public class MsgVariableController extends SuperController<MsgVariableService, M
     }
 
     /**
-     * 获取内置变量
+     * 获取内置变量."
      *
      * @return 字典信息
      */
     @Operation(summary = "通过ID查询字典信息")
     @GetMapping("/getInnerVariable")
     public R<List<MsgVariable>> getInnerVariable() throws Exception {
-        Filter filter = new Filter();
-        Rule rule = new Rule();
-        rule.setData("INNER");
-        rule.setField("type");
-        rule.setOp("eq");
-        filter.addRule(rule);
-        ListParam listParam = new ListParam();
-        listParam.setFilter(filter);
-        return R.success(msgVariableService.getByParam(listParam));
+        List<MsgVariable> result = new ArrayList<>();
+        for(InnerVariable innerVariable:InnerVariable.values()){
+            MsgVariable msgVariable = new MsgVariable();
+            msgVariable.setType("INNER");
+            msgVariable.setTag(innerVariable.getName());
+            msgVariable.setValue(innerVariable.getValue());
+            result.add(msgVariable);
+        }
+        return R.success(result);
     }
 }

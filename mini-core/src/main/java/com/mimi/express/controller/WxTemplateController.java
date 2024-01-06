@@ -2,6 +2,7 @@ package com.mimi.express.controller;
 
 import com.mimi.common.R;
 import com.mimi.common.exception.MimiException;
+import com.mimi.common.util.UserInfoUtil;
 import com.mimi.express.entity.config.PublicAccount;
 import com.mimi.express.service.PublicAccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,14 +37,18 @@ public class WxTemplateController {
     @Autowired
     private PublicAccountService publicAccountService;
 
+    @Autowired
+    private UserInfoUtil userInfoUtil;
 
     /**
      * 获取所有的消息模板
      */
     @Operation(summary = "获取所有的消息模板")
     @GetMapping("/getAllMsgTemplate")
-    public R<List<WxMpTemplate>> getAllMsgTemplate(@RequestParam(name = "schoolId") String schoolId) throws Exception {
-//        String schoolId = LoginUtil.getSchoolId();
+    public R<List<WxMpTemplate>> getAllMsgTemplate(
+            //@RequestParam(name = "schoolId") String schoolId
+    ) throws Exception {
+        String schoolId = userInfoUtil.getSchoolId();
         PublicAccount bySchoolId = publicAccountService.getBySchoolId(schoolId);
         if (null == bySchoolId){
            throw new MimiException("该学校未配置公众号");
