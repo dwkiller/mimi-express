@@ -6,4 +6,8 @@ public interface UserInfoUtil {
 
     public String getSchoolId();
 
+    public String getPhone();
+
+    public String getRealName();
+
 }

@@ -36,6 +36,10 @@ public class LoginUser implements UserDetails {
         return user.getUserName();
     }
 
+    public String getPhone() {return user.getPhone();}
+
+    public String getRealName() {return user.getRealName();}
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

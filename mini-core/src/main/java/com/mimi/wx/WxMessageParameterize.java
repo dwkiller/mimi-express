@@ -7,6 +7,6 @@ import java.util.Map;
 
 public interface WxMessageParameterize {
 
-    public <O extends BaseOrder>Object parameterize(MsgVariable msgVariable,O order);
+    public String parameterize(MsgVariable msgVariable);
 
 }

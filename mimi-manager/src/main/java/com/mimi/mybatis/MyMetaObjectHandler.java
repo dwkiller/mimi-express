@@ -1,10 +1,9 @@
-package com.mimi.common;
+package com.mimi.mybatis;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.mimi.common.util.UserInfoUtil;
+import com.mimi.common.util.LoginUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -18,9 +17,6 @@ import java.util.Date;
 @Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
 
-    @Autowired
-    private UserInfoUtil userInfoUtil;
-
     //插入时的填充策略
     @Override
     public void insertFill(MetaObject metaObject) {
@@ -28,8 +24,9 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         //三个参数：字段名，字段值，元对象参数
         this.setFieldValByName("createTime",new Date(),metaObject);
         this.setFieldValByName("updateTime",new Date(),metaObject);
-        this.setFieldValByName("createBy", userInfoUtil.getUserId(),metaObject);
-        this.setFieldValByName("updateBY", userInfoUtil.getUserId(),metaObject);
+
+        this.setFieldValByName("createBy", LoginUtil.getUserId(),metaObject);
+        this.setFieldValByName("updateBY", LoginUtil.getUserId(),metaObject);
     }
     //修改时的填充策略
     @Override
