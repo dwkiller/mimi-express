@@ -30,3 +30,9 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: ASSIGN_ID
+
+kd:
+  public:
+    fileroot: /root/public
+  pay:
+    fileroot: /root/pay

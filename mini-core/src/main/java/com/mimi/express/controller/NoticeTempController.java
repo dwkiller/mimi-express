@@ -1,12 +1,19 @@
 package com.mimi.express.controller;
 
+import com.mimi.common.R;
 import com.mimi.common.superpackage.controller.SuperController;
 import com.mimi.express.entity.config.NoticeTemp;
 import com.mimi.express.service.NoticeTempService;
+import com.mimi.express.type.MsgSendPoint;
+import com.mimi.vo.SendPointVo;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -22,5 +29,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/notice")
 public class NoticeTempController extends SuperController<NoticeTempService, NoticeTemp> {
+
+    @GetMapping("getAllSendPoint")
+    public R<List<SendPointVo>> getAllSendPoint(){
+        List<SendPointVo> rs = new ArrayList<>();
+        for(MsgSendPoint msgSendPoint:MsgSendPoint.values()) {
+            SendPointVo sendPointVo = new SendPointVo();
+            sendPointVo.setCode(msgSendPoint.getCode());
+            sendPointVo.setName(msgSendPoint.getName()+"("+msgSendPoint.getSender()+")");
+            rs.add(sendPointVo);
+        }
+        return R.success(rs);
+    }
 
 }

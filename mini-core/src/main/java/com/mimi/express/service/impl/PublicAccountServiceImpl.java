@@ -23,16 +23,13 @@ import java.io.File;
 @Service
 public class PublicAccountServiceImpl extends TenantServiceImpl<PublicAccountMapper, PublicAccount> implements PublicAccountService {
 
-    @Value("kd.public.fileroot")
-    private String fileRoot;
-
     @Override
     @Transactional
     public boolean save(PublicAccount publicAccount) {
         if (countByAppId(publicAccount.getAppId(),publicAccount.getSchoolId())>0) {
             throw new MimiException("该公众号已经被使用！");
         }
-        FileUtil.mkdir(fileRoot+ File.separator+publicAccount.getAppId());
+        //FileUtil.mkdir(fileRoot+ File.separator+publicAccount.getAppId());
         return super.save(publicAccount);
     }
 
