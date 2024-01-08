@@ -1,28 +1,15 @@
 package com.mimi.wx.util.pay;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.InetAddress;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-import javax.net.ssl.SSLContext;
-
+import com.mimi.express.entity.config.PayAccount;
 import com.mimi.wx.util.MapHelper;
 import com.mimi.wx.util.http.HttpAPIService;
 import com.mimi.wx.util.http.HttpResult;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.http.client.config.RequestConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -31,98 +18,34 @@ import org.springframework.stereotype.Component;
 @Component
 public class WXPay {
 
-
-	@Value("${wx.appId}")
-	private String appId;
 	@Value("${wx.apiKey}")
 	private String apiKey;
-	@Value("${wx.mchId}")
-	private String mchId;
 	@Value("${wx.unifiedorderUrl}")
 	private String unifiedorderUrl;
 	@Value("${wx.refund.url}")
 	private String refundUrl;
 	@Value("${weixin.app.cert}")
 	private String appCert;
-	@Value("${wx.promotion.transfers.url}")
-	private String promotionTransfersUrl;
-	
-	@Autowired
-	private HttpAPIService httpAPIService;
-	
-	private void initSSL() throws Exception {
-		if(httpAPIService.getSslHttpClient()==null) {
-			InputStream instream = null;
-			KeyStore keyStore  = null;
-			try {
-				keyStore = KeyStore.getInstance("PKCS12");
-				instream = new FileInputStream(new File(appCert));
-				keyStore.load(instream, mchId.toCharArray());
-				log.info("证书加载完成");
-			} catch (Exception e) {
-				e.printStackTrace();
-				log.error("获取证书失败: "+e.getMessage());
-				throw e;
-			}finally {
-				if(instream!=null) {
-					instream.close();
-				}
-			}
-			log.info("创建 SSLContext.....");
-			SSLContext sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore,mchId.toCharArray()).build();
-			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-		            sslcontext,
-		            new String[] { "TLSv1" },
-		            null,
-		            SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
-			log.info("创建 SSLHttpClient.....");
-			httpAPIService.setSslHttpClient(HttpClients.custom()
-		            .setSSLSocketFactory(sslsf)
-		            .build());
-		}
-	}
-	
-	public Map<String,Object> payToUser(CommissionOrder co) throws Exception{
-		initSSL();
-		BigDecimal money = new BigDecimal(co.getCust()).setScale(2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));//转换成分
-		
-		String addr = InetAddress.getLocalHost().getHostAddress();
-		log.info(addr+"往客户打款:"+money.intValue()+"分 ");
-		
-		
-		Map<String, String> params = new HashMap<String, String>();
-    	//小程序appID
-		params.put("mch_appid", appId);
-		//商户号
-		params.put("mch_id", mchId);
-		params.put("nonce_str", WXPayUtil.generateNonceStr());
-		params.put("partner_trade_no", co.getOrderNumber());
-		params.put("openid", co.getOpenId());
-		params.put("check_name", "NO_CHECK");
-		params.put("amount", money.intValue()+"");
-		params.put("desc", co.getMemo());
-		params.put("spbill_create_ip", addr);
-		String sign = WXPayUtil.generateSignature(params, apiKey);
-		params.put("sign", sign);
-		
-		String requestString = WXPayUtil.getRequestXml(params);
-		log.info("打款请求参数 :" + requestString);
-		HttpResult responseResult = httpAPIService.doSslPost(promotionTransfersUrl, "UTF-8", requestString);
-		log.info("打款返回参数 :" + responseResult.getBody());
-		Map responseMap = WXPayUtil.xmlToMap(responseResult.getBody());
-		log.debug(responseMap.toString());
-		return responseMap;
-	}
-	
-	public Map<String,Object> refund(Map param) throws Exception {
-		
-		initSSL();
 
+	@Autowired
+	private RequestConfig config;
+
+	private Map<String,HttpAPIService> httpMap = new HashMap<>();
+
+	private HttpAPIService getHttpAPIService(String appCert,String mchId) throws Exception {
+		HttpAPIService httpAPIService = httpMap.get(mchId);
+		if(httpAPIService==null){
+			httpAPIService = new HttpAPIService(appCert,mchId,config);
+		}
+		return httpAPIService;
+	}
+	
+	public Map<String,Object> refund(PayAccount payAccount, Map param) throws Exception {
 		Map<String, String> params = new HashMap<String, String>();
     	//小程序appID
-		params.put("appid", appId);
+		params.put("appid", payAccount.getAppId());
 		//商户号
-		params.put("mch_id", mchId);
+		params.put("mch_id", payAccount.getMchId());
 		//随机字符串 
 		String desc = MapHelper.getStringValue(param, "refundDesc");
 		if(desc!=null) {
@@ -137,6 +60,7 @@ public class WXPay {
 		params.put("sign", sign);
 		String requestString = WXPayUtil.getRequestXml(params);
 		log.info("退单请求参数 :" + requestString);
+		HttpAPIService httpAPIService = getHttpAPIService(payAccount.getFile(),payAccount.getMchId());
 		HttpResult responseResult = httpAPIService.doSslPost(refundUrl, "UTF-8", requestString);
 		log.info("退单返回参数 :" + responseResult.getBody());
 		Map responseMap = WXPayUtil.xmlToMap(responseResult.getBody());
@@ -163,19 +87,15 @@ public class WXPay {
     /**
      * 作用：统一下单<br>
      * 场景：公共号支付、扫码支付、APP支付
-     * @param reqData 向wxpay post的请求数据
      * @return API返回数据
      * @throws Exception
      */
-    public Map<String,Object> unifiedOrder(Map param) throws Exception {
-		
-    	Map<String, Object> result = new HashMap<String, Object>();
-    	
+    public Map<String,Object> unifiedOrder(PayAccount payAccount,Map param) throws Exception {
 		Map<String, String> params = new HashMap<String, String>();
     	//小程序appID
-		params.put("appid", appId);
+		params.put("appid", payAccount.getAppId());
 		//商户号
-		params.put("mch_id", mchId);
+		params.put("mch_id", payAccount.getMchId());
 		//随机字符串
 		params.put("nonce_str", WXPayUtil.generateNonceStr());
 		//商品描述
@@ -197,6 +117,8 @@ public class WXPay {
 		params.put("sign", sign);
 		String requestString = WXPayUtil.getRequestXml(params);
 		log.info("支付统一下单请求参数 :" + requestString);
+
+		HttpAPIService httpAPIService = getHttpAPIService(payAccount.getFile(),payAccount.getMchId());
 		HttpResult responseResult = httpAPIService.doPost(unifiedorderUrl, "UTF-8", requestString);
 		log.info("支付统一下单返回参数 :" + responseResult.getBody());
 		Map responseMap = WXPayUtil.xmlToMap(responseResult.getBody());

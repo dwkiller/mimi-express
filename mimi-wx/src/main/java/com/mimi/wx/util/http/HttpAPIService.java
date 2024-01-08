@@ -1,5 +1,9 @@
 package com.mimi.wx.util.http;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,6 +12,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -16,47 +21,81 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ConnectionPoolTimeoutException;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.SSLContext;
+
 
 @Slf4j
-@Service
 public class HttpAPIService {
 
-	@Autowired    
-	private CloseableHttpClient httpClient;
-	@Autowired
 	private RequestConfig config;
-	
+
 	private CloseableHttpClient sslHttpClient;
-	
+
 	public CloseableHttpClient getSslHttpClient() {
 		return sslHttpClient;
 	}
 
-	public void setSslHttpClient(CloseableHttpClient sslHttpClient) {
-		this.sslHttpClient = sslHttpClient;
+
+	public HttpAPIService(String appCert,String mchId,RequestConfig config) throws Exception {
+		this.config = config;
+		if(!StringUtils.isEmpty(appCert)&&StringUtils.isEmpty(mchId)){
+			initSSL(appCert,mchId);
+		}
 	}
-	
-	
-	
+
+	private void initSSL(String appCert,String mchId) throws Exception {
+		if (sslHttpClient == null) {
+			InputStream instream = null;
+			KeyStore keyStore = null;
+			try {
+				keyStore = KeyStore.getInstance("PKCS12");
+				instream = new FileInputStream(new File(appCert));
+				keyStore.load(instream, mchId.toCharArray());
+				log.info("证书加载完成");
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.error("获取证书失败: " + e.getMessage());
+				throw e;
+			} finally {
+				if (instream != null) {
+					instream.close();
+				}
+			}
+			log.info("创建 SSLContext.....");
+			SSLContext sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, mchId.toCharArray()).build();
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+					sslcontext,
+					new String[]{"TLSv1"},
+					null,
+					SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+			log.info("创建 SSLHttpClient.....");
+			sslHttpClient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+		}
+	}
+
 	public CloseableHttpResponse doGetResponse(String url) throws Exception {
 		HttpGet httpGet = new HttpGet(url);         
 		// 装载配置信息        
 		httpGet.setConfig(config);         
 		// 发起请求        
 		CloseableHttpResponse response = null;
+		CloseableHttpClient httpClient = HttpClients.createDefault();
 		int reTry=0;
 		while(reTry<3) {
 			try {
-				response = this.httpClient.execute(httpGet);
+				response = httpClient.execute(httpGet);
 				reTry=3;
 			}catch(ConnectionPoolTimeoutException e) {
 				log.error("链接超时:  "+e.getMessage()+" 重试次数:"+reTry);
@@ -74,11 +113,11 @@ public class HttpAPIService {
 		httpGet.setConfig(config);         
 		// 发起请求        
 		CloseableHttpResponse response = null;
-		
+		CloseableHttpClient httpClient = HttpClients.createDefault();
 		int reTry=0;
 		while(reTry<3) {
 			try {
-				response = this.httpClient.execute(httpGet);
+				response = httpClient.execute(httpGet);
 				reTry=3;
 			}catch(ConnectionPoolTimeoutException e) {
 				log.error("链接超时:  "+e.getMessage()+" 重试次数:"+reTry);
@@ -122,8 +161,8 @@ public class HttpAPIService {
 		se.setContentType(contentType);
         se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE,"UTF-8"));
         httpPost.setEntity(se);
-		
-        CloseableHttpResponse response = this.httpClient.execute(httpPost);
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpResponse response = httpClient.execute(httpPost);
         return new HttpResult(response.getStatusLine().getStatusCode(), response.getEntity().getContent());
 	}
 	
@@ -151,9 +190,10 @@ public class HttpAPIService {
 			UrlEncodedFormEntity urlEncodedFormEntity = new UrlEncodedFormEntity(list, "UTF-8");
 			// 把表单放到post里            
 			httpPost.setEntity(urlEncodedFormEntity);
-		}         
-		// 发起请求       
-		CloseableHttpResponse response = this.httpClient.execute(httpPost);
+		}
+		// 发起请求
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		CloseableHttpResponse response = httpClient.execute(httpPost);
 		return new HttpResult(response.getStatusLine().getStatusCode(), EntityUtils.toString(response.getEntity(), "UTF-8"));
 	}
 	
@@ -173,8 +213,9 @@ public class HttpAPIService {
 			// 把表单放到post里            
 			httpPost.setEntity(urlEncodedFormEntity);
 		}         
-		// 发起请求       
-		CloseableHttpResponse response = this.httpClient.execute(httpPost);
+		// 发起请求
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		CloseableHttpResponse response = httpClient.execute(httpPost);
 		return new HttpResult(response.getStatusLine().getStatusCode(), EntityUtils.toString(response.getEntity(), "UTF-8"));
 	}
 	
@@ -196,8 +237,9 @@ public class HttpAPIService {
 		httpPost.setConfig(config);
 		StringEntity postEntity = new StringEntity(outputStr, requestMethod);
 		httpPost.setEntity(postEntity);
-		
-		CloseableHttpResponse response = this.httpClient.execute(httpPost);
+
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		CloseableHttpResponse response = httpClient.execute(httpPost);
 		return new HttpResult(response.getStatusLine().getStatusCode(), EntityUtils.toString(response.getEntity(), requestMethod));
 	}
 	
@@ -208,8 +250,9 @@ public class HttpAPIService {
 		httpPost.setConfig(config);
 		StringEntity postEntity = new StringEntity(outputStr);
 		httpPost.setEntity(postEntity);
-		
-		CloseableHttpResponse response = this.httpClient.execute(httpPost);
+
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		CloseableHttpResponse response = httpClient.execute(httpPost);
 		return new HttpResult(response.getStatusLine().getStatusCode(), EntityUtils.toString(response.getEntity()));
 	}
 	
