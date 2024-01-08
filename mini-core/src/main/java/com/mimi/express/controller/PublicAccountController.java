@@ -34,12 +34,13 @@ import java.io.IOException;
 @RequestMapping("/publicAccount")
 public class PublicAccountController extends SuperController<PublicAccountService, PublicAccount> {
 
-    @Value("kd.public.fileroot")
+    @Value("${kd.public.fileroot}")
     private String fileRoot;
 
     @PostMapping("/upload")
     public R<String> upload(@RequestParam("file") MultipartFile file) throws IOException {
         String path = fileRoot+ File.separator+file.getOriginalFilename();
+        FileUtil.mkdir(fileRoot);
         File filePath = new File(path);
         file.transferTo(filePath);
         return R.success(file.getOriginalFilename());

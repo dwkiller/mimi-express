@@ -36,7 +36,6 @@ public interface OrderMapper<T extends BaseOrder>  extends SuperMapper<T> {
             "</if>";
 
 
-
     public List<T> findPage(OrderParam<T> param);
     public long findCount(OrderParam<T> param);
 

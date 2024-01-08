@@ -30,4 +30,7 @@ public class PayAccount extends TenantEntity implements Serializable {
 
 	@Schema(name = "应用key")
 	private String appKey;
+
+	@Schema(name = "密钥文件")
+	private String file;
 }

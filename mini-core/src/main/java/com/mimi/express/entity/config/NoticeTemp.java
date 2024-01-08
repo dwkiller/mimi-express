@@ -34,4 +34,7 @@ public class NoticeTemp extends TenantEntity implements Serializable {
 	 */
 	@Schema(name = "配置路径url")
 	private String url;
+
+	@Schema(name = "发送点")
+	private String sendPoint;
 }
