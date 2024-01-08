@@ -7,6 +7,7 @@
     <modules>
         <module>mini-core</module>
         <module>mimi-manager</module>
+        <module>mimi-wx</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
