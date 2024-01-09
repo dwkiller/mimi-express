@@ -36,3 +36,8 @@ kd:
     fileroot: /root/public
   pay:
     fileroot: /root/pay
+  wx:
+    appId: 1
+    appSecret: 1
+    code2Session:
+      url: https://api.weixin.qq.com/sns/jscode2session?appid={0}&secret={1}&js_code={2}&grant_type=authorization_code

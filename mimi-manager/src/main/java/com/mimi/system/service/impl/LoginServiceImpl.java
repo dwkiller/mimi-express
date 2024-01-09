@@ -5,6 +5,7 @@ import com.mimi.common.util.RedisCache;
 import com.mimi.system.entity.Employee;
 import com.mimi.system.entity.LoginUser;
 import com.mimi.system.service.LoginService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,7 +46,6 @@ public class LoginServiceImpl implements LoginService {
         //authenticate存入redis
         redisCache.setCacheObject("login:"+userId,loginUser);
         //cache.put("login:"+userId,loginUser);
-
         //把token响应给前端
         HashMap<String,String> map = new HashMap<>();
         map.put("token",jwt);

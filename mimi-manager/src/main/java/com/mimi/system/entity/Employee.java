@@ -1,6 +1,7 @@
 package com.mimi.system.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.mimi.common.superpackage.base.BaseEntity;
@@ -37,5 +38,12 @@ public class Employee extends TenantEntity implements Serializable {
 
     @Schema(name = "是否是学校管理员")
     private boolean forAdmin;
+
+    @Schema(name = "公众号openId")
+    private String openId;
+
+    @TableField(exist = false)
+    @Schema(name = "authCode")
+    private String authCode;
 
 }

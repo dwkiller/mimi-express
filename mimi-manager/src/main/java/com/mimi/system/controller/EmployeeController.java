@@ -1,5 +1,7 @@
 package com.mimi.system.controller;
 
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.mimi.common.R;
 import com.mimi.common.superpackage.controller.SuperController;
 import com.mimi.system.entity.Employee;
@@ -8,8 +10,12 @@ import com.mimi.system.service.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Slf4j
 @Tag(name = "用户管理")
@@ -23,10 +29,20 @@ public class EmployeeController extends SuperController<EmployeeService, Employe
     @Autowired
     private EmployeeService employeeService;
 
+    @Value("${kd.wx.code2Session.url}")
+    private String code2SessionUrl;
+
+    @Value("${kd.wx.appId}")
+    private String appId;
+
+    @Value("${kd.wx.appSecret}")
+    private String appSecret;
+
     @PostMapping("/login")
     @Operation(summary = "用户登录接口")
     public R login(@RequestBody Employee user){
-        return R.success(loginService.login(user));
+        Map<String,String> rs = loginService.login(user);
+        return R.success(rs);
     }
 
     @GetMapping("/logout")
@@ -47,4 +63,5 @@ public class EmployeeController extends SuperController<EmployeeService, Employe
     public R getUserInfo(@RequestParam(name = "userId")String userId){
         return R.success(employeeService.getUserInfo(userId));
     }
+
 }
