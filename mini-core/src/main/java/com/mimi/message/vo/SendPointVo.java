@@ -1,4 +1,4 @@
-package com.mimi.vo;
+package com.mimi.message.vo;
 
 import lombok.Data;
 

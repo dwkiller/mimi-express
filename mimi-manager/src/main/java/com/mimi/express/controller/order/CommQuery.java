@@ -4,7 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.mimi.common.R;
 import com.mimi.express.entity.order.BaseOrder;
 import com.mimi.express.service.IBaseOrderService;
-import com.mimi.vo.CommOrderVo;
+import com.mimi.message.vo.CommOrderVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
