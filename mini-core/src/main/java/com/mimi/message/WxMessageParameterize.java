@@ -1,4 +1,4 @@
-package com.mimi.wx;
+package com.mimi.message;
 
 import com.mimi.express.entity.config.MsgVariable;
 import com.mimi.express.entity.order.BaseOrder;

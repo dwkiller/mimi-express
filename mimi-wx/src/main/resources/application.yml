@@ -38,3 +38,14 @@ http:
   connectionRequestTimeout: 500
   socketTimeout: 10000
   staleConnectionCheckEnabled: true
+
+kd:
+  public:
+    fileroot: /root/public
+  pay:
+    fileroot: /root/pay
+  wx:
+    appId: 1
+    appSecret: 1
+    code2Session:
+      url: https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code

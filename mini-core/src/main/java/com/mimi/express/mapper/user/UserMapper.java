@@ -1,4 +1,4 @@
-package com.mimi.express.mapper;
+package com.mimi.express.mapper.user;
 
 import com.mimi.common.superpackage.mapper.SuperMapper;
 import com.mimi.express.entity.user.User;

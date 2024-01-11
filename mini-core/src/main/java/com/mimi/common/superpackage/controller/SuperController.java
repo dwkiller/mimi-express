@@ -14,36 +14,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 
-public class SuperController<M extends ISuperService<T>, T> {
+public abstract class SuperController<M extends ISuperService<T>, T> extends ReadOnlySuperController<M,T> {
 
-    @Autowired
-    protected M superService;
-
-
-    @Operation(summary = "查询全部实体")
-    @GetMapping("")
-    public R<List<T>> list() throws Exception {
-        ListParam listParam = new ListParam();
-        return R.success(superService.getByParam(listParam));
-    }
-
-    @Operation(summary = "查询分页查询实体")
-    @PostMapping("/page")
-    public R<IPage<T>> page(@RequestBody PageParam pageParam) throws Exception {
-        return R.success(superService.pageByParam(pageParam));
-    }
-
-    @Operation(summary = "根据id查询实体")
-    @GetMapping("/{id}")
-    public R<T> getById(@PathVariable String id) {
-        return R.success(superService.getById(id));
-    }
-
-    @Operation(summary = "根据条件查询")
-    @PostMapping("/param")
-    public R<List<T>> getByParam(@RequestBody ListParam listParam) throws Exception {
-        return R.success(superService.getByParam(listParam));
-    }
 
     @Operation(summary = "根据id修改实体")
     @PutMapping("")

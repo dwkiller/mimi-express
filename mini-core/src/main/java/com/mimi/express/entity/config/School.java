@@ -32,7 +32,6 @@ public class School extends BaseEntity implements Serializable {
 	@Schema(name = "备注")
 	private String note;
 
-
 	@Schema(name = "管理员名称")
 	@TableField(exist = false)
 	@NotBlank(message = "管理员名称不能为空")
@@ -42,5 +41,11 @@ public class School extends BaseEntity implements Serializable {
 	@TableField(exist = false)
 	@NotBlank(message = "管理员密码不能为空")
 	private String adminPassword;
+
+	@Schema(name = "经度")
+	private Double longitude;
+
+	@Schema(name = "纬度")
+	private Double latitude;
 
 }

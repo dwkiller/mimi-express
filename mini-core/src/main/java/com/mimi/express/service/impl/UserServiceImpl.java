@@ -1,10 +1,9 @@
 package com.mimi.express.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.mimi.common.superpackage.service.impl.SuperServiceImpl;
 import com.mimi.common.superpackage.service.impl.TenantServiceImpl;
 import com.mimi.express.entity.user.User;
-import com.mimi.express.mapper.UserMapper;
+import com.mimi.express.mapper.user.UserMapper;
 import com.mimi.express.service.UserService;
 import org.springframework.stereotype.Service;
 

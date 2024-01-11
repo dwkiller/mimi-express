@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.List;
 
 
 /**
@@ -78,4 +79,24 @@ public class SchoolServiceImpl extends SuperServiceImpl<SchoolMapper, School> im
         sysDictService.save(sysDict);
     }
 
+    @Override
+    public School findByPos(double longitude, double latitude) {
+        List<School> schools = list();
+        double minDistance = 99999999;
+        School result = null;
+
+        for(School school:schools) {
+            if(school.getLongitude()==null||school.getLatitude()==null){
+                continue;
+            }
+            double x = Math.abs(school.getLongitude()-longitude)*1000000;
+            double y = Math.abs(school.getLatitude()-latitude)*1000000;
+            double z = Math.sqrt(x*x+y*y);
+            if(z<minDistance){
+                minDistance = z;
+                result = school;
+            }
+        }
+        return result;
+    }
 }

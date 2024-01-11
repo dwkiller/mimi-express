@@ -42,6 +42,20 @@ public class R<T> {
         return r;
     }
 
+    public static <T> R<T> unLogin() {
+        R r = new R();
+        r.msg = "未登录";
+        r.code = -1;
+        return r;
+    }
+
+    public static <T> R<T> unRegist() {
+        R r = new R();
+        r.msg = "用户未注册";
+        r.code = -2;
+        return r;
+    }
+
     public R<T> add(String key, Object value) {
         this.map.put(key, value);
         return this;

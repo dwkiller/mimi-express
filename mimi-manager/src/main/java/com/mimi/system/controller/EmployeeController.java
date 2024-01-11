@@ -29,14 +29,6 @@ public class EmployeeController extends SuperController<EmployeeService, Employe
     @Autowired
     private EmployeeService employeeService;
 
-    @Value("${kd.wx.code2Session.url}")
-    private String code2SessionUrl;
-
-    @Value("${kd.wx.appId}")
-    private String appId;
-
-    @Value("${kd.wx.appSecret}")
-    private String appSecret;
 
     @PostMapping("/login")
     @Operation(summary = "用户登录接口")
