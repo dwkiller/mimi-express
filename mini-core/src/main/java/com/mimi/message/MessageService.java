@@ -50,8 +50,7 @@ public class MessageService<T extends BaseOrder> {
     @Autowired
     private UserInfoUtil userInfoUtil;
 
-    public void sendMsg(String templateId, T order, Map<String,String> sendParam,
-                                             WxMessageParameterize wxMessageParameterize) throws WxErrorException {
+    public void sendMsg(String templateId, T order, Map<String,String> sendParam) throws WxErrorException {
         if(StringUtils.isEmpty(order.getMobile())){
             throw new RuntimeException("运单号上没有手机号码，无法确定用户！");
         }
@@ -67,10 +66,15 @@ public class MessageService<T extends BaseOrder> {
         if(publicAccount==null){
             throw new RuntimeException("该学校未绑定公众号！");
         }
+
         String callBackUrl = null;
+        ISendMsgExt sendMsgExt=null;
         NoticeTemp noticeTemp = noticeTempService.findByTemplateId(templateId);
         if(noticeTemp!=null&&!StringUtils.isEmpty(noticeTemp.getUrl())){
             callBackUrl = noticeTemp.getUrl();
+        }
+        if(!StringUtils.isEmpty(noticeTemp.getSendPoint())){
+            sendMsgExt = SpringUtil.getBean(noticeTemp.getSendPoint());
         }
 
         String token = wxService.getToken(publicAccount);
@@ -89,7 +93,7 @@ public class MessageService<T extends BaseOrder> {
                 .url(callBackUrl)
                 .build();
 
-        if(variableList!=null&&wxMessageParameterize!=null){
+        if(variableList!=null&&sendMsgExt!=null){
             for(MsgVariable msgVariable:variableList){
                 if(!msgVariable.getType().equals("INNER")){
                     continue;
@@ -110,7 +114,7 @@ public class MessageService<T extends BaseOrder> {
                 }else if(InnerVariable.ORDER_NUMBER.getValue().equals(msgVariable.getVariable())){
                     value = order.getOrderNum();
                 }else{
-                    value = wxMessageParameterize.parameterize(msgVariable);
+                    value = sendMsgExt.parameterize(order,msgVariable);
                 }
                 templateMessage.addData(new WxMpTemplateData(msgVariable.getVariable(),value));
             }
@@ -124,8 +128,7 @@ public class MessageService<T extends BaseOrder> {
         }
         wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
 
-        if(!StringUtils.isEmpty(noticeTemp.getSendPoint())){
-            ISendMsgExt sendMsgExt = SpringUtil.getBean(noticeTemp.getSendPoint());
+        if(sendMsgExt!=null){
             sendMsgExt.execute(order);
         }
     }

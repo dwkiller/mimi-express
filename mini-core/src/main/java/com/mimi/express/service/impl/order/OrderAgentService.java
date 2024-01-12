@@ -31,14 +31,6 @@ public class OrderAgentService extends BaseOrderService<OrderAgentMapper,OrderAg
     }
 
     public void sendMsg(String templateId,OrderAgent orderAgent,Map<String,String> param) throws WxErrorException {
-        messageService.sendMsg(templateId,orderAgent,param,(msgVariable)->{
-            String result = "";
-            if(InnerVariable.EXPRESS_DELIVERY_ADDRESS.getValue().equals(msgVariable.getVariable())){
-                result = getExpressAddress(orderAgent);
-            }else if(InnerVariable.GOODS_NUMBER.getValue().equals(msgVariable.getVariable())){
-                result = orderAgent.getRackNo();
-            }
-            return result;
-        });
+        messageService.sendMsg(templateId,orderAgent,param);
     }
 }
