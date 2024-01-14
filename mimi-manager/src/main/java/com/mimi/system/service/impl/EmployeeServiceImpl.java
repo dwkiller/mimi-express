@@ -1,9 +1,9 @@
 package com.mimi.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.mimi.common.exception.MimiException;
-import com.mimi.common.superpackage.service.impl.TenantServiceImpl;
-import com.mimi.common.util.UserInfoUtil;
+import com.mimi.core.common.exception.MimiException;
+import com.mimi.core.common.superpackage.service.impl.TenantServiceImpl;
+import com.mimi.core.common.util.UserInfoUtil;
 import com.mimi.system.entity.Employee;
 import com.mimi.system.entity.LoginUser;
 import com.mimi.system.mapper.EmployeeMapper;

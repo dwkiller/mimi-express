@@ -1,6 +1,6 @@
 package com.mimi.config;
 
-import com.mimi.common.superpackage.intercept.MybatisQueryIntercept;
+import com.mimi.core.common.superpackage.intercept.MybatisQueryIntercept;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

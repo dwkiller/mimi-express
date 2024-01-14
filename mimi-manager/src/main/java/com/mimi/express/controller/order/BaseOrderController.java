@@ -2,14 +2,15 @@ package com.mimi.express.controller.order;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.mimi.common.R;
-import com.mimi.common.superpackage.controller.SuperController;
-import com.mimi.express.entity.order.BaseOrder;
-import com.mimi.express.entity.order.param.OrderParam;
-import com.mimi.express.service.IBaseOrderService;
-import com.mimi.message.MessageService;
-import com.mimi.message.vo.SendMessageVo;
+import com.mimi.core.common.R;
+import com.mimi.core.common.superpackage.controller.SuperController;
+import com.mimi.core.express.entity.order.BaseOrder;
+import com.mimi.core.express.entity.order.param.OrderParam;
+import com.mimi.core.express.service.IBaseOrderService;
+import com.mimi.core.message.MessageService;
+import com.mimi.core.message.vo.SendMessageVo;
 import io.swagger.v3.oas.annotations.Operation;
+import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,12 +35,10 @@ public class BaseOrderController<S extends IBaseOrderService<T>,T extends BaseOr
 
     @Operation(summary = "发送消息")
     @PostMapping("/sendMessage")
-    public R sendMessage(@RequestBody SendMessageVo sendMessageVo){
+    public R sendMessage(@RequestBody SendMessageVo sendMessageVo) throws WxErrorException {
         Class<T> clazzP = getParamClass();
         T order = JSONObject.toJavaObject(sendMessageVo.getOrder(),clazzP);
-
-        //messageService.sendMsg(sendMessageVo.getTemplateId(),sendMessageVo.getOrder(),sendMessageVo.getParam());
-
+        superService.sendMsg(sendMessageVo.getTemplateId(),order,sendMessageVo.getParam());
         return R.success();
     }
 

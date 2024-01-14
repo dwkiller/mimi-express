@@ -2,10 +2,10 @@ package com.mimi.express.controller;
 
 
 import cn.hutool.core.io.FileUtil;
-import com.mimi.common.R;
-import com.mimi.common.superpackage.controller.SuperController;
-import com.mimi.express.entity.config.PayAccount;
-import com.mimi.express.service.PayAccountService;
+import com.mimi.core.common.R;
+import com.mimi.core.common.superpackage.controller.SuperController;
+import com.mimi.core.express.entity.config.PayAccount;
+import com.mimi.core.express.service.PayAccountService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

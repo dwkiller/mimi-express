@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.mimi</groupId>
-            <artifactId>mini-core</artifactId>
+            <artifactId>mimi-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

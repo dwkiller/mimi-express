@@ -1,9 +1,8 @@
 package com.mimi.config;
 
-import com.mimi.system.service.impl.LoginServiceImpl;
 import io.jsonwebtoken.Claims;
 import com.mimi.common.util.JwtUtil;
-import com.mimi.common.util.RedisCache;
+import com.mimi.core.common.util.RedisCache;
 import com.mimi.system.entity.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

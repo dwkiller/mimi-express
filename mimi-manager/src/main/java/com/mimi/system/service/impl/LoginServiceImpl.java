@@ -1,11 +1,10 @@
 package com.mimi.system.service.impl;
 
 import com.mimi.common.util.JwtUtil;
-import com.mimi.common.util.RedisCache;
+import com.mimi.core.common.util.RedisCache;
 import com.mimi.system.entity.Employee;
 import com.mimi.system.entity.LoginUser;
 import com.mimi.system.service.LoginService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

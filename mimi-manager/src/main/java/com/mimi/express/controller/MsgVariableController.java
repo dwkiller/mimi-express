@@ -1,15 +1,11 @@
 package com.mimi.express.controller;
 
 
-import com.mimi.common.R;
-import com.mimi.common.superpackage.controller.SuperController;
-import com.mimi.common.superpackage.param.Filter;
-import com.mimi.common.superpackage.param.ListParam;
-import com.mimi.common.superpackage.param.Rule;
-import com.mimi.express.entity.config.MsgVariable;
-import com.mimi.express.entity.config.SysDict;
-import com.mimi.express.service.MsgVariableService;
-import com.mimi.express.type.InnerVariable;
+import com.mimi.core.common.R;
+import com.mimi.core.common.superpackage.controller.SuperController;
+import com.mimi.core.express.entity.config.MsgVariable;
+import com.mimi.core.express.service.MsgVariableService;
+import com.mimi.core.express.type.InnerVariable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 

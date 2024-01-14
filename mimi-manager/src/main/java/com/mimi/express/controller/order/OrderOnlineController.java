@@ -1,7 +1,7 @@
 package com.mimi.express.controller.order;
 
-import com.mimi.express.entity.order.OrderOnline;
-import com.mimi.express.service.impl.order.OrderOnlineService;
+import com.mimi.core.express.entity.order.OrderOnline;
+import com.mimi.core.express.service.impl.order.OrderOnlineService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;

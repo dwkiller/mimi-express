@@ -1,10 +1,10 @@
 package com.mimi.express.controller;
 
-import com.mimi.common.R;
-import com.mimi.common.exception.MimiException;
-import com.mimi.common.util.UserInfoUtil;
-import com.mimi.express.entity.config.PublicAccount;
-import com.mimi.express.service.PublicAccountService;
+import com.mimi.core.common.R;
+import com.mimi.core.common.exception.MimiException;
+import com.mimi.core.common.util.UserInfoUtil;
+import com.mimi.core.express.entity.config.PublicAccount;
+import com.mimi.core.express.service.PublicAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

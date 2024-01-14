@@ -1,11 +1,8 @@
 package com.mimi.system.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.mimi.common.superpackage.base.BaseEntity;
-import com.mimi.common.superpackage.base.TenantEntity;
+import com.mimi.core.common.superpackage.base.TenantEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

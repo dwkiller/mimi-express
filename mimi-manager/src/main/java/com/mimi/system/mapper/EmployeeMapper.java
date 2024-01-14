@@ -1,6 +1,6 @@
 package com.mimi.system.mapper;
 
-import com.mimi.common.superpackage.mapper.SuperMapper;
+import com.mimi.core.common.superpackage.mapper.SuperMapper;
 import com.mimi.system.entity.Employee;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

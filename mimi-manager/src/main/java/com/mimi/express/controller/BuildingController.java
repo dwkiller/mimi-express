@@ -1,9 +1,9 @@
 package com.mimi.express.controller;
 
 
-import com.mimi.common.superpackage.controller.SuperController;
-import com.mimi.express.entity.config.Building;
-import com.mimi.express.service.BuildingService;
+import com.mimi.core.common.superpackage.controller.SuperController;
+import com.mimi.core.express.entity.config.Building;
+import com.mimi.core.express.service.BuildingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;

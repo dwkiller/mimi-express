@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>mini-core</module>
+        <module>mimi-core</module>
         <module>mimi-manager</module>
         <module>mimi-wx</module>
     </modules>
@@ -25,7 +25,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.mimi</groupId>
-                <artifactId>mini-core</artifactId>
+                <artifactId>mimi-core</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
         </dependencies>

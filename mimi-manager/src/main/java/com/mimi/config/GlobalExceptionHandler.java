@@ -1,7 +1,7 @@
 package com.mimi.config;
 
-import com.mimi.common.R;
-import com.mimi.common.exception.MimiException;
+import com.mimi.core.common.R;
+import com.mimi.core.common.exception.MimiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;

@@ -1,10 +1,10 @@
 package com.mimi.express.controller;
 
 
-import com.mimi.common.R;
-import com.mimi.common.superpackage.controller.SuperController;
-import com.mimi.express.entity.config.School;
-import com.mimi.express.service.SchoolService;
+import com.mimi.core.common.R;
+import com.mimi.core.common.superpackage.controller.SuperController;
+import com.mimi.core.express.entity.config.School;
+import com.mimi.core.express.service.SchoolService;
 import com.mimi.system.entity.Employee;
 import com.mimi.system.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;

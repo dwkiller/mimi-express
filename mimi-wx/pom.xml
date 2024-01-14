@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.mimi</groupId>
-            <artifactId>mini-core</artifactId>
+            <artifactId>mimi-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -28,9 +28,69 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-    </properties>
+    <build>
+        <plugins>
+            <!-- 自定义ClassPath路径 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- 把构建根目录的lib文件夹配置成ClassPath路径 -->
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>./</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!--配置Jar包构建信息-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <addResources>true</addResources>
+                    <includeSystemScope>true</includeSystemScope>
+                    <!--手动设置构建需要加入的依赖，只有配置的依赖才会加入。-->
+                    <includes>
+                        <!--配置一个不存在的groupId，这样就不会引入任何依赖，jar包就只包含代码文件-->
+                        <include>
+                            <groupId>not-exists</groupId>
+                        </include>
+                        <!--如果是多模块项目，其他模块需要手动添加下面-->
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <!--生成的jar包名称为项目的artifactId-->
+        <finalName>${project.artifactId}</finalName>
+    </build>
 </project>
