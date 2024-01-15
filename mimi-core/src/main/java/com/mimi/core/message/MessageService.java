@@ -1,6 +1,8 @@
 package com.mimi.core.message;
 
 import cn.hutool.extra.spring.SpringUtil;
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.mimi.core.common.util.UserInfoUtil;
 import com.mimi.core.express.entity.config.MsgVariable;
 import com.mimi.core.express.entity.config.NoticeTemp;
@@ -19,6 +21,7 @@ import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.Jar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -132,9 +135,40 @@ public class MessageService<T extends BaseOrder> {
         }
     }
 
-    public static void main(String[] args){
-//        String token="76_Kz3DVCQEGKltM8omvKWEiqBQ_sYQLsC1D_zY9bLrBLbEogo4dzCopx-83r_DXz85m44ADqq11nBOt-eGSdtcr66EnoNXgnykf4d1VVDQO-W5Khul--0QjKdgJvMULTbAJAARZ";
-//        String templateId="27QrMyvB9nt7YRDb8mZeej_xpvgVr67wcjDdssxhgSc";
+    public static void main(String[] args) throws WxErrorException {
+        String token="76_4MNRd34xHx2TwSvlad14w-AnZKrvvZNYRub_jbNFnuhMB3Pm8m8MDaIcXiGX-o2tGsNmlNncL610gcsbTjRoLYhsz8G_kcdTdg1Rhy9BT-gYEe-22UIM9BHsrrUWYUaAIACEA";
+        String templateId="hi0OYKik0W0FuJp93vR-hOPbsGufC43yoeiu26dPQ70";
+        String openId = "oeI4a6l1zF20hc9fLhQiqvrpqeBE";
+
+        String url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+token;
+        JSONObject param = new JSONObject();
+        param.put("template_id",templateId);
+        param.put("touser",openId);
+        param.put("url","http://weixin.qq.com/download");
+
+        JSONObject data = new JSONObject();
+
+        JSONObject jo1 = new JSONObject();
+        jo1.put("value","111");
+        JSONObject jo2 = new JSONObject();
+        jo2.put("value","2222");
+        JSONObject jo3 = new JSONObject();
+        jo3.put("value","2024-01-15 00:00:00");
+        JSONObject jo4 = new JSONObject();
+        jo4.put("value","15274898348");
+        JSONObject jo5 = new JSONObject();
+        jo5.put("value","1234");
+        data.put("character_string2",jo1);
+        data.put("character_string3",jo2);
+        data.put("time8",jo3);
+        data.put("const16",jo4);
+        data.put("thing4",jo5);
+        param.put("data",data);
+
+        String rs = HttpUtil.post(url,param.toJSONString());
+        System.out.println(rs);
+
+
 //        WxMpServiceImpl wxMpService = new WxMpServiceImpl();
 //        WxMpDefaultConfigImpl wxStorage = new WxMpDefaultConfigImpl();
 //        wxStorage.setAppId("wx89a0fa9b59731bed");
@@ -143,9 +177,16 @@ public class MessageService<T extends BaseOrder> {
 //        wxMpService.setWxMpConfigStorage(wxStorage);
 //
 //        WxMpTemplateMessage templateMessage = WxMpTemplateMessage.builder()
-//                .toUser(user.getOpenId())
+//                .toUser(openId)
 //                .templateId(templateId)
-//                .url(callBackUrl)
+//                .url("")
 //                .build();
+//        templateMessage.addData(new WxMpTemplateData("character_string2","1111"));
+//        templateMessage.addData(new WxMpTemplateData("character_string3","2222"));
+//        templateMessage.addData(new WxMpTemplateData("time8","2024-01-15 00:00:00"));
+//        templateMessage.addData(new WxMpTemplateData("const16","15274898348"));
+//        templateMessage.addData(new WxMpTemplateData("thing4","1234"));
+//
+//        wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
     }
 }
