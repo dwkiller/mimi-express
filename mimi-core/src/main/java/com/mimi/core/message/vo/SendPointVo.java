@@ -7,4 +7,6 @@ public class SendPointVo {
     private String name;
 
     private String code;
+
+    private String sender;
 }
