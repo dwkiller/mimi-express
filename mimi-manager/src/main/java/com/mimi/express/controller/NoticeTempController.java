@@ -42,6 +42,7 @@ public class NoticeTempController extends SuperController<NoticeTempService, Not
             SendPointVo sendPointVo = new SendPointVo();
             sendPointVo.setCode(msgSendPoint.getCode());
             sendPointVo.setName(msgSendPoint.getName()+"("+msgSendPoint.getSender()+")");
+            sendPointVo.setSender(msgSendPoint.getSender());
             rs.add(sendPointVo);
         }
         return R.success(rs);
