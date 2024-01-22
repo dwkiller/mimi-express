@@ -9,6 +9,7 @@ import com.mimi.core.express.entity.order.param.OrderParam;
 import com.mimi.core.express.service.IBaseOrderService;
 import com.mimi.core.message.MessageService;
 import com.mimi.core.message.vo.SendMessageVo;
+import com.mimi.express.controller.order.vo.BatchOrderVo;
 import io.swagger.v3.oas.annotations.Operation;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +24,20 @@ public class BaseOrderController<S extends IBaseOrderService<T>,T extends BaseOr
     @Autowired
     private MessageService<T> messageService;
 
+    @Operation(summary = "批量生成运单")
+    @PostMapping("/batchSave")
+    public R<?> batchSave(@RequestBody BatchOrderVo<T> batchOrderVo){
+        boolean rs = superService.saveBatch(batchOrderVo.getOrderList());
+        return rs?R.success():R.error("批量保存失败!");
+    }
+
     @Operation(summary = "分页查询运单")
     @PostMapping("/findPage")
-    public R<IPage<T>> findPage(@RequestBody JSONObject jsonParam) throws Exception {
-        Class<T> clazzP = getParamClass();
-        OrderParam<T> p = JSONObject.toJavaObject(jsonParam,OrderParam.class);
-        T t = JSONObject.toJavaObject(jsonParam.getJSONObject("businessData"),clazzP);
-        p.setBusinessData(t);
+    public R<IPage<T>> findPage(@RequestBody OrderParam<T> p) throws Exception {
+//        Class<T> clazzP = getParamClass();
+//        OrderParam<T> p = JSONObject.toJavaObject(jsonParam,OrderParam.class);
+//        T t = JSONObject.toJavaObject(jsonParam.getJSONObject("businessData"),clazzP);
+//        p.setBusinessData(t);
         return R.success(superService.findPage(p));
     }
 

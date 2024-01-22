@@ -20,9 +20,16 @@ public interface OrderOnlineMapper extends OrderMapper<OrderOnline>{
             " AND done = #{businessData.done}"+
             "</if>";
 
+    public static final String TIME_CONDITION="<if test='startTime != null'>"+
+            " AND date_format(t_order_online.create_time,'%Y-%m-%d %H:%i:%s') &gt; #{startTime}"+
+            "</if>"+
+            "<if test='endTime != null'>"+
+            " AND date_format(t_order_online.create_time,'%Y-%m-%d %H:%i:%s') &lt; #{endTime}"+
+            "</if>";
+
     @Select({"<script>",
-            "SELECT * FROM t_order_online",
-            BASE_CONDITION,CONDITION,
+            "SELECT t_order_online.* FROM t_order_online",
+            BASE_CONDITION,CONDITION,TIME_CONDITION,
             "</script>"
     })
     @Override
@@ -30,7 +37,7 @@ public interface OrderOnlineMapper extends OrderMapper<OrderOnline>{
 
     @Select({"<script>",
             "SELECT count(0) FROM t_order_online",
-            BASE_CONDITION,CONDITION,
+            BASE_CONDITION,CONDITION,TIME_CONDITION,
             "</script>"
     })
     @Override

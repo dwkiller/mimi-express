@@ -48,7 +48,7 @@ public class PublicAccountServiceImpl extends TenantServiceImpl<PublicAccountMap
         LambdaQueryWrapper<PublicAccount> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(PublicAccount::getAppId,appId);
         wrapper.ne(PublicAccount::getSchoolId,schoolId);
-        return baseMapper.selectCount(wrapper);
+        return this.count(wrapper);
     }
 
 }

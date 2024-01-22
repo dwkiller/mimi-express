@@ -21,12 +21,6 @@ public interface OrderMapper<T extends BaseOrder>  extends SuperMapper<T> {
                     "<if test='businessData.mobile != null'>"+
                     " AND mobile = #{businessData.mobile}"+
                     "</if>"+
-                    "<if test='startTime != null'>"+
-                    " AND create_time &gt; #{startTime}"+
-                    "</if>"+
-                    "<if test='endTime != null'>"+
-                    " AND create_time &lt; #{endTime}"+
-                    "</if>"+
                     "<if test='nullMobile != null'>"+
                     " AND mobile is null"+
                     "</if>";

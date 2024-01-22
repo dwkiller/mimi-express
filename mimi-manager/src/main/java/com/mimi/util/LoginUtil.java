@@ -1,4 +1,4 @@
-package com.mimi.common.util;
+package com.mimi.util;
 
 import com.mimi.system.entity.LoginUser;
 import lombok.experimental.UtilityClass;

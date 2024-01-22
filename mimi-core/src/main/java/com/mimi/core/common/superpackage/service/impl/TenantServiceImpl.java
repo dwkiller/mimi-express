@@ -1,5 +1,8 @@
 package com.mimi.core.common.superpackage.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mimi.core.common.superpackage.base.TenantEntity;
 import com.mimi.core.common.superpackage.mapper.SuperMapper;
@@ -8,12 +11,14 @@ import com.mimi.core.common.superpackage.param.ListParam;
 import com.mimi.core.common.superpackage.param.PageParam;
 import com.mimi.core.common.superpackage.param.Rule;
 import com.mimi.core.common.util.UserInfoUtil;
+import com.mimi.core.express.entity.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -22,31 +27,45 @@ public abstract class TenantServiceImpl<M extends SuperMapper<T>, T extends Tena
     @Autowired
     protected UserInfoUtil userInfoUtil;
 
-    private Filter addSchool(Filter filter) {
-        String schoolId = userInfoUtil.getSchoolId();
-        log.info(this.getClass().getName()+" : schoolId :"+schoolId);
-        if(!StringUtils.isEmpty(schoolId)){
-            Rule rule = new Rule();
-            rule.setField("schoolId");
-            rule.setOp("eq");
-            rule.setData(schoolId);
-            if(filter==null){
-                filter=new Filter();
-            }
-            filter.addRule(rule);
-        }
-        return filter;
+    @Override
+    public T getOne(Wrapper<T> wrapper){
+        addSchool(wrapper);
+        return super.getOne(wrapper);
     }
 
-    private void addSchool(T t){
-        if(StringUtils.isEmpty(t.getSchoolId())){
-            String schoolId = userInfoUtil.getSchoolId();
-            if(!StringUtils.isEmpty(schoolId)){
-                t.setSchoolId(schoolId);
-            }
-        }
+    @Override
+    public List<T> list(){
+        Wrapper<T> wrapper = addSchool();
+        return super.list(wrapper);
     }
 
+    @Override
+    public List<T> list(Wrapper<T> wrapper){
+        addSchool(wrapper);
+        return super.list(wrapper);
+    }
+
+    @Override
+    public int count(){
+        Wrapper<T> wrapper = addSchool();
+        return super.count(wrapper);
+    }
+
+    @Override
+    public int count(Wrapper<T> wrapper){
+        addSchool(wrapper);
+        return super.count(wrapper);
+    }
+
+    @Override
+    public boolean saveBatch(Collection<T> entityList){
+        if(entityList!=null){
+            for(T t: entityList){
+                addSchool(t);
+            }
+        }
+        return super.saveBatch(entityList);
+    }
 
     @Override
     public IPage<T> pageByParam(PageParam pageParam) throws Exception {
@@ -110,4 +129,51 @@ public abstract class TenantServiceImpl<M extends SuperMapper<T>, T extends Tena
         return superMapper.replaceBatch(entityList);
     }
 
+    private Wrapper<T> addSchool(Wrapper<T> wrapper){
+        String schoolId = userInfoUtil.getSchoolId();
+        if(!StringUtils.isEmpty(schoolId)) {
+            if (wrapper instanceof LambdaQueryWrapper) {
+                LambdaQueryWrapper<T> lambdaQueryWrapper = (LambdaQueryWrapper) wrapper;
+                lambdaQueryWrapper.eq(T::getSchoolId, schoolId);
+            } else if (wrapper instanceof QueryWrapper) {
+                QueryWrapper<T> queryWrapper = (QueryWrapper) wrapper;
+                queryWrapper.eq("school_id", schoolId);
+            }
+        }
+        return wrapper;
+    }
+
+    private Wrapper<T> addSchool(){
+        String schoolId = userInfoUtil.getSchoolId();
+        LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper();
+        if(!StringUtils.isEmpty(schoolId)) {
+            wrapper.eq(T::getSchoolId, schoolId);
+        }
+        return wrapper;
+    }
+
+    private Filter addSchool(Filter filter) {
+        String schoolId = userInfoUtil.getSchoolId();
+        log.info(this.getClass().getName()+" : schoolId :"+schoolId);
+        if(!StringUtils.isEmpty(schoolId)){
+            Rule rule = new Rule();
+            rule.setField("schoolId");
+            rule.setOp("eq");
+            rule.setData(schoolId);
+            if(filter==null){
+                filter=new Filter();
+            }
+            filter.addRule(rule);
+        }
+        return filter;
+    }
+
+    private void addSchool(T t){
+        if(StringUtils.isEmpty(t.getSchoolId())){
+            String schoolId = userInfoUtil.getSchoolId();
+            if(!StringUtils.isEmpty(schoolId)){
+                t.setSchoolId(schoolId);
+            }
+        }
+    }
 }

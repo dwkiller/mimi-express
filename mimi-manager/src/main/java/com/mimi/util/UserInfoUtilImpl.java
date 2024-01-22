@@ -1,4 +1,4 @@
-package com.mimi.common.util;
+package com.mimi.util;
 
 import com.mimi.core.common.util.UserInfoUtil;
 import org.springframework.stereotype.Component;

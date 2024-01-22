@@ -35,17 +35,24 @@ public interface OrderAgentMapper extends OrderMapper<OrderAgent>{
             " AND done = #{businessData.done}"+
             "</if>";
 
+    public static final String TIME_CONDITION="<if test='startTime != null'>"+
+            " AND date_format(t_order_agent.create_time,'%Y-%m-%d %H:%i:%s') &gt; #{startTime}"+
+            "</if>"+
+            "<if test='endTime != null'>"+
+            " AND date_format(t_order_agent.create_time,'%Y-%m-%d %H:%i:%s') &lt; #{endTime}"+
+            "</if>";
+
 
     @Select({"<script>",
-            "SELECT * FROM t_order_agent",
-            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,
+            "SELECT t_order_agent.* FROM t_order_agent",
+            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,TIME_CONDITION,
             "</script>"
     })
     @Override
     public List<OrderAgent> findPage(OrderParam<OrderAgent> param);
 
     @Select({"<script>","SELECT count(0) FROM t_order_agent",
-            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,
+            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,TIME_CONDITION,
             "</script>"})
     @Override
     public long findCount(OrderParam<OrderAgent> param);

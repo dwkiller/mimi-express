@@ -1,6 +1,6 @@
 package com.mimi.system.service.impl;
 
-import com.mimi.common.util.JwtUtil;
+import com.mimi.util.JwtUtil;
 import com.mimi.core.common.util.RedisCache;
 import com.mimi.system.entity.Employee;
 import com.mimi.system.entity.LoginUser;

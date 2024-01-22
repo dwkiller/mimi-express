@@ -135,7 +135,18 @@ public class MessageService<T extends BaseOrder> {
         }
     }
 
-    public static void main(String[] args) throws WxErrorException {
+    private static void getTemplate(){
+        String token="76_4MNRd34xHx2TwSvlad14w-AnZKrvvZNYRub_jbNFnuhMB3Pm8m8MDaIcXiGX-o2tGsNmlNncL610gcsbTjRoLYhsz8G_kcdTdg1Rhy9BT-gYEe-22UIM9BHsrrUWYUaAIACEA";
+        String templateId="hi0OYKik0W0FuJp93vR-hOPbsGufC43yoeiu26dPQ70";
+        String openId = "oeI4a6l1zF20hc9fLhQiqvrpqeBE";
+        String url = "https://api.weixin.qq.com/crm-rest/msg/wxTemps?access_token="+token;
+        JSONObject jo = new JSONObject();
+        jo.put("templateId",templateId);
+        String rs = HttpUtil.post(url,jo.toJSONString());
+        System.out.println(rs);
+    }
+
+    private static void sendTest(){
         String token="76_4MNRd34xHx2TwSvlad14w-AnZKrvvZNYRub_jbNFnuhMB3Pm8m8MDaIcXiGX-o2tGsNmlNncL610gcsbTjRoLYhsz8G_kcdTdg1Rhy9BT-gYEe-22UIM9BHsrrUWYUaAIACEA";
         String templateId="hi0OYKik0W0FuJp93vR-hOPbsGufC43yoeiu26dPQ70";
         String openId = "oeI4a6l1zF20hc9fLhQiqvrpqeBE";
@@ -167,6 +178,10 @@ public class MessageService<T extends BaseOrder> {
 
         String rs = HttpUtil.post(url,param.toJSONString());
         System.out.println(rs);
+    }
+
+    public static void main(String[] args) throws WxErrorException {
+
 
 
 //        WxMpServiceImpl wxMpService = new WxMpServiceImpl();

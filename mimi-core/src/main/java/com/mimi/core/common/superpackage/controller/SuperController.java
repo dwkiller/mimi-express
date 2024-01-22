@@ -30,10 +30,4 @@ public abstract class SuperController<M extends ISuperService<T>, T> extends Rea
         return R.success(superService.removeById(id));
     }
 
-    @Operation(summary = "带条件删除")
-    @DeleteMapping("/param")
-    public R deleteByParam(@RequestBody Filter filter) throws Exception {
-        superService.deleteByParam(filter);
-        return R.success(true);
-    }
 }

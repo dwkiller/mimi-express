@@ -53,6 +53,12 @@ public class NoticeTempServiceImpl extends TenantServiceImpl<NoticeTempMapper, N
     public NoticeTemp findByTemplateId(String templateId) {
         LambdaQueryWrapper<NoticeTemp> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(NoticeTemp::getTemplateId,templateId);
-        return baseMapper.selectOne(wrapper);
+        return getOne(wrapper);
+    }
+
+    @Override
+    public NoticeTemp findByPoint(String point) {
+        LambdaQueryWrapper<NoticeTemp> wrapper = new LambdaQueryWrapper<>();
+        return null;
     }
 }

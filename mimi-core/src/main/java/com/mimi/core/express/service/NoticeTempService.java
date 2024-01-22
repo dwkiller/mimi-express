@@ -10,4 +10,6 @@ import com.mimi.core.express.entity.config.NoticeTemp;
 public interface NoticeTempService extends ISuperService<NoticeTemp> {
 
     public NoticeTemp findByTemplateId(String templateId);
+
+    public NoticeTemp findByPoint(String point);
 }

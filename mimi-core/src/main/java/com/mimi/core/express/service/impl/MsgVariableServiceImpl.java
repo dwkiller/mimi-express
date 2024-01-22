@@ -23,6 +23,6 @@ public class MsgVariableServiceImpl extends SuperServiceImpl<MsgVariableMapper,M
     public List<MsgVariable> findByTemplateId(String templateId) {
         LambdaQueryWrapper<MsgVariable> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(MsgVariable::getTemplateId,templateId);
-        return baseMapper.selectList(wrapper);
+        return list(wrapper);
     }
 }

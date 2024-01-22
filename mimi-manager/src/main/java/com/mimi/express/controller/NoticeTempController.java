@@ -3,11 +3,13 @@ package com.mimi.express.controller;
 import com.mimi.core.common.R;
 import com.mimi.core.common.superpackage.controller.SuperController;
 import com.mimi.core.express.entity.config.NoticeTemp;
+import com.mimi.core.express.service.MsgVariableService;
 import com.mimi.core.express.service.NoticeTempService;
 import com.mimi.core.express.type.MsgSendPoint;
 import com.mimi.core.message.vo.SendPointVo;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +32,9 @@ import java.util.List;
 @RequestMapping("/notice")
 public class NoticeTempController extends SuperController<NoticeTempService, NoticeTemp> {
 
+    @Autowired
+    private MsgVariableService msgVariableService;
+
     @GetMapping("getAllSendPoint")
     public R<List<SendPointVo>> getAllSendPoint(){
         List<SendPointVo> rs = new ArrayList<>();
@@ -40,6 +45,15 @@ public class NoticeTempController extends SuperController<NoticeTempService, Not
             rs.add(sendPointVo);
         }
         return R.success(rs);
+    }
+
+    @GetMapping("findByPoint")
+    public R<NoticeTemp> findByPoint(String point){
+        NoticeTemp noticeTemp = superService.findByPoint(point);
+        if(noticeTemp!=null){
+            noticeTemp.setVariableList(msgVariableService.findByTemplateId(noticeTemp.getTemplateId()));
+        }
+        return R.success(noticeTemp);
     }
 
 }

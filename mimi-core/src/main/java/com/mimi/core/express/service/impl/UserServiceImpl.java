@@ -7,6 +7,8 @@ import com.mimi.core.express.service.UserService;
 import com.mimi.core.express.entity.user.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl extends TenantServiceImpl<UserMapper, User> implements UserService {
 
@@ -15,5 +17,12 @@ public class UserServiceImpl extends TenantServiceImpl<UserMapper, User> impleme
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getMobile,mobile);
         return baseMapper.selectOne(wrapper);
+    }
+
+    @Override
+    public List<User> findByMobileLast4(String mobile) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.likeRight(User::getMobile,mobile);
+        return list(wrapper);
     }
 }

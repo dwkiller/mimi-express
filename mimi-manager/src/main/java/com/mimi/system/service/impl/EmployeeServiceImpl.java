@@ -26,7 +26,9 @@ public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Emplo
 
     @Override
     public Employee getUserInfo(String userId) {
-        return baseMapper.getEmployeeByUserId(userId);
+        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Employee::getId,userId);
+        return getOne(wrapper);
     }
 
     @Override

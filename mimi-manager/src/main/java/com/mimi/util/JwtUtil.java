@@ -1,4 +1,4 @@
-package com.mimi.common.util;
+package com.mimi.util;
 
 /**
  * @Description TODO

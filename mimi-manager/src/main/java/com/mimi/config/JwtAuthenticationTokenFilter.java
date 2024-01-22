@@ -1,7 +1,7 @@
 package com.mimi.config;
 
 import io.jsonwebtoken.Claims;
-import com.mimi.common.util.JwtUtil;
+import com.mimi.util.JwtUtil;
 import com.mimi.core.common.util.RedisCache;
 import com.mimi.system.entity.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
