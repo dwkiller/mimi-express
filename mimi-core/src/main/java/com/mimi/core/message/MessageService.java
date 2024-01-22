@@ -101,19 +101,19 @@ public class MessageService<T extends BaseOrder> {
                     continue;
                 }
                 String value = "";
-                if(StringUtils.isEmpty(msgVariable.getVariable())){
+                if(StringUtils.isEmpty(msgVariable.getValue())){
                     continue;
-                }else if(InnerVariable.CURRENT_TIME.getValue().equals(msgVariable.getVariable())){
+                }else if(InnerVariable.CURRENT_TIME.getValue().equals(msgVariable.getValue())){
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     value = sdf.format(new Date());
-                }else if(InnerVariable.DATA_TIME.getValue().equals(msgVariable.getVariable())){
+                }else if(InnerVariable.DATA_TIME.getValue().equals(msgVariable.getValue())){
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     value = sdf.format(order.getCreateTime());
-                }else if(InnerVariable.LOGIN_EMPLOYEE.getValue().equals(msgVariable.getVariable())){
+                }else if(InnerVariable.LOGIN_EMPLOYEE.getValue().equals(msgVariable.getValue())){
                     value = userInfoUtil.getRealName();
-                }else if(InnerVariable.EMPLOYEE_MOBILE.getValue().equals(msgVariable.getVariable())){
+                }else if(InnerVariable.EMPLOYEE_MOBILE.getValue().equals(msgVariable.getValue())){
                     value = userInfoUtil.getPhone();
-                }else if(InnerVariable.ORDER_NUMBER.getValue().equals(msgVariable.getVariable())){
+                }else if(InnerVariable.ORDER_NUMBER.getValue().equals(msgVariable.getValue())){
                     value = order.getOrderNum();
                 }else{
                     value = sendMsgExt.parameterize(order,msgVariable);

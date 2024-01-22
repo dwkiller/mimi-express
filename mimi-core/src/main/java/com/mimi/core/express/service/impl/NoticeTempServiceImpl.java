@@ -59,6 +59,7 @@ public class NoticeTempServiceImpl extends TenantServiceImpl<NoticeTempMapper, N
     @Override
     public NoticeTemp findByPoint(String point) {
         LambdaQueryWrapper<NoticeTemp> wrapper = new LambdaQueryWrapper<>();
-        return null;
+        wrapper.eq(NoticeTemp::getSendPoint,point);
+        return getOne(wrapper);
     }
 }
