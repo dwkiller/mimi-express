@@ -91,4 +91,8 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
 
     @Schema(name = "代取完成人电话")
     private String agentDoneMobile;
+
+    @SendMsgField(value="#{FULL_ADDRESS}",text="送货地址全名")
+    @Schema(name = "送货地址全名")
+    private String fullAddress;
 }
