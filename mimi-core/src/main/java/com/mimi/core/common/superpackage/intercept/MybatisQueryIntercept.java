@@ -123,7 +123,7 @@ public class MybatisQueryIntercept  implements Interceptor {
         }
 
         newSqlBuffer.insert(insertTableLocat,"T_EXPRESS_DELIVERY ED,");
-        newSqlBuffer.insert(insertRsLocat,",ED.NAME as EXPRESS_DELIVERY_NAME");
+        newSqlBuffer.insert(insertRsLocat,",ED.ADDRESS as EXPRESS_DELIVERY_NAME");
         return newSqlBuffer.toString();
     }
 
