@@ -13,6 +13,7 @@ import com.mimi.express.controller.order.vo.BatchOrderVo;
 import io.swagger.v3.oas.annotations.Operation;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -48,6 +49,12 @@ public class BaseOrderController<S extends IBaseOrderService<T>,T extends BaseOr
         T order = JSONObject.toJavaObject(sendMessageVo.getOrder(),clazzP);
         superService.sendMsg(sendMessageVo.getTemplateId(),order,sendMessageVo.getParam());
         return R.success();
+    }
+
+    @Operation(summary = "根据订单号查订单")
+    @GetMapping("/findByOrderNum")
+    public R<T> findByOrderNum(String orderNum) throws Exception {
+        return R.success(superService.findByOrderNum(orderNum));
     }
 
     private Class<T> getParamClass(){

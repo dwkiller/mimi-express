@@ -147,7 +147,8 @@ public class MessageService<T extends BaseOrder> {
             Iterator<Map.Entry<String, String>> iterator = sendParam.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, String> entry = iterator.next();
-                templateMessage.addData(new WxMpTemplateData(entry.getKey(),entry.getValue()));
+                templateMessage.addData(new WxMpTemplateData(entry.getKey()
+                        .replaceFirst(".DATA",""),entry.getValue()));
             }
         }
         wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
