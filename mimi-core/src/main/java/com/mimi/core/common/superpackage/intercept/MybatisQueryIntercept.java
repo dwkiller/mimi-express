@@ -64,9 +64,7 @@ public class MybatisQueryIntercept  implements Interceptor {
         if(!isCount){
             if(orderParam.getBusinessData() instanceof HasExpressDelivery){
                 HasExpressDelivery hasExpressDelivery = (HasExpressDelivery)orderParam.getBusinessData();
-                if(!StringUtils.isEmpty(hasExpressDelivery.getExpressDeliveryId())){
-                    newSql = addExpressDeliverySql(newSql,tableName,hasExpressDelivery);
-                }
+                newSql = addExpressDeliverySql(newSql,tableName,hasExpressDelivery);
             }
             if(orderParam.getPageNum()>0&&orderParam.getPageSize()>0){
                 newSql = addPage(newSql,orderParam);
@@ -119,7 +117,11 @@ public class MybatisQueryIntercept  implements Interceptor {
         }else{
             newSqlBuffer.append(" AND ");
         }
-        newSqlBuffer.append(tableName+".EXPRESS_DELIVERY_ID = ED.ID AND ED.ID='"+expressDelivery.getExpressDeliveryId()+"'");
+        newSqlBuffer.append(tableName+".EXPRESS_DELIVERY_ID = ED.ID ");
+        if(!StringUtils.isEmpty(expressDelivery.getExpressDeliveryId())){
+            newSqlBuffer.append("AND ED.ID='"+expressDelivery.getExpressDeliveryId()+"'");
+        }
+
         newSqlBuffer.insert(insertTableLocat,"T_EXPRESS_DELIVERY ED,");
         newSqlBuffer.insert(insertRsLocat,",ED.NAME as EXPRESS_DELIVERY_NAME");
         return newSqlBuffer.toString();
