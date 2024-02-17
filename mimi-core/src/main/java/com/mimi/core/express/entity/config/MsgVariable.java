@@ -53,4 +53,10 @@ public class MsgVariable implements Serializable {
     @Schema(name = "中文")
     private String tag;
 
+    /**
+     * 中文
+     */
+    @Schema(name = "字典类型")
+    private String dictType;
+
 }
