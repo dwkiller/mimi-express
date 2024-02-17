@@ -98,7 +98,7 @@ public class MsgVariableController extends SuperController<MsgVariableService, M
     }
 
     private void loadOrderVar(Class clazz){
-        Field[] fields = clazz.getFields();
+        Field[] fields = clazz.getDeclaredFields();
         if(fields!=null){
             for(Field field:fields){
                 if(field.isAnnotationPresent(SendMsgField.class)){
