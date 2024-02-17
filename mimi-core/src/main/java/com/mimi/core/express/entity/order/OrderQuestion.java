@@ -2,6 +2,7 @@ package com.mimi.core.express.entity.order;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.mimi.core.common.annotation.SendMsgField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -24,6 +25,7 @@ public class OrderQuestion extends BaseOrder implements HasExpressDelivery{
     @Schema(name = "问题描述")
     private String descContent;
 
+    @SendMsgField(value="#{EXPRESS_DELIVERY}",text="快递公司",translateNameBean = "expressDeliveryService")
     @Schema(name = "快递公司ID")
     private String expressDeliveryId;
 

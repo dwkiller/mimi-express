@@ -3,6 +3,7 @@ package com.mimi.core.message;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.mimi.core.common.annotation.SendMsgField;
 import com.mimi.core.common.util.UserInfoUtil;
 import com.mimi.core.express.entity.config.MsgVariable;
 import com.mimi.core.express.entity.config.NoticeTemp;
@@ -25,6 +26,7 @@ import org.apache.tomcat.Jar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -113,10 +115,31 @@ public class MessageService<T extends BaseOrder> {
                     value = userInfoUtil.getRealName();
                 }else if(InnerVariable.EMPLOYEE_MOBILE.getValue().equals(msgVariable.getValue())){
                     value = userInfoUtil.getPhone();
-                }else if(InnerVariable.ORDER_NUMBER.getValue().equals(msgVariable.getValue())){
-                    value = order.getOrderNum();
-                }else{
-                    value = sendMsgExt.parameterize(order,msgVariable);
+                }
+//                else if(InnerVariable.ORDER_NUMBER.getValue().equals(msgVariable.getValue())){
+//                    value = order.getOrderNum();
+//                }
+                else{
+                    //value = sendMsgExt.parameterize(order,msgVariable);
+                    Field[] fields = order.getClass().getDeclaredFields();
+                    for (Field field : fields) {
+                        if(field.isAnnotationPresent(SendMsgField.class)){
+                            SendMsgField sendMsgField = field.getAnnotation(SendMsgField.class);
+                            if(sendMsgField.value().equals(msgVariable.getValue())){
+                                if (!field.isAccessible()) {
+                                    field.setAccessible(true);
+                                }
+                                try {
+                                    Object o = (String) field.get(order);
+                                    if(o!=null){
+                                        value = o .toString();
+                                    }
+                                } catch (IllegalAccessException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        }
+                    }
                 }
                 templateMessage.addData(new WxMpTemplateData(msgVariable.getVariable(),value));
             }

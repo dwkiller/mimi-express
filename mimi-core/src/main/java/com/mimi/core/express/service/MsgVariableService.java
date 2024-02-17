@@ -13,4 +13,5 @@ public interface MsgVariableService extends ISuperService<MsgVariable> {
 
     public List<MsgVariable> findByTemplateId(String templateId);
 
+    public void deleteByTemplateId(String templateId);
 }

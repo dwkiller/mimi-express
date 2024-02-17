@@ -1,12 +1,14 @@
 package com.mimi.core.express.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.mimi.core.common.superpackage.service.impl.SuperServiceImpl;
 import com.mimi.core.express.entity.config.MsgVariable;
 import com.mimi.core.express.mapper.MsgVariableMapper;
 import com.mimi.core.express.service.MsgVariableService;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -25,4 +27,13 @@ public class MsgVariableServiceImpl extends SuperServiceImpl<MsgVariableMapper,M
         wrapper.eq(MsgVariable::getTemplateId,templateId);
         return list(wrapper);
     }
+
+    @Override
+    public void deleteByTemplateId(String templateId) {
+        LambdaUpdateWrapper<MsgVariable> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(MsgVariable::getTemplateId,templateId);
+        super.remove(wrapper);
+    }
+
+
 }

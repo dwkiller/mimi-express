@@ -19,11 +19,11 @@ public class AgentFail extends BaseMessageExt<OrderAgent> {
     @Override
     public String parameterize(OrderAgent orderAgent, MsgVariable msgVariable) {
         String result = "";
-        if(InnerVariable.EXPRESS_DELIVERY_ADDRESS.getValue().equals(msgVariable.getVariable())){
-            result = getExpressAddress(orderAgent);
-        }else if(InnerVariable.GOODS_NUMBER.getValue().equals(msgVariable.getVariable())){
-            result = orderAgent.getRackNo();
-        }
+//        if(InnerVariable.EXPRESS_DELIVERY_ADDRESS.getValue().equals(msgVariable.getVariable())){
+//            result = getExpressAddress(orderAgent);
+//        }else if(InnerVariable.GOODS_NUMBER.getValue().equals(msgVariable.getVariable())){
+//            result = orderAgent.getRackNo();
+//        }
         return result;
     }
 }

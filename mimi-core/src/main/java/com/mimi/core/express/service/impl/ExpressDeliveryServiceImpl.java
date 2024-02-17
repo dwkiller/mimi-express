@@ -15,4 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExpressDeliveryServiceImpl extends TenantServiceImpl<ExpressDeliveryMapper, ExpressDelivery> implements ExpressDeliveryService {
 
+    @Override
+    public String translateById(String id) {
+        ExpressDelivery expressDelivery = getById(id);
+        return expressDelivery.getName();
+    }
 }

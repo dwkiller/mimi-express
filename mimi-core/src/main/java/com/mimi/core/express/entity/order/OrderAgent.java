@@ -2,6 +2,7 @@ package com.mimi.core.express.entity.order;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.mimi.core.common.annotation.SendMsgField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -18,6 +19,7 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
     @Schema(name = "备注")
     private String memo;
 
+    @SendMsgField(value="#{EXPRESS_DELIVERY}",text="快递公司",translateNameBean = "expressDeliveryService")
     @Schema(name = "快递公司ID")
     private String expressDeliveryId;
 
@@ -43,6 +45,7 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
     @Schema(name = "是否发送完成消息")
     private Short doneMsg;
 
+    @SendMsgField(value="#{RACK_NO}",text="货架号")
     @Schema(name = "货架号")
     private String rackNo;
 
@@ -55,18 +58,22 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
     @Schema(name = "优惠金额")
     private BigDecimal preferentialMoney;
 
+    @SendMsgField(value="#{BUILD_NAME}",text="公寓名字")
     @Schema(name = "公寓名字")
     private String buildName;
 
+    @SendMsgField(value="#{ROOM_NAME}",text="寝室号")
     @Schema(name = "寝室号")
     private String roomName;
 
     @Schema(name = "取货时间")
     private Date pickUpTime;
 
+    @SendMsgField(value="#{AGENT_NAME}",text="代取人电话")
     @Schema(name = "代取人名称")
     private String agentName;
 
+    @SendMsgField(value="#{AGENT_MOBILE}",text="代取人电话")
     @Schema(name = "代取人电话")
     private String agentMobile;
 
