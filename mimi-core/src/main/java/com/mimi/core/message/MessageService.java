@@ -9,6 +9,7 @@ import com.mimi.core.express.entity.config.MsgVariable;
 import com.mimi.core.express.entity.config.NoticeTemp;
 import com.mimi.core.express.entity.config.PublicAccount;
 import com.mimi.core.express.entity.order.BaseOrder;
+import com.mimi.core.express.entity.order.OrderAgent;
 import com.mimi.core.express.entity.user.User;
 import com.mimi.core.express.service.MsgVariableService;
 import com.mimi.core.express.service.NoticeTempService;
@@ -28,10 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MessageService<T extends BaseOrder> {
@@ -72,14 +70,14 @@ public class MessageService<T extends BaseOrder> {
         }
 
         String callBackUrl = null;
-        ISendMsgExt sendMsgExt=null;
+//        ISendMsgExt sendMsgExt=null;
         NoticeTemp noticeTemp = noticeTempService.findByTemplateId(templateId);
         if(noticeTemp!=null&&!StringUtils.isEmpty(noticeTemp.getUrl())){
             callBackUrl = noticeTemp.getUrl();
         }
-        if(!StringUtils.isEmpty(noticeTemp.getSendPoint())){
-            sendMsgExt = SpringUtil.getBean(noticeTemp.getSendPoint());
-        }
+//        if(!StringUtils.isEmpty(noticeTemp.getSendPoint())){
+//            sendMsgExt = SpringUtil.getBean(noticeTemp.getSendPoint());
+//        }
 
         String token = wxService.getToken(publicAccount);
         List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
@@ -97,7 +95,7 @@ public class MessageService<T extends BaseOrder> {
                 .url(callBackUrl)
                 .build();
 
-        if(variableList!=null&&sendMsgExt!=null){
+        if(variableList!=null){
             for(MsgVariable msgVariable:variableList){
                 if(!msgVariable.getType().equals("INNER")){
                     continue;
@@ -121,7 +119,7 @@ public class MessageService<T extends BaseOrder> {
 //                }
                 else{
                     //value = sendMsgExt.parameterize(order,msgVariable);
-                    Field[] fields = order.getClass().getDeclaredFields();
+                    List<Field> fields = getAllFields(order.getClass());
                     for (Field field : fields) {
                         if(field.isAnnotationPresent(SendMsgField.class)){
                             SendMsgField sendMsgField = field.getAnnotation(SendMsgField.class);
@@ -141,7 +139,8 @@ public class MessageService<T extends BaseOrder> {
                         }
                     }
                 }
-                templateMessage.addData(new WxMpTemplateData(msgVariable.getVariable(),value));
+                templateMessage.addData(new WxMpTemplateData(msgVariable.getVariable()
+                        .replaceFirst(".DATA",""),value));
             }
         }
         if(sendParam!=null){
@@ -153,9 +152,22 @@ public class MessageService<T extends BaseOrder> {
         }
         wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
 
-        if(sendMsgExt!=null){
-            sendMsgExt.execute(order);
+//        if(sendMsgExt!=null){
+//            sendMsgExt.execute(order);
+//        }
+    }
+
+    private List<Field> getAllFields(Class clazz){
+        List<Field> result = new ArrayList<>();
+        Field[] fields = clazz.getDeclaredFields();
+        if(fields!=null){
+            result.addAll(Arrays.asList(fields));
         }
+        Class superClazz = clazz.getSuperclass();
+        if(superClazz!=null){
+            result.addAll(getAllFields(superClazz));
+        }
+        return result;
     }
 
     private static void getTemplate(){
@@ -204,8 +216,6 @@ public class MessageService<T extends BaseOrder> {
     }
 
     public static void main(String[] args) throws WxErrorException {
-
-
 
 //        WxMpServiceImpl wxMpService = new WxMpServiceImpl();
 //        WxMpDefaultConfigImpl wxStorage = new WxMpDefaultConfigImpl();

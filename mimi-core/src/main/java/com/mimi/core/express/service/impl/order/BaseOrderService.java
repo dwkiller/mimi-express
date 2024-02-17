@@ -24,6 +24,7 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
     @Override
     public void sendMsg(String templateId, T order, Map<String,String> param) throws WxErrorException {
         messageService.sendMsg(templateId,order,param);
+        updateById(order);
     }
 
     @Override
