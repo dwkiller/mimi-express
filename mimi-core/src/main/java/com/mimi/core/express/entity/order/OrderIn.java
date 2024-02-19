@@ -15,6 +15,7 @@ public class OrderIn extends BaseOrder implements HasExpressDelivery{
     @Schema(name = "货架号方式")
     private String rackNoType;
 
+    @SendMsgField(value="#{RACK_NO}",text="货架号")
     @Schema(name = "货架号")
     private String rackNo;
 
