@@ -19,10 +19,10 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
     @Schema(name = "备注")
     private String memo;
 
-    @SendMsgField(value="#{EXPRESS_DELIVERY}",text="快递公司",translateNameBean = "expressDeliveryService")
     @Schema(name = "快递公司ID")
     private String expressDeliveryId;
 
+    @SendMsgField(value="#{EXPRESS_DELIVERY}",text="快递公司")
     @TableField(exist = false)
     @Schema(name = "快递公司名字")
     private String expressDeliveryName;

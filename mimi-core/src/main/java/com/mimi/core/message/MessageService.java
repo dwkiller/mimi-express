@@ -131,6 +131,7 @@ public class MessageService<T extends BaseOrder> {
                                     Object o = (String) field.get(order);
                                     if(o!=null){
                                         value = o .toString();
+
                                     }
                                 } catch (IllegalAccessException e) {
                                     throw new RuntimeException(e);
