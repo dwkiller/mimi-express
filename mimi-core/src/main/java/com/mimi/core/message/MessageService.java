@@ -63,6 +63,9 @@ public class MessageService<T extends BaseOrder> {
         if(StringUtils.isEmpty(user.getOpenId())){
             throw new RuntimeException("该用户的公众号未注到系统！");
         }
+        if(StringUtils.isEmpty(order.getSchoolId())){
+            order.setSchoolId(userInfoUtil.getSchoolId());
+        }
         String schoolId=order.getSchoolId();
         PublicAccount publicAccount = publicAccountService.getBySchoolId(schoolId);
         if(publicAccount==null){
