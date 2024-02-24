@@ -10,7 +10,9 @@ import com.mimi.core.express.entity.order.param.OrderParam;
 import com.mimi.core.express.mapper.order.OrderMapper;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -20,6 +22,20 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
 
     @Autowired
     private MessageService<T> messageService;
+
+
+    @Override
+    public boolean save(@Valid T t) {
+        try {
+            T o =findByOrderNum(t.getOrderNum());
+            if(o!=null){
+                throw new RuntimeException("运单号["+t.getOrderNum()+"]已经存在!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return super.save(t);
+    }
 
     @Override
     public void sendMsg(String templateId, T order, Map<String,String> param) throws WxErrorException {

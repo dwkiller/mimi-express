@@ -5,11 +5,14 @@ import com.mimi.core.common.superpackage.base.TenantEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 public abstract class BaseOrder extends TenantEntity {
 
     @SendMsgField(value="#{ORDER_NUMBER}",text="运单号")
     @Schema(name = "运单号")
+    @NotBlank
     private String orderNum;
 
     @SendMsgField(value="#{USER_NAME}",text="用户名")
