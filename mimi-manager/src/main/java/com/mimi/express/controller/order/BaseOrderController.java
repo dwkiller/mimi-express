@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 
 public class BaseOrderController<S extends IBaseOrderService<T>,T extends BaseOrder> extends SuperController<S,T> {
 
@@ -55,6 +56,12 @@ public class BaseOrderController<S extends IBaseOrderService<T>,T extends BaseOr
     @GetMapping("/findByOrderNum")
     public R<T> findByOrderNum(String orderNum) throws Exception {
         return R.success(superService.findByOrderNum(orderNum));
+    }
+
+    @Operation(summary = "根据订单号开始部分查询")
+    @GetMapping("/findByOrderNumStart")
+    public R<List<T>> findByOrderNumStart(String orderNum) {
+        return R.success(superService.findByOrderNumStart(orderNum));
     }
 
     private Class<T> getParamClass(){

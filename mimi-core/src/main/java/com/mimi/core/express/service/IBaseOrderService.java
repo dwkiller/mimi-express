@@ -6,6 +6,7 @@ import com.mimi.core.express.entity.order.BaseOrder;
 import com.mimi.core.express.entity.order.param.OrderParam;
 import me.chanjar.weixin.common.error.WxErrorException;
 
+import java.util.List;
 import java.util.Map;
 
 public interface IBaseOrderService<T extends BaseOrder> extends ISuperService<T> {
@@ -17,4 +18,6 @@ public interface IBaseOrderService<T extends BaseOrder> extends ISuperService<T>
     public String type();
 
     public T findByOrderNum(String orderNum) throws Exception;
+
+    public List<T> findByOrderNumStart(String orderNum);
 }

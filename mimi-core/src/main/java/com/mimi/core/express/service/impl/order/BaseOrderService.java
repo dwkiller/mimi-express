@@ -1,5 +1,6 @@
 package com.mimi.core.express.service.impl.order;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mimi.core.common.superpackage.service.impl.TenantServiceImpl;
@@ -74,6 +75,13 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
             return data.get(0);
         }
         return null;
+    }
+
+    @Override
+    public List<T> findByOrderNumStart(String orderNum){
+        LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper<>();
+        wrapper.likeLeft(T::getOrderNum,orderNum);
+        return baseMapper.selectList(wrapper);
     }
 
     private Class<T> getEntityClazz(){
