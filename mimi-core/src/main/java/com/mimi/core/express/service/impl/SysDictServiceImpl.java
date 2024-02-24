@@ -69,9 +69,9 @@ public class SysDictServiceImpl extends TenantServiceImpl<SysDictMapper, SysDict
      */
     @Override
     public Boolean saveDict(SysDict dict) {
-        if (isExistByCode(dict.getId(), dict.getType())) {
-            throw new RuntimeException("字典类型数据唯一，不能重复");
-        }
+//        if (isExistByCode(dict.getId(), dict.getType())) {
+//            throw new RuntimeException("字典类型数据唯一，不能重复");
+//        }
         this.save(dict);
         return Boolean.TRUE;
     }
