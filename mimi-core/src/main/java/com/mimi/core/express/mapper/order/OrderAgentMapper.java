@@ -45,7 +45,7 @@ public interface OrderAgentMapper extends OrderMapper<OrderAgent>{
 
     @Select({"<script>",
             "SELECT t_order_agent.* FROM t_order_agent",
-            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,TIME_CONDITION,
+            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,TIME_CONDITION,ORDER,
             "</script>"
     })
     @Override

@@ -11,4 +11,5 @@ public class SendMessageVo {
     private String templateId;
     private JSONObject order;
     private Map<String,String> param;
+    private Integer delaySend;
 }

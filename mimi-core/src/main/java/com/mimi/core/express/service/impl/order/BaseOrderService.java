@@ -11,6 +11,7 @@ import com.mimi.core.express.entity.order.param.OrderParam;
 import com.mimi.core.express.mapper.order.OrderMapper;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
@@ -18,12 +19,19 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseOrder> extends TenantServiceImpl<M,T> implements IBaseOrderService<T> {
 
     @Autowired
     private MessageService<T> messageService;
 
+    ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(50);
 
     @Override
     public boolean save(@Valid T t) {
@@ -39,8 +47,21 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
     }
 
     @Override
-    public void sendMsg(String templateId, T order, Map<String,String> param) throws WxErrorException {
-        messageService.sendMsg(templateId,order,param);
+    public void sendMsg(String templateId, T order, Map<String,String> param,Integer delaySend) throws WxErrorException {
+        if(delaySend==null||delaySend.intValue()<=0){
+            messageService.sendMsg(templateId,order,param);
+        }else{
+            executor.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        messageService.sendMsg(templateId,order,param);
+                    } catch (WxErrorException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, delaySend, TimeUnit.MINUTES);
+        }
         updateById(order);
     }
 

@@ -23,7 +23,7 @@ public interface OrderOutMapper extends OrderMapper<OrderOut>{
 
     @Select({"<script>",
             "SELECT t_order_out.* FROM t_order_out",
-            BASE_CONDITION,CONDITION,TIME_CONDITION,
+            BASE_CONDITION,CONDITION,TIME_CONDITION,ORDER,
             "</script>"
     })
     @Override

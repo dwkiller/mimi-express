@@ -48,7 +48,7 @@ public class BaseOrderController<S extends IBaseOrderService<T>,T extends BaseOr
     public R sendMessage(@RequestBody SendMessageVo sendMessageVo) throws WxErrorException {
         Class<T> clazzP = getParamClass();
         T order = JSONObject.toJavaObject(sendMessageVo.getOrder(),clazzP);
-        superService.sendMsg(sendMessageVo.getTemplateId(),order,sendMessageVo.getParam());
+        superService.sendMsg(sendMessageVo.getTemplateId(),order,sendMessageVo.getParam(),sendMessageVo.getDelaySend());
         return R.success();
     }
 
