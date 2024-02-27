@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface IBaseOrderService<T extends BaseOrder> extends ISuperService<T> {
 
-    public void sendMsg(String templateId, T order, Map<String,String> param) throws WxErrorException;
+    public void sendMsg(String templateId, T order, Map<String,String> param,Integer delaySend) throws WxErrorException;
 
     public IPage<T> findPage(OrderParam<T> param);
 

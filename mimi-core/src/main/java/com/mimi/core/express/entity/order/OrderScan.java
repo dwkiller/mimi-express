@@ -10,11 +10,11 @@ import lombok.Data;
 @TableName(value = "t_order_scan")
 public class OrderScan extends BaseOrder implements HasExpressDelivery{
 
-    @Schema(name = "快递公司ID")
+    @Schema(name = "取件地址ID")
     private String expressDeliveryId;
 
     @SendMsgField(value="#{EXPRESS_DELIVERY}",text="快递公司")
     @TableField(exist = false)
-    @Schema(name = "快递公司名字")
+    @Schema(name = "取件地址名字")
     private String expressDeliveryName;
 }

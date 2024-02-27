@@ -19,12 +19,12 @@ public class OrderIn extends BaseOrder implements HasExpressDelivery{
     @Schema(name = "货架号")
     private String rackNo;
 
-    @Schema(name = "快递公司ID")
+    @Schema(name = "取件地址ID")
     private String expressDeliveryId;
 
     @SendMsgField(value="#{EXPRESS_DELIVERY}",text="快递公司")
     @TableField(exist = false)
-    @Schema(name = "快递公司名字")
+    @Schema(name = "取件地址名字")
     private String expressDeliveryName;
 
     @Schema(name = "是否移库")

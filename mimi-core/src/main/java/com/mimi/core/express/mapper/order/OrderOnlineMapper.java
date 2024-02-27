@@ -29,7 +29,7 @@ public interface OrderOnlineMapper extends OrderMapper<OrderOnline>{
 
     @Select({"<script>",
             "SELECT t_order_online.* FROM t_order_online",
-            BASE_CONDITION,CONDITION,TIME_CONDITION,
+            BASE_CONDITION,CONDITION,TIME_CONDITION,ORDER,
             "</script>"
     })
     @Override

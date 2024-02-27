@@ -19,4 +19,6 @@ public class OrderParam<T extends BaseOrder> {
     private Date endTime;
     private String nullMobile;
     private T businessData;
+    private String orderBy;
+    private String desc;
 }

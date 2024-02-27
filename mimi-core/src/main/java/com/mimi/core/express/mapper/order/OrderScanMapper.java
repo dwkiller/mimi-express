@@ -19,7 +19,7 @@ public interface OrderScanMapper extends OrderMapper<OrderScan>{
 
     @Select({"<script>",
             "SELECT t_order_scan.* FROM t_order_scan",
-            BASE_CONDITION,EXPRESS_DELIVERY_CONDITION,TIME_CONDITION,
+            BASE_CONDITION,EXPRESS_DELIVERY_CONDITION,TIME_CONDITION,ORDER,
             "</script>"
     })
     @Override

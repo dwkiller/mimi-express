@@ -25,13 +25,16 @@ public class OrderQuestion extends BaseOrder implements HasExpressDelivery{
     @Schema(name = "问题描述")
     private String descContent;
 
-    @Schema(name = "快递公司ID")
+    @Schema(name = "取件地址ID")
     private String expressDeliveryId;
 
     @SendMsgField(value="#{EXPRESS_DELIVERY}",text="快递公司")
     @TableField(exist = false)
-    @Schema(name = "快递公司名字")
+    @Schema(name = "取件地址名字")
     private String expressDeliveryName;
+
+    @Schema(name = "快递公司")
+    private String expressCompany;
 
     @Schema(name = "损失金额")
     private BigDecimal lossMoney;
