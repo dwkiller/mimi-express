@@ -1,21 +1,24 @@
 package com.mimi.core.message.ext;
 
-import com.mimi.core.express.entity.config.MsgVariable;
 import com.mimi.core.express.entity.order.OrderIn;
-import org.springframework.stereotype.Service;
+import com.mimi.core.message.ISendMsgExt;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
-/**
- * 滞留快递催派移库通知
- */
-@Service
-public class ExpressRetention extends BaseMessageExt<OrderIn> {
+import java.util.Map;
+
+@Slf4j
+@Component
+public class ExpressRetention implements ISendMsgExt<OrderIn> {
     @Override
-    public void execute(OrderIn order) {
+    public void execute(OrderIn order, Map<String, String> sendParam) {
 
-    }
+        String newRack = sendParam.get("character_string3.DATA");
+        log.info("更新货架号"+order.getRackNo()+"->"+newRack);
+        if(!StringUtils.isEmpty(newRack)){
+            order.setRackNo(newRack);
+        }
 
-    @Override
-    public String parameterize(OrderIn order, MsgVariable msgVariable) {
-        return null;
     }
 }

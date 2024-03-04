@@ -38,4 +38,7 @@ public class OrderQuestion extends BaseOrder implements HasExpressDelivery{
 
     @Schema(name = "损失金额")
     private BigDecimal lossMoney;
+
+    @Schema(name = "备注")
+    private String memo;
 }

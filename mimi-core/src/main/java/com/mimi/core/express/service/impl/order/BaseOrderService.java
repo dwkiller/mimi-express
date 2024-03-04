@@ -50,19 +50,21 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
     public void sendMsg(String templateId, T order, Map<String,String> param,Integer delaySend) throws WxErrorException {
         if(delaySend==null||delaySend.intValue()<=0){
             messageService.sendMsg(templateId,order,param);
+            updateById(order);
         }else{
             executor.schedule(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         messageService.sendMsg(templateId,order,param);
+                        updateById(order);
                     } catch (WxErrorException e) {
                         e.printStackTrace();
                     }
                 }
             }, delaySend, TimeUnit.MINUTES);
         }
-        updateById(order);
+
     }
 
     @Override

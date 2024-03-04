@@ -17,6 +17,7 @@ import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.core.express.service.UserService;
 import com.mimi.core.express.type.InnerVariable;
 import com.mimi.core.wx.WxService;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
@@ -31,6 +32,7 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Slf4j
 @Service
 public class MessageService<T extends BaseOrder> {
 
@@ -73,14 +75,18 @@ public class MessageService<T extends BaseOrder> {
         }
 
         String callBackUrl = null;
-//        ISendMsgExt sendMsgExt=null;
+        ISendMsgExt sendMsgExt=null;
         NoticeTemp noticeTemp = noticeTempService.findByTemplateId(templateId);
         if(noticeTemp!=null&&!StringUtils.isEmpty(noticeTemp.getUrl())){
             callBackUrl = noticeTemp.getUrl();
         }
-//        if(!StringUtils.isEmpty(noticeTemp.getSendPoint())){
-//            sendMsgExt = SpringUtil.getBean(noticeTemp.getSendPoint());
-//        }
+        if(!StringUtils.isEmpty(noticeTemp.getSendPoint())){
+            try{
+                sendMsgExt = SpringUtil.getBean(noticeTemp.getSendPoint());
+            }catch (Exception e){
+                log.warn(e.getMessage());
+            }
+        }
 
         String token = wxService.getToken(publicAccount);
         List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
@@ -116,12 +122,7 @@ public class MessageService<T extends BaseOrder> {
                     value = userInfoUtil.getRealName();
                 }else if(InnerVariable.EMPLOYEE_MOBILE.getValue().equals(msgVariable.getValue())){
                     value = userInfoUtil.getPhone();
-                }
-//                else if(InnerVariable.ORDER_NUMBER.getValue().equals(msgVariable.getValue())){
-//                    value = order.getOrderNum();
-//                }
-                else{
-                    //value = sendMsgExt.parameterize(order,msgVariable);
+                }else{
                     List<Field> fields = getAllFields(order.getClass());
                     for (Field field : fields) {
                         if(field.isAnnotationPresent(SendMsgField.class)){
@@ -157,9 +158,9 @@ public class MessageService<T extends BaseOrder> {
         }
         wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
 
-//        if(sendMsgExt!=null){
-//            sendMsgExt.execute(order);
-//        }
+        if(sendMsgExt!=null){
+            sendMsgExt.execute(order,sendParam);
+        }
     }
 
     private List<Field> getAllFields(Class clazz){
