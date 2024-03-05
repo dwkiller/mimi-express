@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -32,6 +29,21 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
     private MessageService<T> messageService;
 
     ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(50);
+
+    @Override
+    public boolean saveBatch(Collection<T> entityList){
+        for(T t:entityList){
+            try {
+                T o =findByOrderNum(t.getOrderNum());
+                if(o!=null){
+                    throw new RuntimeException("运单号["+t.getOrderNum()+"]已经存在!");
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return super.saveBatch(entityList);
+    }
 
     @Override
     public boolean save(@Valid T t) {
