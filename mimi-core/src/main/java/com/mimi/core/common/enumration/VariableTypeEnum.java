@@ -20,7 +20,11 @@ public enum VariableTypeEnum {
     /**
      * 字典变量
      **/
-    DICT(2, "DICT");
+    DICT(2, "DICT"),
+    /**
+     * 时间段变量
+     **/
+    DATE_PART(3, "DATE_PART");
     Integer value;
     String description;
 }

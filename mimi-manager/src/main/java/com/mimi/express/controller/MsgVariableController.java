@@ -3,6 +3,7 @@ package com.mimi.express.controller;
 
 import com.mimi.core.common.R;
 import com.mimi.core.common.annotation.SendMsgField;
+import com.mimi.core.common.enumration.VariableTypeEnum;
 import com.mimi.core.common.superpackage.controller.SuperController;
 import com.mimi.core.common.util.ClassUtil;
 import com.mimi.core.express.entity.config.MsgVariable;
@@ -36,9 +37,9 @@ import java.util.Set;
 @RequestMapping("/msgVariable")
 public class MsgVariableController extends SuperController<MsgVariableService, MsgVariable> {
 
+
     @Autowired
     private MsgVariableService msgVariableService;
-
 
     @Operation(summary = "批量添加消息变量")
     @PostMapping("/saveBatch")
@@ -70,11 +71,17 @@ public class MsgVariableController extends SuperController<MsgVariableService, M
         List<MsgVariable> result = new ArrayList<>();
         for(InnerVariable innerVariable:InnerVariable.values()){
             MsgVariable msgVariable = new MsgVariable();
-            msgVariable.setType("INNER");
+            msgVariable.setType(VariableTypeEnum.INNER.getDescription());
             msgVariable.setTag(innerVariable.getName());
             msgVariable.setValue(innerVariable.getValue());
             result.add(msgVariable);
         }
+        MsgVariable dateVariable = new MsgVariable();
+        dateVariable.setType(VariableTypeEnum.DATE_PART.getDescription());
+        dateVariable.setTag("时间段");
+        dateVariable.setValue(VariableTypeEnum.DATE_PART.getDescription());
+        result.add(dateVariable);
+
         result.addAll(getOrderVariable());
 
 
@@ -106,7 +113,7 @@ public class MsgVariableController extends SuperController<MsgVariableService, M
                     long cnt = orderVariable.stream().filter(m->m.getTag().equals(sendMsgField.text())).count();
                     if(cnt==0){
                         MsgVariable msgVariable = new MsgVariable();
-                        msgVariable.setType("INNER");
+                        msgVariable.setType(VariableTypeEnum.DATE_PART.getDescription());
                         msgVariable.setTag(sendMsgField.text());
                         msgVariable.setValue(sendMsgField.value());
                         orderVariable.add(msgVariable);

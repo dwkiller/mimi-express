@@ -4,6 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.mimi.core.common.annotation.SendMsgField;
+import com.mimi.core.common.enumration.VariableTypeEnum;
 import com.mimi.core.common.util.UserInfoUtil;
 import com.mimi.core.express.entity.config.MsgVariable;
 import com.mimi.core.express.entity.config.NoticeTemp;
@@ -106,10 +107,10 @@ public class MessageService<T extends BaseOrder> {
 
         if(variableList!=null){
             for(MsgVariable msgVariable:variableList){
-                if(!msgVariable.getType().equals("INNER")){
+                String value = "";
+                if(!msgVariable.getType().equals(VariableTypeEnum.INNER.getDescription())){
                     continue;
                 }
-                String value = "";
                 if(StringUtils.isEmpty(msgVariable.getValue())){
                     continue;
                 }else if(InnerVariable.CURRENT_TIME.getValue().equals(msgVariable.getValue())){
@@ -152,8 +153,36 @@ public class MessageService<T extends BaseOrder> {
             Iterator<Map.Entry<String, String>> iterator = sendParam.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, String> entry = iterator.next();
+                String value = entry.getValue();
+                if(value.equals("30分钟以内")){
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    String time1 = dateFormat.format(calendar.getTime());
+                    calendar.add(Calendar.MINUTE,30);
+                    String time2 = dateFormat.format(calendar.getTime());
+                    value = time1+" ~ "+time2;
+                }else if(value.equals("1小时以内")){
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    String time1 = dateFormat.format(calendar.getTime());
+                    calendar.add(Calendar.HOUR_OF_DAY,1);
+                    String time2 = dateFormat.format(calendar.getTime());
+                    value = time1+" ~ "+time2;
+                }else if((value.contains("今天")||value.contains("明天"))&&value.contains("~")){
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    if(value.contains("今天")){
+                        String todayDate = dateFormat.format(calendar.getTime());
+                        value = value.replaceAll("今天",todayDate);
+                    }
+                    if(value.contains("明天")){
+                        calendar.add(Calendar.DAY_OF_MONTH, 1);
+                        String tomorrowDate = dateFormat.format(calendar.getTime());
+                        value = value.replaceAll("明天",tomorrowDate);
+                    }
+                }
                 templateMessage.addData(new WxMpTemplateData(entry.getKey()
-                        .replaceFirst(".DATA",""),entry.getValue()));
+                        .replaceFirst(".DATA",""),value));
             }
         }
         wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
