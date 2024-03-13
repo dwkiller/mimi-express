@@ -140,23 +140,6 @@ public class WXPayUtil {
 
 
     /**
-     * 判断签名是否正确
-     *
-     * @param xmlStr XML格式数据
-     * @param key API密钥
-     * @return 签名是否正确
-     * @throws Exception
-     */
-    public static boolean isSignatureValid(String xmlStr, String key) throws Exception {
-        Map<String, String> data = xmlToMap(xmlStr);
-        if (!data.containsKey(WXPayConstants.FIELD_SIGN) ) {
-            return false;
-        }
-        String sign = data.get(WXPayConstants.FIELD_SIGN);
-        return generateSignature(data, key).equals(sign);
-    }
-
-    /**
      * 判断签名是否正确，必须包含sign字段，否则返回false。使用MD5签名。
      *
      * @param data Map类型数据
@@ -214,7 +197,9 @@ public class WXPayUtil {
                 continue;
             }
             if (data.get(k).trim().length() > 0) // 参数值为空，则不参与签名
+            {
                 sb.append(k).append("=").append(data.get(k).trim()).append("&");
+            }
         }
         sb.append("key=").append(key);
         if (SignType.MD5.equals(signType)) {

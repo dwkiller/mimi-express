@@ -1,4 +1,4 @@
-package com.mimi.guest;
+package com.mimi.wx.controller.guest;
 
 
 import com.mimi.core.common.superpackage.controller.ReadOnlySuperController;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Tag(name = "价格管理")
 @RestController
-@RequestMapping("/pricing")
+@RequestMapping("/guest/pricing")
 public class PricingController extends ReadOnlySuperController<PricingService, Pricing> {
 
 }

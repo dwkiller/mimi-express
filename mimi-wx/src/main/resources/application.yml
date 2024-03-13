@@ -49,3 +49,5 @@ kd:
     appSecret: 1
     code2Session:
       url: https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code
+    notify:
+      url: https://127.0.0.1/guest/pay/notice

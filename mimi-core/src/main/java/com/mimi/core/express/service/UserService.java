@@ -11,4 +11,6 @@ public interface UserService extends ISuperService<User> {
 
     public List<User> findByMobileLast4(String mobile);
 
+    public User findByOpenId(String openId);
+
 }

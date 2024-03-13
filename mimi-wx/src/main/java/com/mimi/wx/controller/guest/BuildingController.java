@@ -1,9 +1,9 @@
-package com.mimi.guest;
+package com.mimi.wx.controller.guest;
 
 
 import com.mimi.core.common.superpackage.controller.ReadOnlySuperController;
-import com.mimi.core.express.entity.config.Area;
-import com.mimi.core.express.service.AreaService;
+import com.mimi.core.express.entity.config.Building;
+import com.mimi.core.express.service.BuildingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- * 宿舍区管理
+ * 楼栋管理
  * </p>
  *
- * @author 宿舍区管理
+ * @author 楼栋管理
  * @since 2023/10/31
  */
 @Slf4j
-@Tag(name = "宿舍区管理")
+@Tag(name = "楼栋管理")
 @RestController
-@RequestMapping("/area")
-public class AreaController extends ReadOnlySuperController<AreaService, Area> {
+@RequestMapping("/guest/building")
+public class BuildingController extends ReadOnlySuperController<BuildingService, Building> {
 
 }

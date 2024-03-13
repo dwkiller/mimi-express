@@ -1,4 +1,4 @@
-package com.mimi.guest;
+package com.mimi.wx.controller.guest;
 
 
 import cn.hutool.http.HttpUtil;
@@ -37,11 +37,17 @@ public class UserController {
     @Autowired
     private RedisCache redisCache;
 
-    @PostMapping("/registUser")
-    public R<String> registUser(@RequestBody User user){
+    @PostMapping("/regist")
+    public R<String> regist(@RequestBody User user){
         TokenVo tokenVo = getTokenBySchoolId(user.getSchoolId(),user.getAuthCode());
         user.setOpenId(tokenVo.getOpenId());
+        user.setId(user.getMobile());
         userService.save(user);
+        tokenVo.setUserId(user.getId());
+        tokenVo.setPhone(user.getMobile());
+        tokenVo.setRealName(user.getUserName());
+        tokenVo.setSchoolId(user.getSchoolId());
+        redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
         return R.success(tokenVo.getToken());
     }
 
@@ -59,7 +65,13 @@ public class UserController {
         if(user==null|| StringUtils.isEmpty(user.getSchoolId())){
             return null;
         }
-        return getTokenBySchoolId(user.getSchoolId(),authCode);
+        TokenVo tokenVo = getTokenBySchoolId(user.getSchoolId(),authCode);
+        tokenVo.setUserId(user.getId());
+        tokenVo.setPhone(user.getMobile());
+        tokenVo.setRealName(user.getUserName());
+        tokenVo.setSchoolId(user.getSchoolId());
+        redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
+        return tokenVo;
     }
 
     private TokenVo getTokenBySchoolId(String schoolId,String authCode){
@@ -77,7 +89,6 @@ public class UserController {
         tokenVo.setToken(jo.getString("access_token"));
         tokenVo.setOpenId(jo.getString("openid"));
         tokenVo.setExpiresIn(jo.getInteger("expires_in"));
-        redisCache.setCacheObject(tokenVo.getToken(),tokenVo.getOpenId(),tokenVo.getExpiresIn(), TimeUnit.SECONDS);
         return tokenVo;
     }
 }

@@ -1,4 +1,4 @@
-package com.mimi.guest;
+package com.mimi.wx.controller.guest;
 
 import com.mimi.core.common.R;
 import com.mimi.core.common.superpackage.controller.ReadOnlySuperController;

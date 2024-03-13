@@ -1,9 +1,9 @@
-package com.mimi.guest;
+package com.mimi.wx.controller.guest;
 
 
 import com.mimi.core.common.superpackage.controller.ReadOnlySuperController;
-import com.mimi.core.express.entity.config.ExpressDelivery;
-import com.mimi.core.express.service.ExpressDeliveryService;
+import com.mimi.core.express.entity.receive.Insurance;
+import com.mimi.core.express.service.InsuranceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
- * 快递公司管理
+ * 保险管理
  * </p>
  *
  * @author 茹凯
  * @since 2023/10/31
  */
 @Slf4j
-@Tag(name = "快递公司管理")
+@Tag(name = "保险管理")
 @RestController
-@RequestMapping("/expressDelivery")
-public class ExpressDeliveryController extends ReadOnlySuperController<ExpressDeliveryService, ExpressDelivery> {
+@RequestMapping("/guest/insurance")
+public class InsuranceController extends ReadOnlySuperController<InsuranceService, Insurance> {
 
 }

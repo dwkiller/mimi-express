@@ -1,28 +1,40 @@
 package com.mimi.util;
 
 import com.mimi.core.common.util.UserInfoUtil;
+import com.mimi.interceptor.UserInterceptor;
+import com.mimi.vo.TokenVo;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 @Component
 public class UserInfoUtilImpl implements UserInfoUtil {
     @Override
     public String getUserId() {
-        return null;
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        TokenVo tokenVo = (TokenVo) requestAttributes.getAttribute(UserInterceptor.USER_INFO,RequestAttributes.SCOPE_REQUEST);
+        return tokenVo.getUserId();
     }
 
     @Override
     public String getSchoolId() {
-        return null;
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        TokenVo tokenVo = (TokenVo) requestAttributes.getAttribute(UserInterceptor.USER_INFO,RequestAttributes.SCOPE_REQUEST);
+        return tokenVo.getSchoolId();
     }
 
     @Override
     public String getPhone() {
-        return null;
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        TokenVo tokenVo = (TokenVo) requestAttributes.getAttribute(UserInterceptor.USER_INFO,RequestAttributes.SCOPE_REQUEST);
+        return tokenVo.getPhone();
     }
 
     @Override
     public String getRealName() {
-        return null;
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        TokenVo tokenVo = (TokenVo) requestAttributes.getAttribute(UserInterceptor.USER_INFO,RequestAttributes.SCOPE_REQUEST);
+        return tokenVo.getRealName();
     }
 }
