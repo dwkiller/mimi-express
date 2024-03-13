@@ -17,7 +17,7 @@ import com.mimi.core.express.service.NoticeTempService;
 import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.core.express.service.UserService;
 import com.mimi.core.express.type.InnerVariable;
-import com.mimi.core.wx.WxService;
+import com.mimi.core.wx.WxAppService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
@@ -50,7 +50,7 @@ public class MessageService<T extends BaseOrder> {
     private MsgVariableService msgVariableService;
 
     @Autowired
-    private WxService wxService;
+    private WxAppService wxAppService;
 
     @Autowired
     private UserInfoUtil userInfoUtil;
@@ -89,7 +89,7 @@ public class MessageService<T extends BaseOrder> {
             }
         }
 
-        String token = wxService.getToken(publicAccount);
+        String token = wxAppService.getToken(publicAccount);
         List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
 
         WxMpServiceImpl wxMpService = new WxMpServiceImpl();

@@ -1,4 +1,4 @@
-package com.mimi.guest;
+package com.mimi.wx.controller.guest;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -26,7 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/dict")
+@RequestMapping("/guest/dict")
 @Tag(name = "字典管理模块")
 public class DictController {
 

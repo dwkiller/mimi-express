@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-public class WxService {
+public class WxAppService {
 
     private static final String TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
 

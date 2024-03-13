@@ -20,7 +20,7 @@ public class ShopCouponInst extends ShopCoupon{
     @Schema(name = "到期时间")
     private Date endTime;
 
-    @Schema(name = "支付ID")
-    private String payId;
+    @Schema(name = "运单号")
+    private String orderNum;
 
 }

@@ -25,4 +25,11 @@ public class UserServiceImpl extends TenantServiceImpl<UserMapper, User> impleme
         wrapper.likeRight(User::getMobile,mobile);
         return list(wrapper);
     }
+
+    @Override
+    public User findByOpenId(String openId) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getOpenId,openId);
+        return baseMapper.selectOne(wrapper);
+    }
 }

@@ -1,6 +1,7 @@
 package com.mimi.core.common;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Map;
  *
  * @param <T>
  */
+@Slf4j
 @Data
 public class R<T> {
 
@@ -39,6 +41,7 @@ public class R<T> {
         R r = new R();
         r.msg = msg;
         r.code = 0;
+        log.error(msg);
         return r;
     }
 

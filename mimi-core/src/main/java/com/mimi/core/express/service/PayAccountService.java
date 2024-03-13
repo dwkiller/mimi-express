@@ -7,4 +7,8 @@ import com.mimi.core.express.entity.config.PayAccount;
  * @author rukai
  */
 public interface PayAccountService extends ISuperService<PayAccount> {
+
+    public PayAccount findMy();
+
+    public PayAccount findBySchoolId(String schoolId);
 }
