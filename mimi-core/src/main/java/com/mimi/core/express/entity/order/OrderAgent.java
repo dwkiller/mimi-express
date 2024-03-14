@@ -95,4 +95,10 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
     @SendMsgField(value="#{FULL_ADDRESS}",text="送货地址全名")
     @Schema(name = "送货地址全名")
     private String fullAddress;
+
+    @Schema(name = "预付单")
+    private String prepayId;
+
+    @Schema(name = "使用卷")
+    private String couponInstId;
 }

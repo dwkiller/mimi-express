@@ -25,6 +25,6 @@ public class ShopCoupon extends TenantEntity {
     private String type;
 
     @Schema(name = "描述")
-    private String desc;
+    private String memo;
 
 }
