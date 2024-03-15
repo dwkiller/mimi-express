@@ -5,6 +5,7 @@ import com.mimi.core.express.entity.config.PayAccount;
 import com.mimi.core.express.entity.order.OrderAgent;
 import com.mimi.core.express.service.PayAccountService;
 import com.mimi.core.express.service.impl.order.OrderAgentService;
+import com.mimi.core.express.type.PayState;
 import com.mimi.util.pay.WXPayUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +68,9 @@ public class PayController {
                 log.error("验证签名失败");
                 return result;
             }
-
+            orderAgent.setPayMoney(orderAgent.getMoney());
+            orderAgent.setPayState(PayState.PAY.getCode());
+            orderAgentService.updateById(orderAgent);
         }else{
             result = WXPayUtil.setXML("FAIL", data.get("err_code_des"));
             log.error("微信支付回调失败，失败原因" + String.valueOf(data.get("err_code_des")));

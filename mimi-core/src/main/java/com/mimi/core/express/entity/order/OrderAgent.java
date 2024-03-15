@@ -101,4 +101,7 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
 
     @Schema(name = "使用卷")
     private String couponInstId;
+
+    @Schema(name = "支付状态")
+    private Short payState;
 }

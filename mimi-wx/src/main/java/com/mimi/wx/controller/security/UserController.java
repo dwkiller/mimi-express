@@ -8,6 +8,7 @@ import com.mimi.core.express.entity.shop.ShopCouponInst;
 import com.mimi.core.express.service.PayAccountService;
 import com.mimi.core.express.service.impl.order.OrderAgentService;
 import com.mimi.core.express.service.shop.ShopCouponInstService;
+import com.mimi.core.express.type.PayState;
 import com.mimi.interceptor.UserInterceptor;
 import com.mimi.util.pay.WXPay;
 import com.mimi.util.pay.WXPayUtil;
@@ -105,7 +106,10 @@ public class UserController {
         if(shopCouponInst!=null){
             orderAgent.setCouponInstId(shopCouponInst.getShopCouponId());
         }
+        orderAgent.setPayState(PayState.PRE_PAY.getCode());
         orderAgentService.updateById(orderAgent);
+        //发送消息
+
 
         log.info("再次签名，内容："+map2);
         String sign = WXPayUtil.generateSignature(map2, payAccount.getAppKey());
