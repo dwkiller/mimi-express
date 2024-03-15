@@ -7,6 +7,8 @@ import com.mimi.core.common.R;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,8 +28,8 @@ public class DoorController {
     @Value("${kd.door.url:https://api.netrelay.cn/api/v1/control}")
     private String url;
 
-    public R open(String code){
-
+    @GetMapping("/open/{code}")
+    public R open(@PathVariable(value = "code") String code){
         String[] codes = code.split("_");
         if(codes.length!=2){
             return R.error("参数不合法:"+code);

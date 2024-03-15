@@ -18,9 +18,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class WXPay {
 
-	@Value("${wx.unifiedorderUrl}")
+	@Value("${kd.wx.unifiedorder.url}")
 	private String unifiedorderUrl;
-	@Value("${wx.refund.url}")
+	@Value("${kd.wx.refund.url}")
 	private String refundUrl;
 
 	@Autowired

@@ -47,6 +47,10 @@ kd:
   door:
     appsecret: f5a8a6c470c1404937fd2ffb00b5a6bea653aff06b313d3c76f50df492d83fbc
   wx:
+    unifiedorder:
+      url: https://api.mch.weixin.qq.com/pay/unifiedorder
+    refund:
+      url: https://api.mch.weixin.qq.com/secapi/pay/refund
     appId: 1
     appSecret: 1
     code2Session:

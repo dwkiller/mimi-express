@@ -46,7 +46,7 @@ public class UserController {
     @Autowired
     private WXPay wxPay;
 
-    @Value("${wx.notify.url}")
+    @Value("${kd.wx.notify.url}")
     private String notifyUrl;
 
     @RequestMapping("payAgentOrder")

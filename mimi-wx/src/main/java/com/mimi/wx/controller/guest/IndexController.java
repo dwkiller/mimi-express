@@ -22,8 +22,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Tag(name = "用户管理")
 @RestController
-@RequestMapping("/guest/user")
-public class UserController {
+@RequestMapping("/guest/index")
+public class IndexController {
 
     @Autowired
     private UserService userService;
@@ -36,6 +36,11 @@ public class UserController {
 
     @Autowired
     private RedisCache redisCache;
+
+    @GetMapping("/test")
+    public R<String> test(){
+        return R.success("test");
+    }
 
     @PostMapping("/regist")
     public R<String> regist(@RequestBody User user){
