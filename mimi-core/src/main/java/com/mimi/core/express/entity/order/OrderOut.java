@@ -1,5 +1,6 @@
 package com.mimi.core.express.entity.order;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -21,4 +22,11 @@ public class OrderOut extends BaseOrder{
 
     @Schema(name = "来源")
     private String source;
+
+    @Schema(name = "文件")
+    private String file;
+
+    @TableField(exist = false)
+    @Schema(name = "文件md5")
+    private String fileMd5;
 }

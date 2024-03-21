@@ -21,6 +21,8 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
+  profiles:
+    active: dev
 #    password: root123
 mybatis-plus:
   configuration:
@@ -38,22 +40,3 @@ http:
   connectionRequestTimeout: 500
   socketTimeout: 10000
   staleConnectionCheckEnabled: true
-
-kd:
-  public:
-    fileroot: /root/public
-  pay:
-    fileroot: /root/pay
-  door:
-    appsecret: f5a8a6c470c1404937fd2ffb00b5a6bea653aff06b313d3c76f50df492d83fbc
-  wx:
-    unifiedorder:
-      url: https://api.mch.weixin.qq.com/pay/unifiedorder
-    refund:
-      url: https://api.mch.weixin.qq.com/secapi/pay/refund
-    appId: 1
-    appSecret: 1
-    code2Session:
-      url: https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code
-    notify:
-      url: https://127.0.0.1/guest/pay/notice
