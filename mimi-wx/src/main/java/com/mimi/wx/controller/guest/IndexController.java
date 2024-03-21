@@ -57,20 +57,21 @@ public class IndexController {
     }
 
     @PostMapping("/refreshToken")
-    public R<String> refreshToken(String mobile, String authCode){
-        TokenVo tokenVo = getToken(mobile,authCode);
+    public R<TokenVo> refreshToken(String schoolId, String authCode){
+        TokenVo tokenVo = getToken(schoolId,authCode);
         if(tokenVo==null){
             return R.unRegist();
         }
-        return R.success(tokenVo.getToken());
+        return R.success(tokenVo);
     }
 
-    private TokenVo getToken(String mobile,String authCode){
-        User user = userService.findByMobile(mobile);
+    private TokenVo getToken(String schoolId,String authCode){
+        TokenVo tokenVo = getTokenBySchoolId(schoolId,authCode);
+        User user = userService.findByOpenId(tokenVo.getOpenId());
         if(user==null|| StringUtils.isEmpty(user.getSchoolId())){
             return null;
         }
-        TokenVo tokenVo = getTokenBySchoolId(user.getSchoolId(),authCode);
+
         tokenVo.setUserId(user.getId());
         tokenVo.setPhone(user.getMobile());
         tokenVo.setRealName(user.getUserName());

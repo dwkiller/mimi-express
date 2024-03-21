@@ -14,6 +14,9 @@ public class UserInfoUtilImpl implements UserInfoUtil {
     public String getUserId() {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         TokenVo tokenVo = (TokenVo) requestAttributes.getAttribute(UserInterceptor.USER_INFO,RequestAttributes.SCOPE_REQUEST);
+        if(tokenVo==null){
+            return null;
+        }
         return tokenVo.getUserId();
     }
 
@@ -21,6 +24,9 @@ public class UserInfoUtilImpl implements UserInfoUtil {
     public String getSchoolId() {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         TokenVo tokenVo = (TokenVo) requestAttributes.getAttribute(UserInterceptor.USER_INFO,RequestAttributes.SCOPE_REQUEST);
+        if(tokenVo==null){
+            return null;
+        }
         return tokenVo.getSchoolId();
     }
 
@@ -28,6 +34,9 @@ public class UserInfoUtilImpl implements UserInfoUtil {
     public String getPhone() {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         TokenVo tokenVo = (TokenVo) requestAttributes.getAttribute(UserInterceptor.USER_INFO,RequestAttributes.SCOPE_REQUEST);
+        if(tokenVo==null){
+            return null;
+        }
         return tokenVo.getPhone();
     }
 
@@ -35,6 +44,9 @@ public class UserInfoUtilImpl implements UserInfoUtil {
     public String getRealName() {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         TokenVo tokenVo = (TokenVo) requestAttributes.getAttribute(UserInterceptor.USER_INFO,RequestAttributes.SCOPE_REQUEST);
+        if(tokenVo==null){
+            return null;
+        }
         return tokenVo.getRealName();
     }
 }
