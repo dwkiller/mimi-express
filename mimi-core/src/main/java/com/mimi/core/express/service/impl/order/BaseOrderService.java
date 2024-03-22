@@ -30,33 +30,33 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
 
     ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(50);
 
-    @Override
-    public boolean saveBatch(Collection<T> entityList){
-        for(T t:entityList){
-            try {
-                T o =findByOrderNum(t.getOrderNum());
-                if(o!=null){
-                    throw new RuntimeException("运单号["+t.getOrderNum()+"]已经存在!");
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return super.saveBatch(entityList);
-    }
-
-    @Override
-    public boolean save(@Valid T t) {
-        try {
-            T o =findByOrderNum(t.getOrderNum());
-            if(o!=null){
-                throw new RuntimeException("运单号["+t.getOrderNum()+"]已经存在!");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return super.save(t);
-    }
+//    @Override
+//    public boolean saveBatch(Collection<T> entityList){
+//        for(T t:entityList){
+//            try {
+//                T o =findByOrderNum(t.getOrderNum());
+//                if(o!=null){
+//                    throw new RuntimeException("运单号["+t.getOrderNum()+"]已经存在!");
+//                }
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//        return super.saveBatch(entityList);
+//    }
+//
+//    @Override
+//    public boolean save(@Valid T t) {
+//        try {
+//            T o =findByOrderNum(t.getOrderNum());
+//            if(o!=null){
+//                throw new RuntimeException("运单号["+t.getOrderNum()+"]已经存在!");
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        return super.save(t);
+//    }
 
     @Override
     public void sendMsg(String templateId, T order, Map<String,String> param,Integer delaySend) throws WxErrorException {
