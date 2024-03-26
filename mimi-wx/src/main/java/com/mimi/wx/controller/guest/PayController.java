@@ -43,8 +43,6 @@ public class PayController {
     @ResponseBody
     public synchronized String notice(HttpServletRequest request, HttpServletResponse response) throws Exception {
         log.info("微信支付回调开始");
-        String resXml = "";//返回xml格式的String
-
         String inputLine;
         String notityXml = "";
         while ((inputLine = request.getReader().readLine()) != null) {
@@ -57,28 +55,24 @@ public class PayController {
             return null;
         }
 
-        String result=null;
         Map<String, String> data = WXPayUtil.xmlToMap(notityXml);
         if("SUCCESS".equals(data.get("result_code"))){
-            String orderNum = data.get("out_trade_no");
-            OrderAgent orderAgent = orderAgentService.findByOrderNum(orderNum);
+            String payOrder = data.get("out_trade_no");
+            OrderAgent orderAgent = orderAgentService.findByPayOrder(payOrder);
             PayAccount payAccount = payAccountService.findBySchoolId(orderAgent.getSchoolId());
             if(!WXPayUtil.isSignatureValid(data,payAccount.getAppKey())){
-                result = WXPayUtil.setXML("FAIL", "验证签名失败");
                 log.error("验证签名失败");
-                return result;
+                return WXPayUtil.setXML("FAIL", "验证签名失败");
             }
             orderAgent.setPayMoney(orderAgent.getMoney());
             orderAgent.setPayState(PayState.PAY.getCode());
             orderAgentService.updateById(orderAgent);
         }else{
-            result = WXPayUtil.setXML("FAIL", data.get("err_code_des"));
             log.error("微信支付回调失败，失败原因" + String.valueOf(data.get("err_code_des")));
+            return WXPayUtil.setXML("FAIL", data.get("err_code_des"));
         }
-
-        //resXml = wxOrderService.wxPayNotice(notityXml);
         log.info("微信支付回调结束");
-        return resXml;
+        return "success";
     }
 
 }

@@ -1,4 +1,4 @@
-package com.mimi.wx.controller.guest;
+package com.mimi.wx.controller.security;
 
 import com.mimi.core.common.R;
 import com.mimi.core.common.superpackage.controller.ReadOnlySuperController;
@@ -27,7 +27,7 @@ import java.util.List;
 @Slf4j
 @Tag(name = "消息模板配置管理")
 @RestController
-@RequestMapping("/guest/notice")
+@RequestMapping("/security/notice")
 public class NoticeTempController extends ReadOnlySuperController<NoticeTempService, NoticeTemp> {
 
     @GetMapping("getAllSendPoint")

@@ -104,4 +104,7 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
 
     @Schema(name = "支付状态")
     private Short payState;
+
+    @Schema(name = "支付单号")
+    private String payOrder;
 }

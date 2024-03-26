@@ -9,7 +9,9 @@ import com.mimi.core.express.entity.config.PublicAccount;
 import com.mimi.core.express.entity.user.User;
 import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.core.express.service.UserService;
+import com.mimi.interceptor.UserInterceptor;
 import com.mimi.vo.TokenVo;
+import com.mimi.vo.UserVo;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -43,25 +45,24 @@ public class IndexController {
     }
 
     @PostMapping("/regist")
-    public R<String> regist(@RequestBody User user){
-        TokenVo tokenVo = getTokenBySchoolId(user.getSchoolId(),user.getAuthCode());
+    public R<TokenVo> regist(@RequestBody UserVo userVo){
+        TokenVo tokenVo = userVo.getTokenVo();
+        User user = userVo.getUser();
         user.setOpenId(tokenVo.getOpenId());
+        user.setSchoolId(tokenVo.getSchoolId());
         user.setId(user.getMobile());
         userService.save(user);
         tokenVo.setUserId(user.getId());
         tokenVo.setPhone(user.getMobile());
         tokenVo.setRealName(user.getUserName());
-        tokenVo.setSchoolId(user.getSchoolId());
         redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
-        return R.success(tokenVo.getToken());
+        return R.success(tokenVo);
     }
 
     @PostMapping("/refreshToken")
-    public R<TokenVo> refreshToken(String schoolId, String authCode){
-        TokenVo tokenVo = getToken(schoolId,authCode);
-        if(tokenVo==null){
-            return R.unRegist();
-        }
+    public R<TokenVo> refreshToken(@RequestBody User user){
+        log.info("refreshToken schoolId: "+user.getSchoolId()+" ; authCode: "+user.getAuthCode());
+        TokenVo tokenVo = getToken(user.getSchoolId(),user.getAuthCode());
         return R.success(tokenVo);
     }
 
@@ -69,13 +70,14 @@ public class IndexController {
         TokenVo tokenVo = getTokenBySchoolId(schoolId,authCode);
         User user = userService.findByOpenId(tokenVo.getOpenId());
         if(user==null|| StringUtils.isEmpty(user.getSchoolId())){
-            return null;
+            tokenVo.setRsCode((short)0);
+            return tokenVo;
         }
 
         tokenVo.setUserId(user.getId());
         tokenVo.setPhone(user.getMobile());
         tokenVo.setRealName(user.getUserName());
-        tokenVo.setSchoolId(user.getSchoolId());
+        tokenVo.setRsCode((short)1);
         redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
         return tokenVo;
     }
@@ -92,6 +94,7 @@ public class IndexController {
             throw new RuntimeException("获取OPENID失败: 错误码:"+jo.getString("errcode")+", 内容: "+jo.getString("errmsg"));
         }
         TokenVo tokenVo = new TokenVo();
+        tokenVo.setSchoolId(schoolId);
         tokenVo.setToken(jo.getString("access_token"));
         tokenVo.setOpenId(jo.getString("openid"));
         tokenVo.setExpiresIn(jo.getInteger("expires_in"));

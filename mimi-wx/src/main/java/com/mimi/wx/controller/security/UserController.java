@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Tag(name = "用户管理(已鉴权)")
@@ -51,19 +52,18 @@ public class UserController {
 
     @RequestMapping("payAgentOrder")
     @ResponseBody
-    public R<PayReturnVo> payAgentOrder(HttpServletRequest request,String orderNum,String couponInstId) throws Exception {
+    public R<PayReturnVo> payAgentOrder(HttpServletRequest request,OrderAgent orderAgent) throws Exception {
         String token = request.getHeader(UserInterceptor.ACCESS_TOKEN);
         ShopCouponInst shopCouponInst = null;
         TokenVo tokenVo = redisCache.getCacheObject(token);
         String openId = tokenVo.getOpenId();
-        OrderAgent orderAgent = orderAgentService.findByOrderNum(orderNum);
-        if(orderAgent==null){
-            throw new RuntimeException("订单["+orderNum+"]不存在");
-        }
+        String couponInstId = orderAgent.getCouponInstId();
+
         PayAccount payAccount = payAccountService.findMy();
         if(payAccount==null){
             throw new RuntimeException("该学校未配置商户号！");
         }
+        orderAgent.setPayOrder(UUID.randomUUID().toString().replaceAll("-",""));
 
         BigDecimal money = orderAgent.getMoney();
         if(!StringUtils.isEmpty(couponInstId)){
@@ -78,7 +78,7 @@ public class UserController {
         Map<String,Object> param = new HashMap<>();
         param.put("spbill_create_ip", getIpAddress(request));
         param.put("notify_url", notifyUrl);
-        param.put("orderNum", orderNum);
+        param.put("orderNum", orderAgent.getPayOrder());
         param.put("money", money.intValue());
         param.put("openid", openId);
         Map<String,Object> unifiedMap = wxPay.unifiedOrder(payAccount,param);

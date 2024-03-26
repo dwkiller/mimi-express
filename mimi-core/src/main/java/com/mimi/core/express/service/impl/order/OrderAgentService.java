@@ -1,5 +1,6 @@
 package com.mimi.core.express.service.impl.order;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mimi.core.express.entity.order.OrderAgent;
 import com.mimi.core.express.mapper.order.OrderAgentMapper;
 import com.mimi.core.message.MessageService;
@@ -14,6 +15,13 @@ public class OrderAgentService extends BaseOrderService<OrderAgentMapper,OrderAg
     @Override
     public String type() {
         return "代取运单";
+    }
+
+
+    public OrderAgent findByPayOrder(String payOrder){
+        LambdaQueryWrapper<OrderAgent> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderAgent::getPayOrder,payOrder);
+        return baseMapper.selectOne(wrapper);
     }
 
 }

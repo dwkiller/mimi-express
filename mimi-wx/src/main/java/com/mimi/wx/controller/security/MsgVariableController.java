@@ -1,4 +1,4 @@
-package com.mimi.wx.controller.guest;
+package com.mimi.wx.controller.security;
 
 
 import com.mimi.core.common.R;
@@ -27,7 +27,7 @@ import java.util.List;
 @Slf4j
 @Tag(name = "消息模板变量管理")
 @RestController
-@RequestMapping("/guest/msgVariable")
+@RequestMapping("/security/msgVariable")
 public class MsgVariableController extends ReadOnlySuperController<MsgVariableService, MsgVariable> {
 
     @Autowired

@@ -1,4 +1,4 @@
-package com.mimi.wx.controller.guest;
+package com.mimi.wx.controller.security;
 
 
 import com.mimi.core.common.superpackage.controller.ReadOnlySuperController;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @Tag(name = "快递公司管理")
 @RestController
-@RequestMapping("/guest/expressDelivery")
+@RequestMapping("/security/expressDelivery")
 public class ExpressDeliveryController extends ReadOnlySuperController<ExpressDeliveryService, ExpressDelivery> {
 
 }

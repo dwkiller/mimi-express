@@ -1,4 +1,4 @@
-package com.mimi.wx.controller.guest;
+package com.mimi.wx.controller.security;
 
 import cn.hutool.core.io.FileUtil;
 import com.mimi.core.common.R;
@@ -17,7 +17,7 @@ import java.util.Collection;
 @Slf4j
 @Tag(name = "出库")
 @RestController
-@RequestMapping("/guest/orderOut")
+@RequestMapping("/security/orderOut")
 public class OrderOutController extends ReadOnlySuperController<OrderOutService, OrderOut> {
 
     @Value("${kd.outorder.fileroot}")
