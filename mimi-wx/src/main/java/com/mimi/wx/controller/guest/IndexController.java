@@ -98,6 +98,11 @@ public class IndexController {
         tokenVo.setToken(jo.getString("access_token"));
         tokenVo.setOpenId(jo.getString("openid"));
         tokenVo.setExpiresIn(jo.getInteger("expires_in"));
+//        TokenVo tokenVo = new TokenVo();
+//        tokenVo.setSchoolId(schoolId);
+//        tokenVo.setToken("123456");
+//        tokenVo.setOpenId("oeI4a6l1zF20hc9fLhQiqvrpqeBE");
+//        tokenVo.setExpiresIn(120);
         return tokenVo;
     }
 }

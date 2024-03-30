@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-@EnableWebMvc
+//@EnableWebMvc
 @Configuration
 public class WebInterceptorConfig extends WebMvcConfigurationSupport{
 

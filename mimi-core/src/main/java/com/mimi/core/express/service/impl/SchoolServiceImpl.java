@@ -47,12 +47,12 @@ public class SchoolServiceImpl extends SuperServiceImpl<SchoolMapper, School> im
         createPricing(school,6,new BigDecimal(6),new BigDecimal(0),"2-4个鞋盒");
         createPricing(school,10,new BigDecimal(10),new BigDecimal(0),"20寸行李箱");
         createPricing(school,11,new BigDecimal(20),new BigDecimal(0),"大于20寸行李箱");
-        createInsurance(school,1,"投保");
-        createInsurance(school,1,"价值100~200元");
+        createInsurance(school,new BigDecimal(1),"投保");
+        createInsurance(school,new BigDecimal(1),"价值100~200元");
         return rs;
     }
 
-    private void createInsurance(School school,double price,String note){
+    private void createInsurance(School school,BigDecimal price,String note){
         Insurance insurance = new Insurance();
         insurance.setSchoolId(school.getId());
         insurance.setPrice(price);
