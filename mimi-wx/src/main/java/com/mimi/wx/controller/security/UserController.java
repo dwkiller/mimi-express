@@ -50,7 +50,7 @@ public class UserController {
     @Value("${kd.wx.notify.url}")
     private String notifyUrl;
 
-    @RequestMapping("payAgentOrder")
+    @RequestMapping("/payAgentOrder")
     @ResponseBody
     public R<PayReturnVo> payAgentOrder(HttpServletRequest request,OrderAgent orderAgent) throws Exception {
         String token = request.getHeader(UserInterceptor.ACCESS_TOKEN);
