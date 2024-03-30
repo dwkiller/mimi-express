@@ -4,8 +4,12 @@ import com.mimi.core.common.R;
 import com.mimi.core.common.util.RedisCache;
 import com.mimi.core.express.entity.config.PayAccount;
 import com.mimi.core.express.entity.order.OrderAgent;
+import com.mimi.core.express.entity.receive.Insurance;
+import com.mimi.core.express.entity.receive.Pricing;
 import com.mimi.core.express.entity.shop.ShopCouponInst;
+import com.mimi.core.express.service.InsuranceService;
 import com.mimi.core.express.service.PayAccountService;
+import com.mimi.core.express.service.PricingService;
 import com.mimi.core.express.service.impl.order.OrderAgentService;
 import com.mimi.core.express.service.shop.ShopCouponInstService;
 import com.mimi.core.express.type.PayState;
@@ -43,6 +47,10 @@ public class UserController {
     @Autowired
     private PayAccountService payAccountService;
     @Autowired
+    private PricingService pricingService;
+    @Autowired
+    private InsuranceService insuranceService;
+    @Autowired
     private RedisCache redisCache;
     @Autowired
     private WXPay wxPay;
@@ -59,13 +67,35 @@ public class UserController {
         String openId = tokenVo.getOpenId();
         String couponInstId = orderAgent.getCouponInstId();
 
+        if(StringUtils.isEmpty(orderAgent.getPricingId())){
+            throw new RuntimeException("缺少参数定价ID！");
+        }
+
         PayAccount payAccount = payAccountService.findMy();
         if(payAccount==null){
             throw new RuntimeException("该学校未配置商户号！");
         }
-        orderAgent.setPayOrder(UUID.randomUUID().toString().replaceAll("-",""));
 
-        BigDecimal money = orderAgent.getMoney();
+        BigDecimal money = BigDecimal.ZERO;
+        Pricing pricing = pricingService.getById(orderAgent.getPricingId());
+        if(pricing==null){
+            throw new RuntimeException("不存在定价配置！");
+        }
+        money = money.add(pricing.getPrice());
+
+        if(!StringUtils.isEmpty(orderAgent.getInsuranceId())){
+            Insurance insurance = insuranceService.getById(orderAgent.getInsuranceId());
+            money.add(insurance.getPrice());
+        }
+
+        if(orderAgent.getIndemnify()!=null&&orderAgent.getIndemnify().shortValue()!=0){
+            money.add(new BigDecimal(0.3));
+        }
+
+        orderAgent.setPayOrder(UUID.randomUUID().toString().replaceAll("-",""));
+        orderAgent.setFullAddress(orderAgent.getBuildName()+orderAgent.getRoomName());
+        orderAgent.setMoney(money);
+
         if(!StringUtils.isEmpty(couponInstId)){
             shopCouponInst = shopCouponInstService.getById(couponInstId);
             if(shopCouponInst==null){

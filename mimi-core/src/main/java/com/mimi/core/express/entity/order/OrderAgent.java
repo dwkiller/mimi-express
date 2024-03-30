@@ -107,4 +107,16 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
 
     @Schema(name = "支付单号")
     private String payOrder;
+
+    @Schema(name = "定价")
+    private String pricingId;
+
+    @Schema(name = "投保")
+    private String insuranceId;
+
+    @Schema(name = "是否赔偿")
+    private Short indemnify;
+
+    @Schema(name = "取货号")
+    private String getGoodsNum;
 }

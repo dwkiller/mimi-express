@@ -5,6 +5,8 @@ import com.mimi.core.common.superpackage.base.TenantEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @Description TODO
  * @Author RuKai
@@ -15,7 +17,7 @@ import lombok.Data;
 public class Insurance extends TenantEntity {
 
 	@Schema(name = "价格")
-	private Double price;
+	private BigDecimal price;
 
 	@Schema(name = "备注")
 	private String note;
