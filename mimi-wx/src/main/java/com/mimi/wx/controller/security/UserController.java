@@ -73,6 +73,7 @@ public class UserController {
 //        tokenVo.setOpenId("oeI4a6lElS00HRWEsnq7WB6GvZ14");
 //        tokenVo.setToken("123456");
         String openId = tokenVo.getOpenId();
+        log.info("openId : ["+openId+"]发起支付！");
         String couponInstId = orderAgent.getCouponInstId();
 
         if(StringUtils.isEmpty(orderAgent.getPricingId())){
@@ -83,6 +84,7 @@ public class UserController {
         if(payAccount==null){
             throw new RuntimeException("该学校未配置商户号！");
         }
+        log.info("学校ID: "+payAccount.getSchoolId());
         PublicAccount publicAccount = publicAccountService.getBySchoolId(payAccount.getSchoolId());
 
         BigDecimal money = BigDecimal.ZERO;
