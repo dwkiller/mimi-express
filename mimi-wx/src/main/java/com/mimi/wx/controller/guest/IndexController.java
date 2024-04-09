@@ -55,6 +55,10 @@ public class IndexController {
         tokenVo.setUserId(user.getId());
         tokenVo.setPhone(user.getMobile());
         tokenVo.setRealName(user.getUserName());
+        PublicAccount publicAccount = publicAccountService.getBySchoolId(tokenVo.getSchoolId());
+        if(publicAccount!=null){
+            tokenVo.setAppId(publicAccount.getAppId());
+        }
         redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
         return R.success(tokenVo);
     }
@@ -95,6 +99,7 @@ public class IndexController {
         }
         TokenVo tokenVo = new TokenVo();
         tokenVo.setSchoolId(schoolId);
+        tokenVo.setAppId(publicAccount.getAppId());
         tokenVo.setToken(jo.getString("access_token"));
         tokenVo.setOpenId(jo.getString("openid"));
         tokenVo.setExpiresIn(jo.getInteger("expires_in"));
