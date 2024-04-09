@@ -5,6 +5,7 @@ package com.mimi.core.common.util;
  * @Author RuKai
  * @Date 2023/12/6 15:31
  **/
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.HashOperations;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  * redis工具类
  */
 @SuppressWarnings(value = { "unchecked", "rawtypes" })
+@Slf4j
 @Component
 public class RedisCache
 {
@@ -46,6 +48,7 @@ public class RedisCache
      */
     public <T> void setCacheObject(final String key, final T value, final Integer timeout, final TimeUnit timeUnit)
     {
+        log.info("set redis key:"+key+" , value:"+value+" , timeout:"+timeout);
         redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
 
@@ -82,6 +85,7 @@ public class RedisCache
      */
     public <T> T getCacheObject(final String key)
     {
+        log.info("get redis key:"+key);
         ValueOperations<String, T> operation = redisTemplate.opsForValue();
         return operation.get(key);
     }

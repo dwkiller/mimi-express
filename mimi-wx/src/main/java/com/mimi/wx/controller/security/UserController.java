@@ -3,6 +3,7 @@ package com.mimi.wx.controller.security;
 import com.mimi.core.common.R;
 import com.mimi.core.common.util.RedisCache;
 import com.mimi.core.express.entity.config.PayAccount;
+import com.mimi.core.express.entity.config.PublicAccount;
 import com.mimi.core.express.entity.order.OrderAgent;
 import com.mimi.core.express.entity.receive.Insurance;
 import com.mimi.core.express.entity.receive.Pricing;
@@ -10,6 +11,7 @@ import com.mimi.core.express.entity.shop.ShopCouponInst;
 import com.mimi.core.express.service.InsuranceService;
 import com.mimi.core.express.service.PayAccountService;
 import com.mimi.core.express.service.PricingService;
+import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.core.express.service.impl.order.OrderAgentService;
 import com.mimi.core.express.service.shop.ShopCouponInstService;
 import com.mimi.core.express.type.PayState;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,6 +54,8 @@ public class UserController {
     @Autowired
     private InsuranceService insuranceService;
     @Autowired
+    private PublicAccountService publicAccountService;
+    @Autowired
     private RedisCache redisCache;
     @Autowired
     private WXPay wxPay;
@@ -60,10 +65,13 @@ public class UserController {
 
     @RequestMapping("/payAgentOrder")
     @ResponseBody
-    public R<PayReturnVo> payAgentOrder(HttpServletRequest request,OrderAgent orderAgent) throws Exception {
+    public R<PayReturnVo> payAgentOrder(HttpServletRequest request,@RequestBody OrderAgent orderAgent) throws Exception {
         String token = request.getHeader(UserInterceptor.ACCESS_TOKEN);
         ShopCouponInst shopCouponInst = null;
         TokenVo tokenVo = redisCache.getCacheObject(token);
+//        TokenVo tokenVo = new TokenVo();
+//        tokenVo.setOpenId("oeI4a6lElS00HRWEsnq7WB6GvZ14");
+//        tokenVo.setToken("123456");
         String openId = tokenVo.getOpenId();
         String couponInstId = orderAgent.getCouponInstId();
 
@@ -75,6 +83,7 @@ public class UserController {
         if(payAccount==null){
             throw new RuntimeException("该学校未配置商户号！");
         }
+        PublicAccount publicAccount = publicAccountService.getBySchoolId(payAccount.getSchoolId());
 
         BigDecimal money = BigDecimal.ZERO;
         Pricing pricing = pricingService.getById(orderAgent.getPricingId());
@@ -125,7 +134,7 @@ public class UserController {
         Map<String, String> map2 = new HashMap<>();
         Date date = new Date();
         String timestamp = String.valueOf(date.getTime());
-        map2.put("appId", payAccount.getAppId());
+        map2.put("appId", publicAccount.getAppId());
         map2.put("timeStamp",timestamp);
         String nonceStr = WXPayUtil.generateNonceStr();
         map2.put("nonceStr", nonceStr);
@@ -142,7 +151,7 @@ public class UserController {
 
 
         log.info("再次签名，内容："+map2);
-        String sign = WXPayUtil.generateSignature(map2, payAccount.getAppKey());
+        String sign = WXPayUtil.generateSignature(map2, publicAccount.getAppSecret());
 
         PayReturnVo result = new PayReturnVo();
         result.setTimestamp(timestamp);

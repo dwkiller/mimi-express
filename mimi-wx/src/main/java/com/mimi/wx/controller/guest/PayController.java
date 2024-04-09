@@ -2,8 +2,10 @@ package com.mimi.wx.controller.guest;
 
 
 import com.mimi.core.express.entity.config.PayAccount;
+import com.mimi.core.express.entity.config.PublicAccount;
 import com.mimi.core.express.entity.order.OrderAgent;
 import com.mimi.core.express.service.PayAccountService;
+import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.core.express.service.impl.order.OrderAgentService;
 import com.mimi.core.express.type.PayState;
 import com.mimi.util.pay.WXPayUtil;
@@ -39,6 +41,9 @@ public class PayController {
     @Autowired
     private PayAccountService payAccountService;
 
+    @Autowired
+    private PublicAccountService publicAccountService;
+
     @RequestMapping("/notice")
     @ResponseBody
     public synchronized String notice(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -59,8 +64,9 @@ public class PayController {
         if("SUCCESS".equals(data.get("result_code"))){
             String payOrder = data.get("out_trade_no");
             OrderAgent orderAgent = orderAgentService.findByPayOrder(payOrder);
-            PayAccount payAccount = payAccountService.findBySchoolId(orderAgent.getSchoolId());
-            if(!WXPayUtil.isSignatureValid(data,payAccount.getAppKey())){
+            PublicAccount publicAccount = publicAccountService.getBySchoolId(orderAgent.getSchoolId());
+            //PayAccount payAccount = payAccountService.findBySchoolId(orderAgent.getSchoolId());
+            if(!WXPayUtil.isSignatureValid(data,publicAccount.getAppSecret())){
                 log.error("验证签名失败");
                 return WXPayUtil.setXML("FAIL", "验证签名失败");
             }

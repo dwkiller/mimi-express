@@ -48,7 +48,7 @@ public class HttpAPIService {
 
 	public HttpAPIService(String appCert,String mchId,RequestConfig config) throws Exception {
 		this.config = config;
-		if(!StringUtils.isEmpty(appCert)&&StringUtils.isEmpty(mchId)){
+		if(!StringUtils.isEmpty(appCert)&&!StringUtils.isEmpty(mchId)){
 			initSSL(appCert,mchId);
 		}
 	}

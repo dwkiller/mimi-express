@@ -1,10 +1,13 @@
 package com.mimi.util.pay;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.mimi.core.express.entity.config.PayAccount;
+import com.mimi.core.express.entity.config.PublicAccount;
+import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.util.http.HttpAPIService;
 import com.mimi.util.http.HttpResult;
 import com.mimi.util.MapHelper;
@@ -23,6 +26,12 @@ public class WXPay {
 	@Value("${kd.wx.refund.url}")
 	private String refundUrl;
 
+	@Value("${kd.pay.fileroot}")
+	private String fileRoot;
+
+	@Autowired
+	private PublicAccountService  publicAccountService;
+
 	@Autowired
 	private RequestConfig config;
 
@@ -31,15 +40,19 @@ public class WXPay {
 	private HttpAPIService getHttpAPIService(String appCert,String mchId) throws Exception {
 		HttpAPIService httpAPIService = httpMap.get(mchId);
 		if(httpAPIService==null){
-			httpAPIService = new HttpAPIService(appCert,mchId,config);
+			httpAPIService = new HttpAPIService(fileRoot+ File.separator+appCert,mchId,config);
+			httpMap.put(mchId,httpAPIService);
 		}
 		return httpAPIService;
 	}
 	
 	public Map<String,Object> refund(PayAccount payAccount, Map param) throws Exception {
+
+		PublicAccount publicAccount = publicAccountService.getBySchoolId(payAccount.getSchoolId());
+
 		Map<String, String> params = new HashMap<String, String>();
     	//小程序appID
-		params.put("appid", payAccount.getAppId());
+		params.put("appid", publicAccount.getAppId());
 		//商户号
 		params.put("mch_id", payAccount.getMchId());
 		//随机字符串 
@@ -52,7 +65,7 @@ public class WXPay {
 		params.put("out_refund_no", MapHelper.getStringValue(param, "reOrderNum"));
 		params.put("total_fee", MapHelper.getStringValue(param, "money"));
 		params.put("refund_fee", MapHelper.getStringValue(param, "money"));
-		String sign = WXPayUtil.generateSignature(params, payAccount.getAppId());
+		String sign = WXPayUtil.generateSignature(params, payAccount.getAppKey());
 		params.put("sign", sign);
 		String requestString = WXPayUtil.getRequestXml(params);
 		log.info("退单请求参数 :" + requestString);
@@ -87,15 +100,16 @@ public class WXPay {
      * @throws Exception
      */
     public Map<String,Object> unifiedOrder(PayAccount payAccount,Map param) throws Exception {
+		PublicAccount publicAccount = publicAccountService.getBySchoolId(payAccount.getSchoolId());
 		Map<String, String> params = new HashMap<String, String>();
     	//小程序appID
-		params.put("appid", payAccount.getAppId());
+		params.put("appid", publicAccount.getAppId());
 		//商户号
 		params.put("mch_id", payAccount.getMchId());
 		//随机字符串
 		params.put("nonce_str", WXPayUtil.generateNonceStr());
 		//商品描述
-		params.put("body", "设备租赁");
+		params.put("body", "代取支付");
 		//商户订单号
 		params.put("out_trade_no", MapHelper.getStringValue(param, "orderNum"));
 		params.put("total_fee", MapHelper.getStringValue(param, "money"));
@@ -109,7 +123,7 @@ public class WXPay {
 		params.put("openid", String.valueOf(param.get("openid")));
 		//附加数据，在查询API和支付通知中原样返回，可作为自定义参数使用
 		params.put("attach", "flag=true");
-		String sign = WXPayUtil.generateSignature(params, payAccount.getAppId());
+		String sign = WXPayUtil.generateSignature(params, payAccount.getAppKey());
 		params.put("sign", sign);
 		String requestString = WXPayUtil.getRequestXml(params);
 		log.info("支付统一下单请求参数 :" + requestString);

@@ -19,13 +19,13 @@ public class PayAccount extends TenantEntity implements Serializable {
 	@Schema(name = "支付账号名称")
 	private String name;
 
-	@Schema(name = "应用id")
-	private String appId;
+//	@Schema(name = "应用id")
+//	private String appId;
 
 	@Schema(name = "商户id")
 	private String mchId;
 
-	@Schema(name = "应用key")
+	@Schema(name = "商户key")
 	private String appKey;
 
 	@Schema(name = "密钥文件")
