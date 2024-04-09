@@ -41,7 +41,14 @@ public class PublicAccountServiceImpl extends TenantServiceImpl<PublicAccountMap
     public PublicAccount getBySchoolId(String schoolId) {
         LambdaQueryWrapper<PublicAccount> publicAccountLambdaQueryWrapper = new LambdaQueryWrapper<>();
         publicAccountLambdaQueryWrapper.eq(PublicAccount::getSchoolId, schoolId);
-        return this.getOne(publicAccountLambdaQueryWrapper);
+        return baseMapper.selectOne(publicAccountLambdaQueryWrapper);
+    }
+
+    @Override
+    public PublicAccount getByAppId(String appId) {
+        LambdaQueryWrapper<PublicAccount> publicAccountLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        publicAccountLambdaQueryWrapper.eq(PublicAccount::getAppId, appId);
+        return baseMapper.selectOne(publicAccountLambdaQueryWrapper);
     }
 
     public int countByAppId(String appId,String schoolId){

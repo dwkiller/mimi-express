@@ -16,8 +16,20 @@ public class WxAppService {
 
     private static final String TOKEN_URL="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
 
+    private static final String TICKET_URL="https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi";
+
     @Autowired
     private RedisCache redisCache;
+
+    public String getTicket(String token){
+        String url = String.format(TICKET_URL,token);
+        String rs = HttpUtil.get(url);
+        JSONObject rsJo = JSONObject.parseObject(rs);
+        if(rsJo.containsKey("errcode")&&rsJo.getInteger("errcode")!=0&&rsJo.containsKey("errmsg")){
+            throw new RuntimeException("获取Ticket失败: "+rsJo.getString("errmsg"));
+        }
+        return rsJo.getString("ticket");
+    }
 
     public String getToken(PublicAccount publicAccount){
         String schoolId=publicAccount.getSchoolId();

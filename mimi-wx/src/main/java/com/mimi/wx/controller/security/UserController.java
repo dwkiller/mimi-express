@@ -15,11 +15,13 @@ import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.core.express.service.impl.order.OrderAgentService;
 import com.mimi.core.express.service.shop.ShopCouponInstService;
 import com.mimi.core.express.type.PayState;
+import com.mimi.core.wx.WxAppService;
 import com.mimi.interceptor.UserInterceptor;
 import com.mimi.util.pay.WXPay;
 import com.mimi.util.pay.WXPayUtil;
 import com.mimi.vo.PayReturnVo;
 import com.mimi.vo.TokenVo;
+import com.mimi.vo.WxConfigVo;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,10 +62,46 @@ public class UserController {
     @Autowired
     private RedisCache redisCache;
     @Autowired
+    private WxAppService wxAppService;
+
+    @Autowired
     private WXPay wxPay;
 
     @Value("${kd.wx.notify.url}")
     private String notifyUrl;
+
+
+    private String getSha1Signature(String input) {
+        try {
+            MessageDigest sha1Digest = MessageDigest.getInstance("SHA-1");
+            byte[] hashedBytes = sha1Digest.digest(input.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-1 is not supported", e);
+        }
+    }
+
+    @RequestMapping("/getWxConfig")
+    @ResponseBody
+    public R<WxConfigVo> getWxConfig(String appId){
+        WxConfigVo wxConfigVo = new WxConfigVo();
+        wxConfigVo.setAppId(appId);
+        Date date = new Date();
+        String timestamp = String.valueOf(date.getTime());
+        wxConfigVo.setTimeStamp(timestamp);
+        wxConfigVo.setNonceStr(WXPayUtil.generateNonceStr());
+        PublicAccount publicAccount = publicAccountService.getByAppId(appId);
+        String token = wxAppService.getToken(publicAccount);
+        String ticket = wxAppService.getTicket(token);
+        String signStr = "jsapi_ticket="+ticket+"&noncestr="+wxConfigVo.getNonceStr()+"&timestamp="
+                +wxConfigVo.getTimeStamp()+"&url=https://www.lywzs21293.top/test/";
+        wxConfigVo.setSignature(getSha1Signature(signStr));
+        return R.success(wxConfigVo);
+    }
 
     @RequestMapping("/payAgentOrder")
     @ResponseBody

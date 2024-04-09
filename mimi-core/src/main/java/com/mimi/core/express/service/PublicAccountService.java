@@ -16,4 +16,6 @@ public interface PublicAccountService extends ISuperService<PublicAccount> {
      * @return
      */
     public PublicAccount getBySchoolId(String schoolId);
+
+    public PublicAccount getByAppId(String appId);
 }
