@@ -27,19 +27,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Tag(name = "用户管理(已鉴权)")
@@ -70,6 +66,60 @@ public class UserController {
     @Value("${kd.wx.notify.url}")
     private String notifyUrl;
 
+    private static String getsig(String noncestr,String jsapi_ticket,String timestamp,String url){
+        String[] paramArr = new String[] { "jsapi_ticket=" + jsapi_ticket,
+                "timestamp=" + timestamp, "noncestr=" + noncestr, "url=" + url };
+        Arrays.sort(paramArr);
+        // 将排序后的结果拼接成一个字符串
+        String content = paramArr[0].concat("&"+paramArr[1]).concat("&"+paramArr[2])
+                .concat("&"+paramArr[3]);
+        String gensignature = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            // 对拼接后的字符串进行 sha1 加密
+            log.info("拼接加密签名："+content);
+            byte[] digest = md.digest(content.getBytes());
+            gensignature = byteToStr(digest);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        // 将 sha1 加密后的字符串与 signature 进行对比
+        if (gensignature != null) {
+            return gensignature;// 返回signature
+        } else {
+            return "false";
+        }
+    }
+
+    /**
+     * 将字节数组转换为十六进制字符串
+     *
+     * @param byteArray
+     * @return
+     */
+    private static String byteToStr(byte[] byteArray) {
+        String strDigest = "";
+        for (int i = 0; i < byteArray.length; i++) {
+            strDigest += byteToHexStr(byteArray[i]);
+        }
+        return strDigest;
+    }
+
+    /**
+     * 将字节转换为十六进制字符串
+     *
+     * @param mByte
+     * @return
+     */
+    private static String byteToHexStr(byte mByte) {
+        char[] Digit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
+                'B', 'C', 'D', 'E', 'F' };
+        char[] tempArr = new char[2];
+        tempArr[0] = Digit[(mByte >>> 4) & 0X0F];
+        tempArr[1] = Digit[mByte & 0X0F];
+        String s = new String(tempArr);
+        return s;
+    }
 
     private String getSha1Signature(String input) {
         try {
@@ -85,21 +135,32 @@ public class UserController {
         }
     }
 
-    @RequestMapping("/getWxConfig")
+    @GetMapping("/getWxConfig")
     @ResponseBody
-    public R<WxConfigVo> getWxConfig(String appId){
+    public R<WxConfigVo> getWxConfig(String appId,String url){
+//        String params = request.getQueryString();
+//        if(StringUtils.isEmpty(params)){
+//            params="";
+//        }else{
+//            params="?"+params;
+//        }
+//        String url = "https://www.lywzs21293.top"+request.getRequestURI()+params;
+
         WxConfigVo wxConfigVo = new WxConfigVo();
         wxConfigVo.setAppId(appId);
         Date date = new Date();
-        String timestamp = String.valueOf(date.getTime());
+        String timestamp = Long.toString((new Date().getTime()) / 1000);
         wxConfigVo.setTimeStamp(timestamp);
         wxConfigVo.setNonceStr(WXPayUtil.generateNonceStr());
         PublicAccount publicAccount = publicAccountService.getByAppId(appId);
         String token = wxAppService.getToken(publicAccount);
         String ticket = wxAppService.getTicket(token);
-        String signStr = "jsapi_ticket="+ticket+"&noncestr="+wxConfigVo.getNonceStr()+"&timestamp="
-                +wxConfigVo.getTimeStamp()+"&url=https://www.lywzs21293.top/test/";
-        wxConfigVo.setSignature(getSha1Signature(signStr));
+//        String signStr = "jsapi_ticket="+ticket+"&noncestr="+wxConfigVo.getNonceStr()+"&timestamp="
+//                +wxConfigVo.getTimeStamp()+"&url=https://www.lywzs21293.top/test/";
+//        log.info("get config : "+signStr);
+//        wxConfigVo.setSignature(getSha1Signature(signStr));
+        wxConfigVo.setSignature(getsig(wxConfigVo.getNonceStr(),ticket,wxConfigVo.getTimeStamp(),url));
+        log.info("签名结果: "+wxConfigVo.getSignature());
         return R.success(wxConfigVo);
     }
 
@@ -192,12 +253,16 @@ public class UserController {
         //发送消息
 
 
+
         log.info("再次签名，内容："+map2);
-        String sign = WXPayUtil.generateSignature(map2, publicAccount.getAppSecret());
+        String sign = WXPayUtil.generateSignature(map2, payAccount.getAppKey());
+        map2.put("sign",sign);
+
+        log.info("xml: "+WXPayUtil.mapToXml(map2));
 
         PayReturnVo result = new PayReturnVo();
         result.setTimestamp(timestamp);
-        result.setNonceStr(nonceStr);
+        result.setNonceStr(map2.get("nonceStr"));
         result.setPkg(map2.get("package"));
         result.setSign(sign);
         result.setSignType("MD5");
@@ -207,7 +272,62 @@ public class UserController {
         return R.success(result);
     }
 
+    private static final String IP_UTILS_FLAG = ",";
+    private static final String UNKNOWN = "unknown";
+    private static final String LOCALHOST_IP = "0:0:0:0:0:0:0:1";
+    private static final String LOCALHOST_IP1 = "127.0.0.1";
+
+
     public static String getIpAddress(HttpServletRequest request) {
+        String ip = null;
+        try {
+            //以下两个获取在k8s中，将真实的客户端IP，放到了x-Original-Forwarded-For。而将WAF的回源地址放到了 x-Forwarded-For了。
+            ip = request.getHeader("X-Original-Forwarded-For");
+            if (StringUtils.isEmpty(ip) || UNKNOWN.equalsIgnoreCase(ip)) {
+                ip = request.getHeader("X-Forwarded-For");
+            }
+            //获取nginx等代理的ip
+            if (StringUtils.isEmpty(ip) || UNKNOWN.equalsIgnoreCase(ip)) {
+                ip = request.getHeader("x-forwarded-for");
+            }
+            if (StringUtils.isEmpty(ip) || UNKNOWN.equalsIgnoreCase(ip)) {
+                ip = request.getHeader("Proxy-Client-IP");
+            }
+            if (StringUtils.isEmpty(ip) || ip.length() == 0 || UNKNOWN.equalsIgnoreCase(ip)) {
+                ip = request.getHeader("WL-Proxy-Client-IP");
+            }
+            if (StringUtils.isEmpty(ip) || UNKNOWN.equalsIgnoreCase(ip)) {
+                ip = request.getHeader("HTTP_CLIENT_IP");
+            }
+            if (StringUtils.isEmpty(ip) || UNKNOWN.equalsIgnoreCase(ip)) {
+                ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+            }
+            //兼容k8s集群获取ip
+            if (StringUtils.isEmpty(ip) || UNKNOWN.equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+                if (LOCALHOST_IP1.equalsIgnoreCase(ip) || LOCALHOST_IP.equalsIgnoreCase(ip)) {
+                    //根据网卡取本机配置的IP
+                    InetAddress iNet = null;
+                    try {
+                        iNet = InetAddress.getLocalHost();
+                    } catch (UnknownHostException e) {
+                        log.error("getClientIp error: {}", e);
+                    }
+                    ip = iNet.getHostAddress();
+                }
+            }
+        } catch (Exception e) {
+            log.error("IPUtils ERROR ", e);
+        }
+        //使用代理，则获取第一个IP地址
+        if (!StringUtils.isEmpty(ip) && ip.indexOf(IP_UTILS_FLAG) > 0) {
+            ip = ip.substring(0, ip.indexOf(IP_UTILS_FLAG));
+        }
+
+        return ip;
+    }
+
+    public static String getIpAddress2(HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
