@@ -29,9 +29,9 @@ public interface OrderMapper<T extends BaseOrder>  extends SuperMapper<T> {
             " AND done = #{businessData.done}"+
             "</if>";
 
-    public static final String ORDER="<if test='orderBy'>"+
-            " order by #{orderBy}"+
-                "<if test='desc'> #{desc}</if>"+
+    public static final String ORDER="<if test='orderBy != null'>"+
+            " order by ${orderBy}"+
+                "<if test='desc != null'> ${desc}</if>"+
             "</if>";
     public List<T> findPage(OrderParam<T> param);
     public long findCount(OrderParam<T> param);

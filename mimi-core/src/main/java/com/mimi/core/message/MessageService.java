@@ -89,7 +89,8 @@ public class MessageService<T extends BaseOrder> {
             }
         }
 
-        String token = wxAppService.getToken(publicAccount);
+        //String token = wxAppService.getToken(publicAccount);
+        String token="";
         List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
 
         WxMpServiceImpl wxMpService = new WxMpServiceImpl();
@@ -133,7 +134,7 @@ public class MessageService<T extends BaseOrder> {
                                     field.setAccessible(true);
                                 }
                                 try {
-                                    Object o = (String) field.get(order);
+                                    Object o = field.get(order);
                                     if(o!=null){
                                         value = o .toString();
 

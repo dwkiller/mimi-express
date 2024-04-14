@@ -14,4 +14,6 @@ public class User extends TenantEntity {
 
     @TableField(exist = false)
     private String authCode;
+    @TableField(exist = false)
+    private String token;
 }

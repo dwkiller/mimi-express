@@ -34,9 +34,13 @@ public interface OrderAgentMapper extends OrderMapper<OrderAgent>{
             "<if test='businessData.done != null'>"+
             " AND done = #{businessData.done}"+
             "</if>"+
+            "<if test='businessData.payState != null'>"+
+            " AND pay_state = #{businessData.payState}"+
+            "</if>"+
             "<if test='businessData.state != null'>"+
             " AND state = #{businessData.state}"+
-            "</if>";
+            "</if>"
+            ;
 
     public static final String TIME_CONDITION="<if test='startTime != null'>"+
             " AND date_format(t_order_agent.create_time,'%Y-%m-%d %H:%i:%s') &gt; #{startTime}"+

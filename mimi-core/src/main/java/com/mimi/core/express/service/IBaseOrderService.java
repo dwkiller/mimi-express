@@ -4,14 +4,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mimi.core.common.superpackage.service.ISuperService;
 import com.mimi.core.express.entity.order.BaseOrder;
 import com.mimi.core.express.entity.order.param.OrderParam;
-import me.chanjar.weixin.common.error.WxErrorException;
 
 import java.util.List;
 import java.util.Map;
 
 public interface IBaseOrderService<T extends BaseOrder> extends ISuperService<T> {
 
-    public void sendMsg(String templateId, T order, Map<String,String> param,Integer delaySend) throws WxErrorException;
+    public void sendMsg(String templateId, T order, Map<String,String> param,Integer delaySend) throws Exception;
 
     public IPage<T> findPage(OrderParam<T> param);
 

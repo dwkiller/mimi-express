@@ -65,24 +65,33 @@ public class IndexController {
 
     @PostMapping("/refreshToken")
     public R<TokenVo> refreshToken(@RequestBody User user){
-        log.info("refreshToken schoolId: "+user.getSchoolId()+" ; authCode: "+user.getAuthCode());
-        TokenVo tokenVo = getToken(user.getSchoolId(),user.getAuthCode());
+        log.info("refreshToken schoolId: "+user.getSchoolId()+" ; authCode: "+user.getAuthCode()+" ; token: "+user.getToken());
+        TokenVo tokenVo = getToken(user.getSchoolId(),user.getAuthCode(),user.getToken());
         return R.success(tokenVo);
     }
 
-    private TokenVo getToken(String schoolId,String authCode){
-        TokenVo tokenVo = getTokenBySchoolId(schoolId,authCode);
-        User user = userService.findByOpenId(tokenVo.getOpenId());
-        if(user==null|| StringUtils.isEmpty(user.getSchoolId())){
-            tokenVo.setRsCode((short)0);
-            return tokenVo;
+    private TokenVo getToken(String schoolId,String authCode,String token){
+        TokenVo tokenVo = null;
+        if(!StringUtils.isEmpty(token)){
+            tokenVo = redisCache.getCacheObject(token);
+            if(tokenVo==null){
+                tokenVo = new TokenVo();
+                tokenVo.setRsCode((short)-1);
+                return tokenVo;
+            }
+        }else{
+            tokenVo = getTokenBySchoolId(schoolId,authCode);
+            User user = userService.findByOpenId(tokenVo.getOpenId());
+            if(user==null|| StringUtils.isEmpty(user.getSchoolId())){
+                tokenVo.setRsCode((short)0);
+                return tokenVo;
+            }
+            tokenVo.setUserId(user.getId());
+            tokenVo.setPhone(user.getMobile());
+            tokenVo.setRealName(user.getUserName());
+            redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
         }
-
-        tokenVo.setUserId(user.getId());
-        tokenVo.setPhone(user.getMobile());
-        tokenVo.setRealName(user.getUserName());
         tokenVo.setRsCode((short)1);
-        redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
         return tokenVo;
     }
 

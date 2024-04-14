@@ -38,13 +38,16 @@ public class WxAppService {
         if(token==null){
             String url = String.format(TOKEN_URL,publicAccount.getAppId(),publicAccount.getAppSecret());
             String rs = HttpUtil.get(url);
+            log.info("获取token结果："+rs);
             JSONObject rsJo = JSONObject.parseObject(rs);
             if(rsJo.containsKey("errcode")){
                 throw new RuntimeException("获取token失败: "+rsJo.getString("errmsg"));
             }
             token = rsJo.getString("access_token");
-            int expiresIn = rsJo.getInteger("expires_in");
+            int expiresIn = rsJo.getInteger("expires_in")-60;
             redisCache.setCacheObject(key,token,expiresIn,TimeUnit.SECONDS);
+        }else{
+            log.info("cache token : "+token);
         }
         return token;
     }

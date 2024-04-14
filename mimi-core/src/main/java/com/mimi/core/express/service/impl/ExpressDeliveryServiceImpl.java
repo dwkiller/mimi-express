@@ -18,6 +18,6 @@ public class ExpressDeliveryServiceImpl extends TenantServiceImpl<ExpressDeliver
     @Override
     public String translateById(String id) {
         ExpressDelivery expressDelivery = getById(id);
-        return expressDelivery.getName();
+        return expressDelivery.getAddress();
     }
 }

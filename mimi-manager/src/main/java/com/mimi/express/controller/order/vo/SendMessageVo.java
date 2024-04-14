@@ -1,4 +1,4 @@
-package com.mimi.core.message.vo;
+package com.mimi.express.controller.order.vo;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;

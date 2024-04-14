@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -83,6 +84,7 @@ public abstract class TenantServiceImpl<M extends SuperMapper<T>, T extends Tena
     @Transactional
     public boolean save(@Valid T t) {
         addSchool(t);
+        t.setCreateTime(new Date());
         return super.save(t);
     }
 

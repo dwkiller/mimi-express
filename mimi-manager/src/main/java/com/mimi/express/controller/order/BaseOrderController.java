@@ -8,10 +8,11 @@ import com.mimi.core.express.entity.order.BaseOrder;
 import com.mimi.core.express.entity.order.param.OrderParam;
 import com.mimi.core.express.service.IBaseOrderService;
 import com.mimi.core.message.MessageService;
-import com.mimi.core.message.vo.SendMessageVo;
+import com.mimi.express.controller.order.vo.BatchMsgBodyVo;
+import com.mimi.express.controller.order.vo.BatchSendMessageVo;
+import com.mimi.express.controller.order.vo.SendMessageVo;
 import com.mimi.express.controller.order.vo.BatchOrderVo;
 import io.swagger.v3.oas.annotations.Operation;
-import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,9 +44,31 @@ public class BaseOrderController<S extends IBaseOrderService<T>,T extends BaseOr
         return R.success(superService.findPage(p));
     }
 
+    @Operation(summary = "批量发送消息")
+    @PostMapping("/batchSendMsg")
+    public R batchSendMsg(@RequestBody BatchSendMessageVo batchSendMessageVo) {
+        Class<T> clazzP = getParamClass();
+        String errMsg = "";
+        for(BatchMsgBodyVo msgVo:batchSendMessageVo.getOrderParam()){
+            String orderNum = "";
+            try {
+                T order = JSONObject.toJavaObject(msgVo.getOrder(),clazzP);
+                orderNum = order.getOrderNum();
+                superService.sendMsg(batchSendMessageVo.getTemplateId(),order,msgVo.getParam(),null);
+            } catch (Exception e) {
+                errMsg+="运单:"+orderNum+"发送失败:"+e.getMessage()+"; ";
+            }
+        }
+        if(errMsg.isEmpty()){
+            return R.success();
+        }else{
+            return R.error(errMsg);
+        }
+    }
+
     @Operation(summary = "发送消息")
     @PostMapping("/sendMessage")
-    public R sendMessage(@RequestBody SendMessageVo sendMessageVo) throws WxErrorException {
+    public R sendMessage(@RequestBody SendMessageVo sendMessageVo) throws Exception {
         Class<T> clazzP = getParamClass();
         T order = JSONObject.toJavaObject(sendMessageVo.getOrder(),clazzP);
         superService.sendMsg(sendMessageVo.getTemplateId(),order,sendMessageVo.getParam(),sendMessageVo.getDelaySend());

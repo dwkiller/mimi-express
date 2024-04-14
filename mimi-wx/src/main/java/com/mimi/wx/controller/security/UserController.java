@@ -2,6 +2,7 @@ package com.mimi.wx.controller.security;
 
 import com.mimi.core.common.R;
 import com.mimi.core.common.util.RedisCache;
+import com.mimi.core.common.util.UserInfoUtil;
 import com.mimi.core.express.entity.config.PayAccount;
 import com.mimi.core.express.entity.config.PublicAccount;
 import com.mimi.core.express.entity.order.OrderAgent;
@@ -59,6 +60,8 @@ public class UserController {
     private RedisCache redisCache;
     @Autowired
     private WxAppService wxAppService;
+    @Autowired
+    private UserInfoUtil userInfoUtil;
 
     @Autowired
     private WXPay wxPay;
@@ -119,20 +122,6 @@ public class UserController {
         tempArr[1] = Digit[mByte & 0X0F];
         String s = new String(tempArr);
         return s;
-    }
-
-    private String getSha1Signature(String input) {
-        try {
-            MessageDigest sha1Digest = MessageDigest.getInstance("SHA-1");
-            byte[] hashedBytes = sha1Digest.digest(input.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashedBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-1 is not supported", e);
-        }
     }
 
     @GetMapping("/getWxConfig")
@@ -205,9 +194,16 @@ public class UserController {
         }
 
         orderAgent.setPayOrder(UUID.randomUUID().toString().replaceAll("-",""));
-        orderAgent.setFullAddress(orderAgent.getBuildName()+orderAgent.getRoomName());
-        orderAgent.setMoney(money);
+        orderAgent.setFullAddress(orderAgent.getBuildName()+"-"+orderAgent.getRoomName());
 
+        orderAgent.setUserName(userInfoUtil.getRealName());
+        orderAgent.setMobile(userInfoUtil.getPhone());
+
+        orderAgent.setMoney(money);
+        boolean r = orderAgentService.save(orderAgent);
+        if(!r){
+            return R.error("保存运单失败!");
+        }
         if(!StringUtils.isEmpty(couponInstId)){
             shopCouponInst = shopCouponInstService.getById(couponInstId);
             if(shopCouponInst==null){
@@ -223,8 +219,8 @@ public class UserController {
         param.put("orderNum", orderAgent.getPayOrder());
         param.put("money", money.intValue());
         param.put("openid", openId);
-        Map<String,Object> unifiedMap = wxPay.unifiedOrder(payAccount,param);
 
+        Map<String,Object> unifiedMap = wxPay.unifiedOrder(payAccount,param);
         if ("FAIL".equals(unifiedMap.get("return_code"))) {
             return R.error("调用支付统一下单通信失败：" + String.valueOf(unifiedMap.get("return_msg")));
         }
@@ -249,11 +245,12 @@ public class UserController {
             orderAgent.setCouponInstId(shopCouponInst.getShopCouponId());
         }
         orderAgent.setPayState(PayState.PRE_PAY.getCode());
-        orderAgentService.updateById(orderAgent);
+        r = orderAgentService.updateById(orderAgent);
+        if(!r){
+            return R.error("更新运单状态失败!");
+        }
+
         //发送消息
-
-
-
         log.info("再次签名，内容："+map2);
         String sign = WXPayUtil.generateSignature(map2, payAccount.getAppKey());
         map2.put("sign",sign);

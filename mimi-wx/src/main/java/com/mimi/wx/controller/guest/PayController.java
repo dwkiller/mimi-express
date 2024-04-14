@@ -64,9 +64,9 @@ public class PayController {
         if("SUCCESS".equals(data.get("result_code"))){
             String payOrder = data.get("out_trade_no");
             OrderAgent orderAgent = orderAgentService.findByPayOrder(payOrder);
-            PublicAccount publicAccount = publicAccountService.getBySchoolId(orderAgent.getSchoolId());
-            //PayAccount payAccount = payAccountService.findBySchoolId(orderAgent.getSchoolId());
-            if(!WXPayUtil.isSignatureValid(data,publicAccount.getAppSecret())){
+            //PublicAccount publicAccount = publicAccountService.getBySchoolId(orderAgent.getSchoolId());
+            PayAccount payAccount = payAccountService.findBySchoolId(orderAgent.getSchoolId());
+            if(!WXPayUtil.isSignatureValid(data,payAccount.getAppKey())){
                 log.error("验证签名失败");
                 return WXPayUtil.setXML("FAIL", "验证签名失败");
             }
