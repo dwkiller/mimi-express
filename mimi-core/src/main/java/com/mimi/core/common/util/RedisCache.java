@@ -49,9 +49,9 @@ public class RedisCache
     public <T> void setCacheObject(final String key, final T value, final Integer timeout, final TimeUnit timeUnit)
     {
         log.info("set redis key:"+key+" , value:"+value+" , timeout:"+timeout);
-        //redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
-        redisTemplate.opsForValue().set(key,value);
-        expire(key, timeout, timeUnit);
+        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
+//        redisTemplate.opsForValue().set(key,value);
+//        expire(key, timeout, timeUnit);
     }
 
     /**

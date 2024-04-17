@@ -66,7 +66,8 @@ public class DoorController {
 
         Map<String,Object> param = new HashMap<>();
         param.put("appsecret","f5a8a6c470c1404937fd2ffb00b5a6bea653aff06b313d3c76f50df492d83fbc");
-        param.put("sn","Q8a526b2e5b29757");
+        //param.put("sn","Q8a526b2e5b29757");
+        param.put("sn","Q8552d92e7b77757");
         param.put("type","0");
         param.put("cmd","setr");
         param.put("param","setr=20000000");

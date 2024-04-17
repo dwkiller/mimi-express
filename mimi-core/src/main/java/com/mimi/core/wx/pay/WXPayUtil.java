@@ -1,4 +1,4 @@
-package com.mimi.util.pay;
+package com.mimi.core.wx.pay;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.mimi.util.pay.WXPayConstants.SignType;
+import com.mimi.core.wx.pay.WXPayConstants.SignType;
 
 
 public class WXPayUtil {

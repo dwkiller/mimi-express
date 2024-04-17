@@ -1,4 +1,4 @@
-package com.mimi.util;
+package com.mimi.core.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

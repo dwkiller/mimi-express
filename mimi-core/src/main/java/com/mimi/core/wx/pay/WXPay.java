@@ -1,4 +1,4 @@
-package com.mimi.util.pay;
+package com.mimi.core.wx.pay;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -8,9 +8,9 @@ import java.util.Map;
 import com.mimi.core.express.entity.config.PayAccount;
 import com.mimi.core.express.entity.config.PublicAccount;
 import com.mimi.core.express.service.PublicAccountService;
-import com.mimi.util.http.HttpAPIService;
-import com.mimi.util.http.HttpResult;
-import com.mimi.util.MapHelper;
+import com.mimi.core.util.MapHelper;
+import com.mimi.core.util.http.HttpAPIService;
+import com.mimi.core.util.http.HttpResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.config.RequestConfig;
 import org.springframework.beans.factory.annotation.Autowired;

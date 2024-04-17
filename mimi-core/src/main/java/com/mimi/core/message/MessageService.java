@@ -89,8 +89,8 @@ public class MessageService<T extends BaseOrder> {
             }
         }
 
-        //String token = wxAppService.getToken(publicAccount);
-        String token="";
+        String token = wxAppService.getToken(publicAccount);
+//        String token="";
         List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
 
         WxMpServiceImpl wxMpService = new WxMpServiceImpl();

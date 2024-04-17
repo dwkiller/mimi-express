@@ -2,13 +2,12 @@ package com.mimi.wx.controller.guest;
 
 
 import com.mimi.core.express.entity.config.PayAccount;
-import com.mimi.core.express.entity.config.PublicAccount;
 import com.mimi.core.express.entity.order.OrderAgent;
 import com.mimi.core.express.service.PayAccountService;
 import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.core.express.service.impl.order.OrderAgentService;
 import com.mimi.core.express.type.PayState;
-import com.mimi.util.pay.WXPayUtil;
+import com.mimi.core.wx.pay.WXPayUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

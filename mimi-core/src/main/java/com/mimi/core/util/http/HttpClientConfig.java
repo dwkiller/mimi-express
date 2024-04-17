@@ -1,4 +1,4 @@
-package com.mimi.util.http;
+package com.mimi.core.util.http;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;

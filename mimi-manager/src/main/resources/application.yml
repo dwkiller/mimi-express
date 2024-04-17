@@ -22,6 +22,8 @@ spring:
     host: 127.0.0.1
     port: 6379
 #    password: root123
+  profiles:
+    active: dev
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
@@ -31,8 +33,10 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
 
-kd:
-  public:
-    fileroot: /root/public
-  pay:
-    fileroot: /root/pay
+http:
+  maxTotal: 100
+  defaultMaxPerRoute: 20
+  connectTimeout: 1000
+  connectionRequestTimeout: 500
+  socketTimeout: 10000
+  staleConnectionCheckEnabled: true

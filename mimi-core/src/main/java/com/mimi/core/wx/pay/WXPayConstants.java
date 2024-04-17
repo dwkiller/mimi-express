@@ -1,4 +1,4 @@
-package com.mimi.util.pay;
+package com.mimi.core.wx.pay;
 
 import org.apache.http.client.HttpClient;
 

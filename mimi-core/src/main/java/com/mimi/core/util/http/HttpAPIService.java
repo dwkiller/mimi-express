@@ -1,4 +1,4 @@
-package com.mimi.util.http;
+package com.mimi.core.util.http;
 
 import java.io.File;
 import java.io.FileInputStream;
