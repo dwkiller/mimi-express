@@ -1,3 +1,9 @@
+spring:
+  datasource:
+    druid:
+      url: jdbc:mysql://127.0.0.1:3306/pig-school-config?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+
+
 kd:
   outorder:
     fileroot: /root/outorder
@@ -17,4 +23,4 @@ kd:
     code2Session:
       url: https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code
     notify:
-      url: https://127.0.0.1/guest/pay/notice
+      url: https://nddd.top/gapi/guest/pay/notice

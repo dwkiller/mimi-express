@@ -78,16 +78,7 @@ public class WXPay {
 		if(responseMap.get("result_code")!=null&&responseMap.get("err_code")!=null&&responseMap.get("err_code_des")!=null) {
 			String resultCode = responseMap.get("result_code").toString();
 			if(resultCode.equals("FAIL")) {
-				/*
-				FailPayLog fpLog = new FailPayLog();
-				fpLog.setErrCode(responseMap.get("err_code").toString());
-				fpLog.setErrDesc(responseMap.get("err_code_des").toString());
-				fpLog.setOrderNumber(params.get("out_trade_no"));
-				fpLog.setReOrderNumber(params.get("out_refund_no"));
-				fpLog.setRefundCust(Double.parseDouble(params.get("refund_fee")));
-				fpLog.setTotalCust(Double.parseDouble(params.get("total_fee")));
-				commLogService.saveFailPayLog(fpLog);
-				*/
+				throw new RuntimeException(responseMap.get("return_msg").toString());
 			}
 		}
 		return responseMap;
