@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Data
 @TableName(value = "t_order_in")
-public class OrderIn extends BaseOrder implements HasExpressDelivery{
+public class OrderIn extends BaseOrder {
 
     @Schema(name = "货架号方式")
     private String rackNoType;
@@ -19,13 +19,8 @@ public class OrderIn extends BaseOrder implements HasExpressDelivery{
     @Schema(name = "货架号")
     private String rackNo;
 
-    @Schema(name = "快递站ID")
-    private String expressDeliveryId;
-
-    @SendMsgField(value="#{EXPRESS_DELIVERY}",text="快递站")
-    @TableField(exist = false)
-    @Schema(name = "快递站名字")
-    private String expressDeliveryName;
+    @Schema(name = "快递公司")
+    private String expressCompany;
 
     @Schema(name = "是否移库")
     private Short moveDb;

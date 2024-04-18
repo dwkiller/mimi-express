@@ -1,5 +1,6 @@
 package com.mimi.system.service.impl;
 
+import com.mimi.core.common.superpackage.redis.CacheManager;
 import com.mimi.util.JwtUtil;
 import com.mimi.core.common.util.RedisCache;
 import com.mimi.system.entity.Employee;
@@ -26,8 +27,11 @@ public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+//    @Autowired
+//    private RedisCache redisCache;
+
     @Autowired
-    private RedisCache redisCache;
+    private CacheManager cacheManager;
 
     //public static Map<String,Object> cache = new HashMap<>();
 
@@ -43,7 +47,8 @@ public class LoginServiceImpl implements LoginService {
         String userId = loginUser.getUser().getId().toString();
         String jwt = JwtUtil.createJWT(userId);
         //authenticate存入redis
-        redisCache.setCacheObject("login:"+userId,loginUser);
+        cacheManager.setValue("login:"+userId,loginUser);
+        //redisCache.setCacheObject("login:"+userId,loginUser);
         //cache.put("login:"+userId,loginUser);
         //把token响应给前端
         HashMap<String,String> map = new HashMap<>();
@@ -56,7 +61,8 @@ public class LoginServiceImpl implements LoginService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         String userid = loginUser.getUser().getId();
-        redisCache.deleteObject("login:"+userid);
+        cacheManager.remove("login:"+userid);
+        //redisCache.deleteObject("login:"+userid);
         //cache.remove("login:"+userid);
         return "退出成功";
     }

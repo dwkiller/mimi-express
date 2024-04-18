@@ -1,5 +1,6 @@
 package com.mimi.config;
 
+import com.mimi.core.common.superpackage.redis.CacheManager;
 import io.jsonwebtoken.Claims;
 import com.mimi.util.JwtUtil;
 import com.mimi.core.common.util.RedisCache;
@@ -26,8 +27,11 @@ import java.util.Objects;
 @Component
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
+//    @Autowired
+//    private RedisCache redisCache;
+
     @Autowired
-    private RedisCache redisCache;
+    private CacheManager cacheManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -49,7 +53,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
         //从redis中获取用户信息
         String redisKey = "login:" + userid;
-        LoginUser loginUser = redisCache.getCacheObject(redisKey);
+        //LoginUser loginUser = redisCache.getCacheObject(redisKey);
+        LoginUser loginUser = (LoginUser) cacheManager.getValue(redisKey);
         //LoginUser loginUser = (LoginUser) LoginServiceImpl.cache.get(redisKey);
         if(Objects.isNull(loginUser)){
             throw new RuntimeException("用户未登录");

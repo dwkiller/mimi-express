@@ -18,9 +18,6 @@ public interface OrderInMapper extends OrderMapper<OrderIn>{
             "</if>"+
             "<if test='businessData.sendMsg != null'>"+
             " AND send_msg = #{businessData.sendMsg}"+
-            "</if>"+
-            "<if test='businessData.sendMsg != null'>"+
-            " AND send_msg = #{businessData.sendMsg}"+
             "</if>";
 
     public static final String TIME_CONDITION="<if test='startTime != null'>"+
@@ -33,7 +30,7 @@ public interface OrderInMapper extends OrderMapper<OrderIn>{
 
     @Select({"<script>",
             "SELECT t_order_in.* FROM t_order_in",
-            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,TIME_CONDITION,ORDER,
+            BASE_CONDITION,CONDITION,TIME_CONDITION,ORDER,
             "</script>"
     })
     @Override

@@ -1,6 +1,7 @@
 package com.mimi.wx.controller.security;
 
 import com.mimi.core.common.R;
+import com.mimi.core.common.superpackage.redis.CacheManager;
 import com.mimi.core.common.util.RedisCache;
 import com.mimi.core.common.util.UserInfoUtil;
 import com.mimi.core.express.entity.config.PayAccount;
@@ -57,7 +58,7 @@ public class UserController {
     @Autowired
     private PublicAccountService publicAccountService;
     @Autowired
-    private RedisCache redisCache;
+    private CacheManager cacheManager;
     @Autowired
     private WxAppService wxAppService;
     @Autowired
@@ -127,14 +128,6 @@ public class UserController {
     @GetMapping("/getWxConfig")
     @ResponseBody
     public R<WxConfigVo> getWxConfig(String appId,String url){
-//        String params = request.getQueryString();
-//        if(StringUtils.isEmpty(params)){
-//            params="";
-//        }else{
-//            params="?"+params;
-//        }
-//        String url = "https://www.lywzs21293.top"+request.getRequestURI()+params;
-
         WxConfigVo wxConfigVo = new WxConfigVo();
         wxConfigVo.setAppId(appId);
         Date date = new Date();
@@ -144,10 +137,6 @@ public class UserController {
         PublicAccount publicAccount = publicAccountService.getByAppId(appId);
         String token = wxAppService.getToken(publicAccount);
         String ticket = wxAppService.getTicket(token);
-//        String signStr = "jsapi_ticket="+ticket+"&noncestr="+wxConfigVo.getNonceStr()+"&timestamp="
-//                +wxConfigVo.getTimeStamp()+"&url=https://www.lywzs21293.top/test/";
-//        log.info("get config : "+signStr);
-//        wxConfigVo.setSignature(getSha1Signature(signStr));
         wxConfigVo.setSignature(getsig(wxConfigVo.getNonceStr(),ticket,wxConfigVo.getTimeStamp(),url));
         log.info("签名结果: "+wxConfigVo.getSignature());
         return R.success(wxConfigVo);
@@ -158,7 +147,8 @@ public class UserController {
     public R<PayReturnVo> payAgentOrder(HttpServletRequest request,@RequestBody OrderAgent orderAgent) throws Exception {
         String token = request.getHeader(UserInterceptor.ACCESS_TOKEN);
         ShopCouponInst shopCouponInst = null;
-        TokenVo tokenVo = redisCache.getCacheObject(token);
+        TokenVo tokenVo = (TokenVo) cacheManager.getValue(token);
+        //TokenVo tokenVo = redisCache.getCacheObject(token);
 //        TokenVo tokenVo = new TokenVo();
 //        tokenVo.setOpenId("oeI4a6lElS00HRWEsnq7WB6GvZ14");
 //        tokenVo.setToken("123456");

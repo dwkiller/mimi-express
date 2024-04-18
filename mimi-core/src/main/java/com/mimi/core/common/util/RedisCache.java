@@ -50,8 +50,10 @@ public class RedisCache
     {
         log.info("set redis key:"+key+" , value:"+value+" , timeout:"+timeout);
         redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
-//        redisTemplate.opsForValue().set(key,value);
-//        expire(key, timeout, timeUnit);
+    }
+
+    public boolean hasKey(String key){
+        return redisTemplate.hasKey(key);
     }
 
     /**

@@ -4,6 +4,7 @@ package com.mimi.wx.controller.guest;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.mimi.core.common.R;
+import com.mimi.core.common.superpackage.redis.CacheManager;
 import com.mimi.core.common.util.RedisCache;
 import com.mimi.core.express.entity.config.PublicAccount;
 import com.mimi.core.express.entity.user.User;
@@ -37,7 +38,7 @@ public class IndexController {
     private String code2SessionUrl;
 
     @Autowired
-    private RedisCache redisCache;
+    private CacheManager cacheManager;
 
     @GetMapping("/test")
     public R<String> test(){
@@ -59,7 +60,8 @@ public class IndexController {
         if(publicAccount!=null){
             tokenVo.setAppId(publicAccount.getAppId());
         }
-        redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
+        //redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
+        cacheManager.setValue(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn());
         return R.success(tokenVo);
     }
 
@@ -73,7 +75,8 @@ public class IndexController {
     private TokenVo getToken(String schoolId,String authCode,String token){
         TokenVo tokenVo = null;
         if(!StringUtils.isEmpty(token)){
-            tokenVo = redisCache.getCacheObject(token);
+            //tokenVo = redisCache.getCacheObject(token);
+            tokenVo = (TokenVo) cacheManager.getValue(token);
             if(tokenVo==null){
                 tokenVo = new TokenVo();
                 tokenVo.setRsCode((short)-1);
@@ -89,7 +92,7 @@ public class IndexController {
             tokenVo.setUserId(user.getId());
             tokenVo.setPhone(user.getMobile());
             tokenVo.setRealName(user.getUserName());
-            redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
+            cacheManager.setValue(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn());
         }
         tokenVo.setRsCode((short)1);
         return tokenVo;

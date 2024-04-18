@@ -2,6 +2,7 @@ package com.mimi.core.wx;
 
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.mimi.core.common.superpackage.redis.CacheManager;
 import com.mimi.core.common.util.RedisCache;
 import com.mimi.core.express.entity.config.PublicAccount;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,10 @@ public class WxAppService {
 
     private static final String TICKET_URL="https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi";
 
+//    @Autowired
+//    private RedisCache redisCache;
     @Autowired
-    private RedisCache redisCache;
+    private CacheManager cacheManager;
 
     public String getTicket(String token){
         String url = String.format(TICKET_URL,token);
@@ -34,8 +37,8 @@ public class WxAppService {
     public String getToken(PublicAccount publicAccount){
         String schoolId=publicAccount.getSchoolId();
         String key="getToken_"+schoolId;
-        String token = redisCache.getCacheObject(key);
-        if(token==null){
+        String token = null;
+        if(!cacheManager.exists(key)){
             String url = String.format(TOKEN_URL,publicAccount.getAppId(),publicAccount.getAppSecret());
             String rs = HttpUtil.get(url);
             log.info("获取token结果："+rs);
@@ -45,8 +48,11 @@ public class WxAppService {
             }
             token = rsJo.getString("access_token");
             int expiresIn = rsJo.getInteger("expires_in")-60;
-            redisCache.setCacheObject(key,token,expiresIn,TimeUnit.SECONDS);
+            cacheManager.setValue(key,token,expiresIn);
+            //redisCache.setCacheObject(key,token,expiresIn,TimeUnit.SECONDS);
         }else{
+            //token = redisCache.getCacheObject(key);
+            token = (String) cacheManager.getValue(key);
             log.info("cache token : "+token);
         }
         return token;

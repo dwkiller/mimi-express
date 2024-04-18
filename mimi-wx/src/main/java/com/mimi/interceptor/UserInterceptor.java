@@ -3,6 +3,7 @@ package com.mimi.interceptor;
 import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.mimi.core.common.R;
+import com.mimi.core.common.superpackage.redis.CacheManager;
 import com.mimi.core.common.util.RedisCache;
 import com.mimi.vo.TokenVo;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,9 @@ public class UserInterceptor implements HandlerInterceptor {
 
     private String charset="UTF-8";
 
-    private RedisCache redisCache;
+//    private RedisCache redisCache;
+
+    private CacheManager cacheManager;
 
     private void write(HttpServletResponse response, R responseObject) throws IOException {
         String rs = JSONObject.toJSONString(responseObject);
@@ -37,10 +40,11 @@ public class UserInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object arg2) throws Exception {
         log.info("request请求地址path["+request.getServletPath()+"] uri["+request.getRequestURI()+"]");
         String accessToken = request.getHeader(ACCESS_TOKEN);
-        if(redisCache==null){
-            redisCache = SpringUtil.getBean("redisCache");
+        if(cacheManager==null){
+            cacheManager = SpringUtil.getBean(CacheManager.class);
         }
-        TokenVo tokenVo = redisCache.getCacheObject(accessToken);
+        TokenVo tokenVo = (TokenVo) cacheManager.getValue(accessToken);
+        // tokenVo = redisCache.getCacheObject(accessToken);
 //        TokenVo tokenVo = new TokenVo();
 //        tokenVo.setOpenId("oeI4a6lElS00HRWEsnq7WB6GvZ14");
 //        tokenVo.setToken("123456");
