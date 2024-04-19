@@ -3,7 +3,6 @@ package com.mimi.config;
 import com.mimi.core.common.superpackage.redis.CacheManager;
 import io.jsonwebtoken.Claims;
 import com.mimi.util.JwtUtil;
-import com.mimi.core.common.util.RedisCache;
 import com.mimi.system.entity.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

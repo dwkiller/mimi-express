@@ -15,7 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -44,6 +47,9 @@ public class DictController {
     @GetMapping("/listDict")
     public R<List<SysDict>> listDict() throws Exception {
         ListParam listParam = new ListParam();
+        LinkedHashMap<String,String> sort = new LinkedHashMap();
+        sort.put("sysDict","asc");
+        listParam.setSorts(sort);
         return R.success(sysDictService.getByParam(listParam));
     }
 

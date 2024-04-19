@@ -56,140 +56,133 @@ public class MessageService<T extends BaseOrder> {
     private UserInfoUtil userInfoUtil;
 
     public void sendMsg(String templateId, T order, Map<String,String> sendParam) throws WxErrorException {
-        if(StringUtils.isEmpty(order.getMobile())){
-            throw new RuntimeException("运单号上没有手机号码，无法确定用户！");
-        }
-        User user =userService.findByMobile(order.getMobile());
-        if(user==null){
-            throw new RuntimeException("根据手机号码["+order.getMobile()+"]不能找到用户！");
-        }
-        if(StringUtils.isEmpty(user.getOpenId())){
-            throw new RuntimeException("该用户的公众号未注到系统！");
-        }
-        if(StringUtils.isEmpty(order.getSchoolId())){
-            order.setSchoolId(userInfoUtil.getSchoolId());
-        }
-        String schoolId=order.getSchoolId();
-        PublicAccount publicAccount = publicAccountService.getBySchoolId(schoolId);
-        if(publicAccount==null){
-            throw new RuntimeException("该学校未绑定公众号！");
-        }
-
-        String callBackUrl = null;
-        ISendMsgExt sendMsgExt=null;
         NoticeTemp noticeTemp = noticeTempService.findByTemplateId(templateId);
-        if(noticeTemp!=null&&!StringUtils.isEmpty(noticeTemp.getUrl())){
-            callBackUrl = noticeTemp.getUrl();
-        }
-        if(!StringUtils.isEmpty(noticeTemp.getSendPoint())){
-            try{
-                sendMsgExt = SpringUtil.getBean(noticeTemp.getSendPoint());
-            }catch (Exception e){
-                log.warn(e.getMessage());
-            }
-        }
-
-        String token = wxAppService.getToken(publicAccount);
-//        String token="";
-        List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
-
-        WxMpServiceImpl wxMpService = new WxMpServiceImpl();
-        WxMpDefaultConfigImpl wxStorage = new WxMpDefaultConfigImpl();
-        wxStorage.setAppId(publicAccount.getAppId());
-        wxStorage.setSecret(publicAccount.getAppSecret());
-        wxStorage.setToken(token);
-        wxMpService.setWxMpConfigStorage(wxStorage);
-
-        WxMpTemplateMessage templateMessage = WxMpTemplateMessage.builder()
-                .toUser(user.getOpenId())
-                .templateId(templateId)
-                .url(callBackUrl)
-                .build();
-
-        if(variableList!=null){
-            for(MsgVariable msgVariable:variableList){
-                String value = "";
-                if(!msgVariable.getType().equals(VariableTypeEnum.INNER.getDescription())){
-                    continue;
+        if(!StringUtils.isEmpty(order.getMobile())){
+            User user =userService.findByMobile(order.getMobile());
+            if(user!=null){
+                if(StringUtils.isEmpty(user.getOpenId())){
+                    throw new RuntimeException("该用户的公众号未注到系统！");
                 }
-                if(StringUtils.isEmpty(msgVariable.getValue())){
-                    continue;
-                }else if(InnerVariable.CURRENT_TIME.getValue().equals(msgVariable.getValue())){
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    value = sdf.format(new Date());
-                }else if(InnerVariable.DATA_TIME.getValue().equals(msgVariable.getValue())){
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    value = sdf.format(order.getCreateTime());
-                }else if(InnerVariable.LOGIN_EMPLOYEE.getValue().equals(msgVariable.getValue())){
-                    value = userInfoUtil.getRealName();
-                }else if(InnerVariable.EMPLOYEE_MOBILE.getValue().equals(msgVariable.getValue())){
-                    value = userInfoUtil.getPhone();
-                }else{
-                    List<Field> fields = getAllFields(order.getClass());
-                    for (Field field : fields) {
-                        if(field.isAnnotationPresent(SendMsgField.class)){
-                            SendMsgField sendMsgField = field.getAnnotation(SendMsgField.class);
-                            if(sendMsgField.value().equals(msgVariable.getValue())){
-                                if (!field.isAccessible()) {
-                                    field.setAccessible(true);
-                                }
-                                try {
-                                    Object o = field.get(order);
-                                    if(o!=null){
-                                        value = o .toString();
+                if(StringUtils.isEmpty(order.getSchoolId())){
+                    order.setSchoolId(userInfoUtil.getSchoolId());
+                }
+                String schoolId=order.getSchoolId();
+                PublicAccount publicAccount = publicAccountService.getBySchoolId(schoolId);
+                if(publicAccount==null){
+                    throw new RuntimeException("该学校未绑定公众号！");
+                }
 
+                String callBackUrl = null;
+                if(noticeTemp!=null&&!StringUtils.isEmpty(noticeTemp.getUrl())){
+                    callBackUrl = noticeTemp.getUrl();
+                }
+                String token = wxAppService.getToken(publicAccount);
+                List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
+
+                WxMpServiceImpl wxMpService = new WxMpServiceImpl();
+                WxMpDefaultConfigImpl wxStorage = new WxMpDefaultConfigImpl();
+                wxStorage.setAppId(publicAccount.getAppId());
+                wxStorage.setSecret(publicAccount.getAppSecret());
+                wxStorage.setToken(token);
+                wxMpService.setWxMpConfigStorage(wxStorage);
+
+                WxMpTemplateMessage templateMessage = WxMpTemplateMessage.builder()
+                        .toUser(user.getOpenId())
+                        .templateId(templateId)
+                        .url(callBackUrl)
+                        .build();
+
+                if(variableList!=null){
+                    for(MsgVariable msgVariable:variableList){
+                        String value = "";
+                        if(!msgVariable.getType().equals(VariableTypeEnum.INNER.getDescription())){
+                            continue;
+                        }
+                        if(StringUtils.isEmpty(msgVariable.getValue())){
+                            continue;
+                        }else if(InnerVariable.CURRENT_TIME.getValue().equals(msgVariable.getValue())){
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            value = sdf.format(new Date());
+                        }else if(InnerVariable.DATA_TIME.getValue().equals(msgVariable.getValue())){
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            value = sdf.format(order.getCreateTime());
+                        }else if(InnerVariable.LOGIN_EMPLOYEE.getValue().equals(msgVariable.getValue())){
+                            value = userInfoUtil.getRealName();
+                        }else if(InnerVariable.EMPLOYEE_MOBILE.getValue().equals(msgVariable.getValue())){
+                            value = userInfoUtil.getPhone();
+                        }else{
+                            List<Field> fields = getAllFields(order.getClass());
+                            for (Field field : fields) {
+                                if(field.isAnnotationPresent(SendMsgField.class)){
+                                    SendMsgField sendMsgField = field.getAnnotation(SendMsgField.class);
+                                    if(sendMsgField.value().equals(msgVariable.getValue())){
+                                        if (!field.isAccessible()) {
+                                            field.setAccessible(true);
+                                        }
+                                        try {
+                                            Object o = field.get(order);
+                                            if(o!=null){
+                                                value = o .toString();
+
+                                            }
+                                        } catch (IllegalAccessException e) {
+                                            throw new RuntimeException(e);
+                                        }
                                     }
-                                } catch (IllegalAccessException e) {
-                                    throw new RuntimeException(e);
                                 }
                             }
                         }
+                        templateMessage.addData(new WxMpTemplateData(msgVariable.getVariable()
+                                .replaceFirst(".DATA",""),value));
                     }
                 }
-                templateMessage.addData(new WxMpTemplateData(msgVariable.getVariable()
-                        .replaceFirst(".DATA",""),value));
-            }
-        }
-        if(sendParam!=null){
-            Iterator<Map.Entry<String, String>> iterator = sendParam.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, String> entry = iterator.next();
-                String value = entry.getValue();
-                if(value.equals("30分钟以内")){
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                    String time1 = dateFormat.format(calendar.getTime());
-                    calendar.add(Calendar.MINUTE,30);
-                    String time2 = dateFormat.format(calendar.getTime());
-                    value = time1+" ~ "+time2;
-                }else if(value.equals("1小时以内")){
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                    String time1 = dateFormat.format(calendar.getTime());
-                    calendar.add(Calendar.HOUR_OF_DAY,1);
-                    String time2 = dateFormat.format(calendar.getTime());
-                    value = time1+" ~ "+time2;
-                }else if((value.contains("今天")||value.contains("明天"))&&value.contains("~")){
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    if(value.contains("今天")){
-                        String todayDate = dateFormat.format(calendar.getTime());
-                        value = value.replaceAll("今天",todayDate);
-                    }
-                    if(value.contains("明天")){
-                        calendar.add(Calendar.DAY_OF_MONTH, 1);
-                        String tomorrowDate = dateFormat.format(calendar.getTime());
-                        value = value.replaceAll("明天",tomorrowDate);
+                if(sendParam!=null){
+                    Iterator<Map.Entry<String, String>> iterator = sendParam.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Map.Entry<String, String> entry = iterator.next();
+                        String value = entry.getValue();
+                        if(value.equals("30分钟以内")){
+                            Calendar calendar = Calendar.getInstance();
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            String time1 = dateFormat.format(calendar.getTime());
+                            calendar.add(Calendar.MINUTE,30);
+                            String time2 = dateFormat.format(calendar.getTime());
+                            value = time1+" ~ "+time2;
+                        }else if(value.equals("1小时以内")){
+                            Calendar calendar = Calendar.getInstance();
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            String time1 = dateFormat.format(calendar.getTime());
+                            calendar.add(Calendar.HOUR_OF_DAY,1);
+                            String time2 = dateFormat.format(calendar.getTime());
+                            value = time1+" ~ "+time2;
+                        }else if((value.contains("今天")||value.contains("明天"))&&value.contains("~")){
+                            Calendar calendar = Calendar.getInstance();
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            if(value.contains("今天")){
+                                String todayDate = dateFormat.format(calendar.getTime());
+                                value = value.replaceAll("今天",todayDate);
+                            }
+                            if(value.contains("明天")){
+                                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                                String tomorrowDate = dateFormat.format(calendar.getTime());
+                                value = value.replaceAll("明天",tomorrowDate);
+                            }
+                        }
+                        templateMessage.addData(new WxMpTemplateData(entry.getKey()
+                                .replaceFirst(".DATA",""),value));
                     }
                 }
-                templateMessage.addData(new WxMpTemplateData(entry.getKey()
-                        .replaceFirst(".DATA",""),value));
+                wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
             }
         }
-        wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
 
-        if(sendMsgExt!=null){
-            sendMsgExt.execute(order,sendParam);
+        if(!StringUtils.isEmpty(noticeTemp.getSendPoint())){
+            try{
+                ISendMsgExt sendMsgExt = SpringUtil.getBean(noticeTemp.getSendPoint());
+                sendMsgExt.execute(order,sendParam);
+            }catch (Exception e){
+                log.warn(e.getMessage());
+            }
         }
     }
 

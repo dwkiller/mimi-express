@@ -2,9 +2,10 @@ package com.mimi.system.controller;
 
 import com.mimi.core.common.R;
 import com.mimi.core.common.superpackage.controller.SuperController;
-import com.mimi.system.entity.Employee;
-import com.mimi.system.service.EmployeeService;
+import com.mimi.core.system.entity.Employee;
+import com.mimi.core.system.service.ReadOnlyEmployeeService;
 import com.mimi.system.service.LoginService;
+import com.mimi.system.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import java.util.Map;
 @Tag(name = "用户管理")
 @RestController
 @RequestMapping("/employee")
-public class EmployeeController extends SuperController<EmployeeService, Employee> {
+public class EmployeeController extends SuperController<ReadOnlyEmployeeService, Employee> {
 
     @Autowired
     private LoginService loginService;
