@@ -61,11 +61,14 @@ public class MybatisQueryIntercept  implements Interceptor {
             newSql = addTenantSql(newSql,tableName,orderParam.getBusinessData(),isCount);
         }
 
+        if(orderParam.getBusinessData() instanceof HasExpressDelivery){
+            HasExpressDelivery hasExpressDelivery = (HasExpressDelivery)orderParam.getBusinessData();
+            newSql = addExpressDeliverySql(newSql,tableName,hasExpressDelivery,isCount);
+        }
+
+        newSql = addEmployeeSql(newSql,tableName,isCount);
+
         if(!isCount){
-            if(orderParam.getBusinessData() instanceof HasExpressDelivery){
-                HasExpressDelivery hasExpressDelivery = (HasExpressDelivery)orderParam.getBusinessData();
-                newSql = addExpressDeliverySql(newSql,tableName,hasExpressDelivery);
-            }
             if(orderParam.getPageNum()>0&&orderParam.getPageSize()>0){
                 newSql = addPage(newSql,orderParam);
             }
@@ -99,36 +102,53 @@ public class MybatisQueryIntercept  implements Interceptor {
         return sql + newCondition;
     }
 
-    private String addExpressDeliverySql(String sql,String tableName, HasExpressDelivery expressDelivery){
+    private String addEmployeeSql(String sql,String tableName,boolean isCount){
         String upperSql = sql.toUpperCase();
         StringBuffer newSqlBuffer = new StringBuffer(sql);
-
+        String upperTableName = " "+tableName.toUpperCase()+" ";
         int insertRsLocat = upperSql.indexOf(" FROM ");
-        int insertTableLocat = upperSql.indexOf(" FROM ")+" FROM ".length();
+
+        int insertConditionLocat = upperSql.indexOf(upperTableName)+upperTableName.length();
+        newSqlBuffer.insert(insertConditionLocat," left join T_EMPLOYEE EMPLOYEE on "+tableName+".CREATE_BY=EMPLOYEE.id ");
+        if(!isCount){
+            newSqlBuffer.insert(insertRsLocat,",EMPLOYEE.REAL_NAME as CREATE_BY_NAME ");
+        }
+        return newSqlBuffer.toString();
+    }
+
+    private String addExpressDeliverySql(String sql,String tableName, HasExpressDelivery expressDelivery,boolean isCount){
+
+        String upperSql = sql.toUpperCase();
+        StringBuffer newSqlBuffer = new StringBuffer(sql);
+        String upperTableName = " "+tableName.toUpperCase()+" ";
+        int insertRsLocat = upperSql.indexOf(" FROM ");
+
+        int insertConditionLocat = upperSql.indexOf(upperTableName)+upperTableName.length();
+        newSqlBuffer.insert(insertConditionLocat," left join T_EXPRESS_DELIVERY ED on "+tableName+".EXPRESS_DELIVERY_ID=ED.id ");
+        if(!isCount){
+            newSqlBuffer.insert(insertRsLocat,",ED.ADDRESS as EXPRESS_DELIVERY_NAME ");
+        }
         int orderByLocat = upperSql.indexOf(" ORDER BY ");
         boolean hasCondition = true;
         if(upperSql.indexOf("WHERE")<=0) {
             hasCondition = false;
         }
 
-        StringBuffer newConditionBuffer = new StringBuffer();
-        if(!hasCondition){
-            newConditionBuffer.append(" WHERE ");
-        }else{
-            newConditionBuffer.append(" AND ");
+        String expressDeliveryId = expressDelivery.getExpressDeliveryId();
+        if(!StringUtils.isEmpty(expressDeliveryId)){
+            StringBuffer newConditionBuffer = new StringBuffer();
+            if(!hasCondition){
+                newConditionBuffer.append(" WHERE ");
+            }else{
+                newConditionBuffer.append(" AND ");
+            }
+            newConditionBuffer.append(" ED.id = '"+expressDeliveryId+"'");
+            if(orderByLocat>-1){
+                newSqlBuffer.insert(orderByLocat,newConditionBuffer);
+            }else{
+                newSqlBuffer.append(newConditionBuffer);
+            }
         }
-        newConditionBuffer.append(tableName+".EXPRESS_DELIVERY_ID = ED.ID ");
-        if(!StringUtils.isEmpty(expressDelivery.getExpressDeliveryId())){
-            newConditionBuffer.append("AND ED.ID='"+expressDelivery.getExpressDeliveryId()+"'");
-        }
-        if(orderByLocat>-1){
-            newSqlBuffer.insert(orderByLocat,newConditionBuffer);
-        }else{
-            newSqlBuffer.append(newConditionBuffer);
-        }
-
-        newSqlBuffer.insert(insertTableLocat,"T_EXPRESS_DELIVERY ED,");
-        newSqlBuffer.insert(insertRsLocat,",ED.ADDRESS as EXPRESS_DELIVERY_NAME");
 
         return newSqlBuffer.toString();
     }
@@ -136,42 +156,35 @@ public class MybatisQueryIntercept  implements Interceptor {
     private String addTenantSql(String sql,String tableName,TenantEntity tenantEntity,boolean isCount){
         String upperSql = sql.toUpperCase();
         StringBuffer newSqlBuffer = new StringBuffer(sql);
-
+        String upperTableName = " "+tableName.toUpperCase()+" ";
         int insertRsLocat = upperSql.indexOf(" FROM ");
-        int insertTableLocat = upperSql.indexOf(" FROM ")+" FROM ".length();
+
+        int insertConditionLocat = upperSql.indexOf(upperTableName)+upperTableName.length();
+        newSqlBuffer.insert(insertConditionLocat," left join T_SCHOOL SCHOOL on "+tableName+".school_id=SCHOOL.id ");
+        if(!isCount){
+            newSqlBuffer.insert(insertRsLocat,",SCHOOL.NAME as SCHOOL_NAME");
+        }
         int orderByLocat = upperSql.indexOf(" ORDER BY ");
         boolean hasCondition = true;
         if(upperSql.indexOf("WHERE")<=0) {
             hasCondition = false;
         }
-        String schoolId = tenantEntity.getSchoolId();
 
-        StringBuffer newConditionBuffer = new StringBuffer();
-        if(!hasCondition){
-            newConditionBuffer.append(" WHERE ");
-        }else{
-            newConditionBuffer.append(" AND ");
-        }
-        if(!isCount){
-            String condition=StringUtils.isEmpty(schoolId)?"":" AND SCHOOL.ID = '"+schoolId+"'";
-            newConditionBuffer.append(tableName+".SCHOOL_ID = SCHOOL.ID"+condition);
-        }else{
-            if(!StringUtils.isEmpty(schoolId)){
-                newConditionBuffer.append(tableName+".SCHOOL_ID = '"+schoolId+"'");
+        String schoolId = tenantEntity.getSchoolId();
+        if(!StringUtils.isEmpty(schoolId)){
+            StringBuffer newConditionBuffer = new StringBuffer();
+            if(!hasCondition){
+                newConditionBuffer.append(" WHERE ");
+            }else{
+                newConditionBuffer.append(" AND ");
+            }
+            newConditionBuffer.append(" SCHOOL.id = '"+schoolId+"'");
+            if(orderByLocat>-1){
+                newSqlBuffer.insert(orderByLocat,newConditionBuffer);
+            }else{
+                newSqlBuffer.append(newConditionBuffer);
             }
         }
-
-        if(orderByLocat>-1){
-            newSqlBuffer.insert(orderByLocat,newConditionBuffer);
-        }else{
-            newSqlBuffer.append(newConditionBuffer);
-        }
-
-        if(!isCount){
-            newSqlBuffer.insert(insertTableLocat,"T_SCHOOL SCHOOL,");
-            newSqlBuffer.insert(insertRsLocat,",SCHOOL.NAME as SCHOOL_NAME");
-        }
-
         return newSqlBuffer.toString();
     }
 

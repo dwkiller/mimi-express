@@ -38,7 +38,7 @@ public interface OrderInMapper extends OrderMapper<OrderIn>{
 
     @Select({"<script>",
             "SELECT count(0) FROM t_order_in",
-            BASE_CONDITION,CONDITION,EXPRESS_DELIVERY_CONDITION,TIME_CONDITION,
+            BASE_CONDITION,CONDITION,TIME_CONDITION,
             "</script>"
     })
     @Override

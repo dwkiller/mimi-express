@@ -39,6 +39,10 @@ public abstract class BaseEntity implements Serializable {
 	@TableField(fill = FieldFill.INSERT)
 	private String createBy;
 
+	@Schema(description = "创建人名字")
+	@TableField(exist = false)
+	private String createByName;
+
 	/**
 	 * 创建时间
 	 */
