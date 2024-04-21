@@ -1,5 +1,6 @@
 package com.mimi.message.ext;
 
+import com.mimi.core.express.entity.config.MsgVariable;
 import com.mimi.core.express.entity.config.PayAccount;
 import com.mimi.core.express.entity.order.OrderAgent;
 import com.mimi.core.express.service.PayAccountService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -23,7 +25,7 @@ public class AgentFail implements ISendMsgExt<OrderAgent> {
     private PayAccountService payAccountService;
 
     @Override
-    public void execute(OrderAgent order, Map<String, String> sendParam) {
+    public void execute(OrderAgent order, Map<String, String> sendParam, List<MsgVariable> msgVariableList) {
         //退款
         String schoolId = order.getSchoolId();
 

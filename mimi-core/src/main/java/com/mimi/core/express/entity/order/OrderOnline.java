@@ -2,6 +2,7 @@ package com.mimi.core.express.entity.order;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.mimi.core.common.annotation.SendMsgField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,6 +36,7 @@ public class OrderOnline extends BaseOrder{
     private Short done;
 
     @Schema(name = "失败原因")
+    @SendMsgField(value="#{FAIL_REASON}",text="失败原因")
     private String failReason;
 
     @Schema(name = "是否已发失败消息")

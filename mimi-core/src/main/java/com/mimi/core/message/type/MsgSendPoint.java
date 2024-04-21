@@ -1,4 +1,4 @@
-package com.mimi.core.express.type;
+package com.mimi.core.message.type;
 
 public enum MsgSendPoint {
 

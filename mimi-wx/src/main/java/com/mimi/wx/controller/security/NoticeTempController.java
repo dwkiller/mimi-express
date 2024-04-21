@@ -4,7 +4,7 @@ import com.mimi.core.common.R;
 import com.mimi.core.common.superpackage.controller.ReadOnlySuperController;
 import com.mimi.core.express.entity.config.NoticeTemp;
 import com.mimi.core.express.service.NoticeTempService;
-import com.mimi.core.express.type.MsgSendPoint;
+import com.mimi.core.message.type.MsgSendPoint;
 import com.mimi.core.message.vo.SendPointVo;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

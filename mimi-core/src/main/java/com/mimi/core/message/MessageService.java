@@ -57,6 +57,7 @@ public class MessageService<T extends BaseOrder> {
 
     public void sendMsg(String templateId, T order, Map<String,String> sendParam) throws WxErrorException {
         NoticeTemp noticeTemp = noticeTempService.findByTemplateId(templateId);
+        List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
         if(!StringUtils.isEmpty(order.getMobile())){
             User user =userService.findByMobile(order.getMobile());
             if(user!=null){
@@ -77,7 +78,7 @@ public class MessageService<T extends BaseOrder> {
                     callBackUrl = noticeTemp.getUrl();
                 }
                 String token = wxAppService.getToken(publicAccount);
-                List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
+                variableList = msgVariableService.findByTemplateId(templateId);
 
                 WxMpServiceImpl wxMpService = new WxMpServiceImpl();
                 WxMpDefaultConfigImpl wxStorage = new WxMpDefaultConfigImpl();
@@ -179,7 +180,7 @@ public class MessageService<T extends BaseOrder> {
         if(!StringUtils.isEmpty(noticeTemp.getSendPoint())){
             try{
                 ISendMsgExt sendMsgExt = SpringUtil.getBean(noticeTemp.getSendPoint());
-                sendMsgExt.execute(order,sendParam);
+                sendMsgExt.execute(order,sendParam,variableList);
             }catch (Exception e){
                 log.warn(e.getMessage());
             }
