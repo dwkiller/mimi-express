@@ -23,6 +23,9 @@ public interface OrderMapper<T extends BaseOrder>  extends SuperMapper<T> {
                     "</if>"+
                     "<if test='nullMobile != null'>"+
                     " AND mobile is null"+
+                    "</if>"+
+                    "<if test='orderNumLike != null'>"+
+                    " AND order_num like  \"%\"#{orderNumLike}\"%\""+
                     "</if>";
 
     public static final String DONE_CONDITION= "<if test='businessData.done != null'>"+

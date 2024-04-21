@@ -1,6 +1,7 @@
 package com.mimi.core.common.superpackage.intercept;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.mimi.core.common.superpackage.base.BaseEntity;
 import com.mimi.core.common.superpackage.base.TenantEntity;
 import com.mimi.core.common.superpackage.util.ObjectUtil;
 import com.mimi.core.express.entity.order.HasExpressDelivery;
@@ -57,16 +58,12 @@ public class MybatisQueryIntercept  implements Interceptor {
 
         newSql = newSql.replaceAll(" create_time"," "+tableName+".create_time");
 
-        if(orderParam.getBusinessData() instanceof TenantEntity){
-            newSql = addTenantSql(newSql,tableName,orderParam.getBusinessData(),isCount);
-        }
-
+        newSql = addTenantSql(newSql,tableName,orderParam.getBusinessData(),isCount);
         if(orderParam.getBusinessData() instanceof HasExpressDelivery){
             HasExpressDelivery hasExpressDelivery = (HasExpressDelivery)orderParam.getBusinessData();
             newSql = addExpressDeliverySql(newSql,tableName,hasExpressDelivery,isCount);
         }
-
-        newSql = addEmployeeSql(newSql,tableName,isCount);
+        newSql = addEmployeeSql(newSql,tableName,orderParam.getBusinessData(),isCount);
 
         if(!isCount){
             if(orderParam.getPageNum()>0&&orderParam.getPageSize()>0){
@@ -102,33 +99,51 @@ public class MybatisQueryIntercept  implements Interceptor {
         return sql + newCondition;
     }
 
-    private String addEmployeeSql(String sql,String tableName,boolean isCount){
+    private String addEmployeeSql(String sql, String tableName, BaseEntity baseEntity, boolean isCount){
         String upperSql = sql.toUpperCase();
         StringBuffer newSqlBuffer = new StringBuffer(sql);
         String upperTableName = " "+tableName.toUpperCase()+" ";
         int insertRsLocat = upperSql.indexOf(" FROM ");
-
         int insertConditionLocat = upperSql.indexOf(upperTableName)+upperTableName.length();
+        int orderByLocat = upperSql.indexOf(" ORDER BY ");
+
+        boolean hasCondition = true;
+        if(upperSql.indexOf("WHERE")<=0) {
+            hasCondition = false;
+        }
+
+        String createBy = baseEntity.getCreateBy();
+        if(!StringUtils.isEmpty(createBy)){
+            StringBuffer newConditionBuffer = new StringBuffer();
+            if(!hasCondition){
+                newConditionBuffer.append(" WHERE ");
+            }else{
+                newConditionBuffer.append(" AND ");
+            }
+            newConditionBuffer.append(" EMPLOYEE.id = '"+createBy+"'");
+            if(orderByLocat>-1){
+                newSqlBuffer.insert(orderByLocat,newConditionBuffer);
+            }else{
+                newSqlBuffer.append(newConditionBuffer);
+            }
+        }
+
         newSqlBuffer.insert(insertConditionLocat," left join T_EMPLOYEE EMPLOYEE on "+tableName+".CREATE_BY=EMPLOYEE.id ");
         if(!isCount){
             newSqlBuffer.insert(insertRsLocat,",EMPLOYEE.REAL_NAME as CREATE_BY_NAME ");
         }
+
         return newSqlBuffer.toString();
     }
 
     private String addExpressDeliverySql(String sql,String tableName, HasExpressDelivery expressDelivery,boolean isCount){
-
         String upperSql = sql.toUpperCase();
         StringBuffer newSqlBuffer = new StringBuffer(sql);
         String upperTableName = " "+tableName.toUpperCase()+" ";
         int insertRsLocat = upperSql.indexOf(" FROM ");
-
         int insertConditionLocat = upperSql.indexOf(upperTableName)+upperTableName.length();
-        newSqlBuffer.insert(insertConditionLocat," left join T_EXPRESS_DELIVERY ED on "+tableName+".EXPRESS_DELIVERY_ID=ED.id ");
-        if(!isCount){
-            newSqlBuffer.insert(insertRsLocat,",ED.ADDRESS as EXPRESS_DELIVERY_NAME ");
-        }
         int orderByLocat = upperSql.indexOf(" ORDER BY ");
+
         boolean hasCondition = true;
         if(upperSql.indexOf("WHERE")<=0) {
             hasCondition = false;
@@ -149,6 +164,10 @@ public class MybatisQueryIntercept  implements Interceptor {
                 newSqlBuffer.append(newConditionBuffer);
             }
         }
+        newSqlBuffer.insert(insertConditionLocat," left join T_EXPRESS_DELIVERY ED on "+tableName+".EXPRESS_DELIVERY_ID=ED.id ");
+        if(!isCount){
+            newSqlBuffer.insert(insertRsLocat,",ED.ADDRESS as EXPRESS_DELIVERY_NAME ");
+        }
 
         return newSqlBuffer.toString();
     }
@@ -158,13 +177,9 @@ public class MybatisQueryIntercept  implements Interceptor {
         StringBuffer newSqlBuffer = new StringBuffer(sql);
         String upperTableName = " "+tableName.toUpperCase()+" ";
         int insertRsLocat = upperSql.indexOf(" FROM ");
-
         int insertConditionLocat = upperSql.indexOf(upperTableName)+upperTableName.length();
-        newSqlBuffer.insert(insertConditionLocat," left join T_SCHOOL SCHOOL on "+tableName+".school_id=SCHOOL.id ");
-        if(!isCount){
-            newSqlBuffer.insert(insertRsLocat,",SCHOOL.NAME as SCHOOL_NAME");
-        }
         int orderByLocat = upperSql.indexOf(" ORDER BY ");
+
         boolean hasCondition = true;
         if(upperSql.indexOf("WHERE")<=0) {
             hasCondition = false;
@@ -184,6 +199,11 @@ public class MybatisQueryIntercept  implements Interceptor {
             }else{
                 newSqlBuffer.append(newConditionBuffer);
             }
+        }
+
+        newSqlBuffer.insert(insertConditionLocat," left join T_SCHOOL SCHOOL on "+tableName+".school_id=SCHOOL.id ");
+        if(!isCount){
+            newSqlBuffer.insert(insertRsLocat,",SCHOOL.NAME as SCHOOL_NAME");
         }
         return newSqlBuffer.toString();
     }

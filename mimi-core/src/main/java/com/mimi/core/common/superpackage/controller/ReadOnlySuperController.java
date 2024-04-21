@@ -2,11 +2,14 @@ package com.mimi.core.common.superpackage.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mimi.core.common.R;
+import com.mimi.core.common.superpackage.base.BaseEntity;
 import com.mimi.core.common.superpackage.param.ListParam;
 import com.mimi.core.common.superpackage.param.PageParam;
 import com.mimi.core.common.superpackage.service.ISuperService;
 import com.mimi.core.express.entity.order.HasExpressDelivery;
 import com.mimi.core.express.service.ExpressDeliveryService;
+import com.mimi.core.system.entity.Employee;
+import com.mimi.core.system.service.ReadOnlyEmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ public abstract class ReadOnlySuperController<M extends ISuperService<T>, T> {
 
     @Autowired
     private ExpressDeliveryService expressDeliveryService;
+
+    @Autowired
+    private ReadOnlyEmployeeService readOnlyEmployeeService;
 
     @Operation(summary = "查询全部实体")
     @GetMapping("")
@@ -43,6 +49,15 @@ public abstract class ReadOnlySuperController<M extends ISuperService<T>, T> {
             HasExpressDelivery hasExpressDelivery = (HasExpressDelivery)t;
             if(!StringUtils.isEmpty(hasExpressDelivery.getExpressDeliveryId())){
                 hasExpressDelivery.setExpressDeliveryName(expressDeliveryService.translateById(hasExpressDelivery.getExpressDeliveryId()));
+            }
+        }
+        if(t instanceof BaseEntity){
+            BaseEntity baseEntity = (BaseEntity)t;
+            if(!StringUtils.isEmpty(baseEntity.getCreateBy())){
+                Employee employee = readOnlyEmployeeService.getUserInfo(baseEntity.getCreateBy());
+                if(employee!=null){
+                    baseEntity.setCreateByName(employee.getRealName());
+                }
             }
         }
         return R.success(t);

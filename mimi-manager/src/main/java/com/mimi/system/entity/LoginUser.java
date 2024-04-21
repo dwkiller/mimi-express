@@ -1,6 +1,7 @@
 package com.mimi.system.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.mimi.core.system.entity.Employee;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

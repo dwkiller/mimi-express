@@ -21,4 +21,5 @@ public class OrderParam<T extends BaseOrder> {
     private T businessData;
     private String orderBy;
     private String desc;
+    private String orderNumLike;
 }

@@ -1,4 +1,4 @@
-package com.mimi.system.entity;
+package com.mimi.core.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;

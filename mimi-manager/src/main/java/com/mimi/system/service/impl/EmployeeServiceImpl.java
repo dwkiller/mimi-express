@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mimi.core.common.exception.MimiException;
 import com.mimi.core.common.superpackage.service.impl.TenantServiceImpl;
 import com.mimi.core.common.util.UserInfoUtil;
-import com.mimi.system.entity.Employee;
+import com.mimi.core.system.entity.Employee;
+import com.mimi.core.system.mapper.EmployeeMapper;
 import com.mimi.system.entity.LoginUser;
-import com.mimi.system.mapper.EmployeeMapper;
 import com.mimi.system.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,19 +17,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-
 @Service
 public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Employee> implements EmployeeService, UserDetailsService {
 
     @Autowired
     private UserInfoUtil userInfoUtil;
-
-    @Override
-    public Employee getUserInfo(String userId) {
-        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Employee::getId,userId);
-        return getOne(wrapper);
-    }
 
     @Override
     public boolean save(Employee user) {
@@ -71,5 +63,12 @@ public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Emplo
         String encode = passwordEncoder.encode(newPassword);
         byId.setPassword(encode);
         return super.updateById(byId);
+    }
+
+    @Override
+    public Employee getUserInfo(String userId) {
+        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Employee::getId,userId);
+        return getOne(wrapper);
     }
 }
