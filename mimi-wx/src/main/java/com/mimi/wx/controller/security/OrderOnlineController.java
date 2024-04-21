@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @Slf4j
 @Tag(name = "投诉运单")
 @RestController
-@RequestMapping("/orderOnline")
+@RequestMapping("/security/orderOnline")
 public class OrderOnlineController extends ReadOnlySuperController<OrderOnlineService, OrderOnline> {
 
     @Operation(summary = "新增实体")
