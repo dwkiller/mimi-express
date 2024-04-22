@@ -28,7 +28,7 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
 
     @Override
     public void sendMsg(String templateId, T order, Map<String,String> param,Integer delaySend) throws Exception {
-        if(findByOrderNum(order.getOrderNum())==null){
+        if(order.getId()==null){
             this.save(order);
         }
         if(delaySend==null||delaySend.intValue()<=0){

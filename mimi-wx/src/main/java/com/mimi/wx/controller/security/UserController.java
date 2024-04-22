@@ -176,11 +176,11 @@ public class UserController {
 
         if(!StringUtils.isEmpty(orderAgent.getInsuranceId())){
             Insurance insurance = insuranceService.getById(orderAgent.getInsuranceId());
-            money.add(insurance.getPrice());
+            money = money.add(insurance.getPrice());
         }
 
         if(orderAgent.getIndemnify()!=null&&orderAgent.getIndemnify().shortValue()!=0){
-            money.add(new BigDecimal(0.3));
+            money = money.add(new BigDecimal(0.3));
         }
 
         orderAgent.setPayOrder(UUID.randomUUID().toString().replaceAll("-",""));
