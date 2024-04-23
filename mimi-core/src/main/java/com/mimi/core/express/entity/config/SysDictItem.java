@@ -47,8 +47,8 @@ public class SysDictItem{
     /**
      * 所属字典类id
      */
-    @Schema(description = "所属字典类Type")
-    private String type;
+    @Schema(description = "所属字典类Id")
+    private String dictId;
 
     /**
      * 所属字典类id
@@ -56,5 +56,8 @@ public class SysDictItem{
     @TableField(exist = false)
     @Schema(description = "所属字典类TypeName")
     private String typeName;
+
+    @TableField(exist = false)
+    private String type;
 
 }

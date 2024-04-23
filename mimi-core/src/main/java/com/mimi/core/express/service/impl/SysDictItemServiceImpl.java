@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +43,6 @@ public class SysDictItemServiceImpl extends ServiceImpl<SysDictItemMapper, SysDi
     @Transactional
     public void removeDictItem(String id) {
         // 根据ID查询字典ID
-        SysDictItem dictItem = this.getById(id);
         this.removeById(id);
     }
 
@@ -62,12 +62,45 @@ public class SysDictItemServiceImpl extends ServiceImpl<SysDictItemMapper, SysDi
     /**
      * 根据type查字典项列表
      *
-     * @param type
+     * @param dictId
      * @return
      */
     @Override
+    public List<SysDictItem> getListByDictId(String dictId) {
+        return list(Wrappers.<SysDictItem>query().lambda().eq(SysDictItem::getDictId, dictId));
+    }
+
+    @Override
+    public List<SysDictItem> getListByDictAndStartLabel(String dictId, String startLabel) {
+        return list(Wrappers.<SysDictItem>query().lambda().eq(SysDictItem::getDictId, dictId)
+        .likeLeft(SysDictItem::getLabel,startLabel));
+    }
+
+    @Override
+    public void removeByByDictAndStartLabel(String dictId, String startLabel) {
+        remove(Wrappers.<SysDictItem>update().lambda().eq(SysDictItem::getDictId, dictId)
+                .likeLeft(SysDictItem::getLabel,startLabel));
+    }
+
+    @Override
+    public List<SysDictItem> getListByDictAndLabel(String dictId, String label) {
+        return list(Wrappers.<SysDictItem>query().lambda().eq(SysDictItem::getDictId, dictId)
+                .eq(SysDictItem::getLabel,label));
+    }
+
+    @Override
+    public void removeByByDictAndLabel(String dictId, String label) {
+        remove(Wrappers.<SysDictItem>update().lambda().eq(SysDictItem::getDictId, dictId)
+                .eq(SysDictItem::getLabel,label));
+    }
+
+    @Override
     public List<SysDictItem> getListByType(String type) {
-        return list(Wrappers.<SysDictItem>query().lambda().eq(SysDictItem::getType, type));
+        SysDict sysDict = dictService.getByType(type);
+        if(sysDict==null){
+            return null;
+        }
+        return getListByDictId(sysDict.getId());
     }
 
     /**
@@ -87,18 +120,18 @@ public class SysDictItemServiceImpl extends ServiceImpl<SysDictItemMapper, SysDi
     @Override
     public List<SysDictItem> getAllDictItem() {
         List<SysDictItem> dictItems = null;
+
         String schoolId = userInfoUtil.getSchoolId();
         if(StringUtils.isBlank(schoolId))
         {
             dictItems = this.list();
-            List<String> typeList = dictItems.stream().map(SysDictItem::getType).collect(Collectors.toList());
-            List<SysDict> sysDictList = dictService.getByTypes(typeList);
-            for (SysDictItem dictItem : dictItems) {
-                for (SysDict sysDict : sysDictList) {
-                    if (dictItem.getType().equals(sysDict.getType())) {
-                        dictItem.setType(sysDict.getType());
-                        dictItem.setTypeName(sysDict.getTypeName());
-                    }
+            List<SysDict> sysDictList = dictService.list();
+            for(SysDictItem sysDictItem:dictItems){
+                Optional<SysDict> optional = sysDictList.stream().filter(
+                        d->d.getId().equals(sysDictItem.getDictId())).findFirst();
+                if(optional.isPresent()){
+                    sysDictItem.setType(optional.get().getType());
+                    sysDictItem.setTypeName(optional.get().getTypeName());
                 }
             }
         }else{

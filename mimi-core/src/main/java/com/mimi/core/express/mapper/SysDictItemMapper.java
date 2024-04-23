@@ -28,7 +28,7 @@ public interface SysDictItemMapper extends SuperMapper<SysDictItem> {
     @Delete(" delete from sys_dict_item ")
     int deleteAllDicItem();
 
-    @Select("select sdi.*,sd.type_name from sys_dict_item sdi,sys_dict sd where sdi.type=sd.type and sd.school_id=#{schoolId}")
+    @Select("select sdi.*,sd.type,sd.type_name from sys_dict_item sdi,sys_dict sd where sdi.type=sd.type and sd.school_id=#{schoolId}")
     List<SysDictItem> getAllItem(@Param("schoolId") String schoolId);
 
 }

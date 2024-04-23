@@ -61,6 +61,13 @@ public class SysDictServiceImpl extends TenantServiceImpl<SysDictMapper, SysDict
         return this.list(sysDictLambdaQueryWrapper);
     }
 
+    @Override
+    public SysDict getByType(String type){
+        LambdaQueryWrapper<SysDict> sysDictLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        sysDictLambdaQueryWrapper.eq(SysDict::getType,type);
+        return this.getOne(sysDictLambdaQueryWrapper);
+    }
+
     /**
      * 新增字典
      *

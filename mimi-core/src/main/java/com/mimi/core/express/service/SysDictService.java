@@ -61,4 +61,6 @@ public interface SysDictService extends ISuperService<SysDict> {
      */
     List<SysDict> getByTypes(List<String> types);
 
+    SysDict getByType(String type);
+
 }

@@ -45,13 +45,22 @@ public interface SysDictItemService extends IService<SysDictItem> {
     void updateDictItem(SysDictItem item);
 
     /**
-     * 根据type查字典项列表
+     * 根据字典ID查字典项列表
      *
-     * @param type
+     * @param dictId
      * @return
      */
-    List<SysDictItem> getListByType(String type);
+    List<SysDictItem> getListByDictId(String dictId);
 
+    List<SysDictItem> getListByDictAndStartLabel(String dictId,String startLabel);
+
+    void removeByByDictAndStartLabel(String dictId,String startLabel);
+
+    List<SysDictItem> getListByDictAndLabel(String dictId,String label);
+
+    void removeByByDictAndLabel(String dictId,String label);
+
+    List<SysDictItem> getListByType(String type);
     /**
      * 新增字段项
      *

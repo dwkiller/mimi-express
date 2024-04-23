@@ -44,6 +44,7 @@ public class SchoolServiceImpl extends SuperServiceImpl<SchoolMapper, School> im
         createDict(school,"complaintContent","投诉内容");
         createDict(school,"expressCompany","快递公司");
         createDict(school,"dooToDoorPickup","上门取件时间");
+        createDict(school,"userAddress","用户地址");
         createPricing(school,1,new BigDecimal(2),new BigDecimal(0),"小于1个鞋盒");
         createPricing(school,3,new BigDecimal(4),new BigDecimal(0),"小于2个鞋盒");
         createPricing(school,6,new BigDecimal(6),new BigDecimal(0),"2-4个鞋盒");
