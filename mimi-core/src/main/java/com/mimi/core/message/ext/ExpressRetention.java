@@ -22,7 +22,10 @@ public class ExpressRetention implements ISendMsgExt<OrderIn> {
 
     @Override
     public void execute(OrderIn order, Map<String, String> sendParam, List<MsgVariable> msgVariableList) {
-        order.setSendMsg((short)1);
+        if(!StringUtils.isEmpty(order.getMobile())){
+            order.setSendMsg((short)1);
+        }
+
         if(msgVariableList!=null){
             Optional<String> optional = msgVariableList.stream().filter(v->"更新现取货号".equals(v.getTag())).map(MsgVariable::getVariable).findFirst();
             if(optional.isPresent()){
