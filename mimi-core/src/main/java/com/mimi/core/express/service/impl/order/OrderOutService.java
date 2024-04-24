@@ -2,9 +2,11 @@ package com.mimi.core.express.service.impl.order;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.FileUtil;
+import com.mimi.core.common.util.UserInfoUtil;
 import com.mimi.core.express.entity.order.OrderOut;
 import com.mimi.core.express.mapper.order.OrderOutMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,10 @@ import java.util.UUID;
 
 @Service
 public class OrderOutService extends BaseOrderService<OrderOutMapper, OrderOut> {
+
+    @Autowired
+    protected UserInfoUtil userInfoUtil;
+
     @Override
     public String type() {
         return "出库单";
@@ -35,7 +41,10 @@ public class OrderOutService extends BaseOrderService<OrderOutMapper, OrderOut> 
                 Base64.decodeToFile(order.getFileMd5(),new File(filePath+File.separator+order.getFile()));
             }
             order.setFileMd5(null);
+            order.setUserName(userInfoUtil.getRealName());
+            order.setMobile(userInfoUtil.getPhone());
             orderOutList.add(order);
+
         }
         return super.saveBatch(orderOutList);
     }
