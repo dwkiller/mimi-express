@@ -6,6 +6,7 @@ import com.mimi.core.common.superpackage.service.impl.TenantServiceImpl;
 import com.mimi.core.common.util.UserInfoUtil;
 import com.mimi.core.system.entity.Employee;
 import com.mimi.core.system.mapper.EmployeeMapper;
+import com.mimi.core.system.service.impl.ReadonlyEmployeeServiceImpl;
 import com.mimi.system.entity.LoginUser;
 import com.mimi.system.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Employee> implements EmployeeService, UserDetailsService {
+public class EmployeeServiceImpl extends ReadonlyEmployeeServiceImpl implements EmployeeService, UserDetailsService {
 
     @Autowired
     private UserInfoUtil userInfoUtil;
@@ -31,12 +32,11 @@ public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Emplo
         if (null != one) {
             throw new MimiException("该用户名已被使用：" + user.getUserName());
         }
-        String password = user.getPassword();
+        String password ="123456";
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encode = passwordEncoder.encode(password);
         user.setPassword(encode);
         return super.save(user);
-
     }
 
     @Override
@@ -44,7 +44,7 @@ public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Emplo
         //根据用户名查询用户信息
         LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Employee::getUserName, username);
-        Employee user = baseMapper.selectOne(wrapper);
+        Employee user = super.getOne(wrapper);
         //如果查询不到数据就通过抛出异常来给出提示
         if (Objects.isNull(user)) {
             throw new RuntimeException("用户名或密码错误");
@@ -56,19 +56,27 @@ public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Emplo
     }
 
     @Override
-    public boolean updatePassword(String newPassword) {
+    public boolean updatePassword(String password,String newPassword) {
         String userId = userInfoUtil.getUserId();
         Employee byId = this.getById(userId);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String oldEncode = passwordEncoder.encode(password);
+        if(!oldEncode.equals(byId.getPassword())){
+            throw new RuntimeException("原密码输入错误!");
+        }
         String encode = passwordEncoder.encode(newPassword);
         byId.setPassword(encode);
         return super.updateById(byId);
     }
 
     @Override
-    public Employee getUserInfo(String userId) {
-        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Employee::getId,userId);
-        return getOne(wrapper);
+    public boolean resetPassword() {
+        String userId = userInfoUtil.getUserId();
+        Employee employee = this.getById(userId);
+        String password ="123456";
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encode = passwordEncoder.encode(password);
+        employee.setPassword(encode);
+        return super.updateById(employee);
     }
 }

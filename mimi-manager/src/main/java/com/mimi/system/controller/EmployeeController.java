@@ -43,8 +43,9 @@ public class EmployeeController extends SuperController<ReadOnlyEmployeeService,
 
     @GetMapping("/updatePassword")
     @Operation(summary = "修改密码")
-    public R updatePassword(@RequestParam(name = "newPassword")String newPassword){
-        return R.success(employeeService.updatePassword(newPassword));
+    public R updatePassword(@RequestParam(name = "password")String password,
+                            @RequestParam(name = "newPassword")String newPassword){
+        return R.success(employeeService.updatePassword(password,newPassword));
     }
 
     @GetMapping("/getUserInfo")
