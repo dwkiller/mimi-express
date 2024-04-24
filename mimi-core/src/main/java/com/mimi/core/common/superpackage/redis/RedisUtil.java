@@ -162,4 +162,8 @@ public class RedisUtil{
 		return so.members(key);
 	}
 
+	public void expire(String key,long expireTime){
+		redisTemplate.expire(key,expireTime,TimeUnit.SECONDS);
+	}
+
 }

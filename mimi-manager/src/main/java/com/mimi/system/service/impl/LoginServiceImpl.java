@@ -46,7 +46,7 @@ public class LoginServiceImpl implements LoginService {
         String userId = loginUser.getUser().getId().toString();
         String jwt = JwtUtil.createJWT(userId);
         //authenticate存入redis
-        cacheManager.setValue("login:"+userId,loginUser);
+        cacheManager.setValue("login:"+userId,loginUser,3600);
         //redisCache.setCacheObject("login:"+userId,loginUser);
         //cache.put("login:"+userId,loginUser);
         //把token响应给前端

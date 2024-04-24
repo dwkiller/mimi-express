@@ -27,5 +27,7 @@ public interface CacheManager {
 	public void setSetValue(String key,Object... o);
 	
 	public Set<Object> getSetValue(String key);
+
+	public void expire(String key,long expireTime);
 	
 }

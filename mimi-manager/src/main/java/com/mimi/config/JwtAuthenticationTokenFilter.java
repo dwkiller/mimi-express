@@ -58,6 +58,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if(Objects.isNull(loginUser)){
             throw new RuntimeException("用户未登录");
         }
+        cacheManager.expire(redisKey,3600);
+
         //存入SecurityContextHolder
         //TODO 获取权限信息封装到Authentication中
         UsernamePasswordAuthenticationToken authenticationToken =

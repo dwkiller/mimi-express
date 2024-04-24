@@ -60,8 +60,7 @@ public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Emplo
         String userId = userInfoUtil.getUserId();
         Employee byId = this.getById(userId);
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String oldEncode = passwordEncoder.encode(password);
-        if(!oldEncode.equals(byId.getPassword())){
+        if(!passwordEncoder.matches(password,byId.getPassword())){
             throw new RuntimeException("原密码输入错误!");
         }
         String encode = passwordEncoder.encode(newPassword);
