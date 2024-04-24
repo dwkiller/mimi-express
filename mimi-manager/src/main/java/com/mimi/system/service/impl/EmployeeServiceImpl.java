@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class EmployeeServiceImpl extends ReadonlyEmployeeServiceImpl implements EmployeeService, UserDetailsService {
+public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Employee> implements EmployeeService, UserDetailsService {
 
     @Autowired
     private UserInfoUtil userInfoUtil;
@@ -78,5 +78,12 @@ public class EmployeeServiceImpl extends ReadonlyEmployeeServiceImpl implements 
         String encode = passwordEncoder.encode(password);
         employee.setPassword(encode);
         return super.updateById(employee);
+    }
+
+    @Override
+    public Employee getUserInfo(String userId) {
+        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Employee::getId,userId);
+        return getOne(wrapper);
     }
 }
