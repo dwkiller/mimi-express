@@ -44,7 +44,7 @@ public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Emplo
         //根据用户名查询用户信息
         LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Employee::getUserName, username);
-        Employee user = super.getOne(wrapper);
+        Employee user = superMapper.selectOne(wrapper);
         //如果查询不到数据就通过抛出异常来给出提示
         if (Objects.isNull(user)) {
             throw new RuntimeException("用户名或密码错误");
