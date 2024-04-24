@@ -48,6 +48,12 @@ public class EmployeeController extends SuperController<ReadOnlyEmployeeService,
         return R.success(employeeService.updatePassword(password,newPassword));
     }
 
+    @GetMapping("/resetPassword")
+    @Operation(summary = "重置密码")
+    public R updatePassword(@RequestParam(name = "id")String id){
+        return R.success(employeeService.resetPassword(id));
+    }
+
     @GetMapping("/getUserInfo")
     @Operation(summary = "根据用户id获取用户信息")
     public R getUserInfo(@RequestParam(name = "userId")String userId){

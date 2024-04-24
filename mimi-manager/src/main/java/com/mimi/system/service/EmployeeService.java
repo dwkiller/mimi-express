@@ -10,6 +10,6 @@ public interface EmployeeService extends ISuperService<Employee> {
 
     boolean updatePassword(String password,String newPassword);
 
-    boolean resetPassword();
+    boolean resetPassword(String id);
 
 }

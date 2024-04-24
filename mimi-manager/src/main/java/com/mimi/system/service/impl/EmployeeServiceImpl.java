@@ -70,9 +70,8 @@ public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Emplo
     }
 
     @Override
-    public boolean resetPassword() {
-        String userId = userInfoUtil.getUserId();
-        Employee employee = this.getById(userId);
+    public boolean resetPassword(String id) {
+        Employee employee = this.getById(id);
         String password ="123456";
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encode = passwordEncoder.encode(password);
