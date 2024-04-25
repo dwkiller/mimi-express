@@ -115,4 +115,9 @@ public class RedisCacheManager implements CacheManager {
 	public Set<Object> getSetValue(String key) {
 		return redisUtil.getSetValue(key);
 	}
+
+	@Override
+	public void expire(String key, long expireTime) {
+		redisUtil.expire(key,expireTime);
+	}
 }

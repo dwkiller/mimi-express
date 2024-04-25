@@ -63,6 +63,7 @@ public abstract class TenantServiceImpl<M extends SuperMapper<T>, T extends Tena
         if(entityList!=null){
             for(T t: entityList){
                 addSchool(t);
+                t.setCreateTime(new Date());
             }
         }
         return super.saveBatch(entityList);
