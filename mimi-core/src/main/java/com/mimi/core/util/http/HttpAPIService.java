@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,9 @@ public class HttpAPIService {
 		return sslHttpClient;
 	}
 
+	public HttpAPIService(RequestConfig config) {
+		this.config = config;
+	}
 
 	public HttpAPIService(String appCert,String mchId,RequestConfig config) throws Exception {
 		this.config = config;
@@ -253,11 +255,4 @@ public class HttpAPIService {
 		CloseableHttpResponse response = httpClient.execute(httpPost);
 		return new HttpResult(response.getStatusLine().getStatusCode(), EntityUtils.toString(response.getEntity()));
 	}
-	
-	public HttpResult doPost(String url) throws Exception {
-		return this.doPost(url, new HashMap<String,Object>());    
-	}	
-	
-	
-
 }

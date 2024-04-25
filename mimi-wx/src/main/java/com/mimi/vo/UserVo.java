@@ -8,4 +8,5 @@ public class UserVo {
 
     private User user;
     private TokenVo tokenVo;
+    private String checkCode;
 }

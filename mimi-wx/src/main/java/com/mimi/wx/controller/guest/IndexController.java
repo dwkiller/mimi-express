@@ -1,32 +1,36 @@
 package com.mimi.wx.controller.guest;
 
 
+import cn.hutool.Hutool;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.mimi.core.common.R;
 import com.mimi.core.common.superpackage.redis.CacheManager;
-import com.mimi.core.common.util.RedisCache;
 import com.mimi.core.express.entity.config.PublicAccount;
 import com.mimi.core.express.entity.user.User;
 import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.core.express.service.UserService;
-import com.mimi.interceptor.UserInterceptor;
+import com.mimi.core.util.ALiYunSMSUtil;
 import com.mimi.vo.TokenVo;
 import com.mimi.vo.UserVo;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.constraints.Pattern;
 
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Tag(name = "用户管理")
 @RestController
 @RequestMapping("/guest/index")
 public class IndexController {
+
+    public static final String CHEKC_CODE="checkCode:";
 
     @Autowired
     private UserService userService;
@@ -37,16 +41,49 @@ public class IndexController {
     @Value("${kd.wx.code2Session.url}")
     private String code2SessionUrl;
 
+    @Value("${kd.regist.checkcode:SMS_286280162}")
+    private String registCheckCode;
+
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    private ALiYunSMSUtil aLiYunSMSUtil;
 
     @GetMapping("/test")
     public R<String> test(){
         return R.success("test");
     }
 
+    @PostMapping("/getCheckCode")
+    public R<?> getCheckCode(@Pattern(regexp = "^1[3-9]\\d{9}$",message="请输入正确的手机号") String mobile){
+        String key = CHEKC_CODE+mobile;
+        if(cacheManager.exists(key)){
+            return R.error("请不要频繁的发送验证码!");
+        }
+        String code = RandomUtil.randomNumbers(4);
+        JSONObject param = new JSONObject();
+        param.put("code",code);
+        aLiYunSMSUtil.sendSMS(registCheckCode,mobile,param);
+        cacheManager.setValue(key,code,300);
+        return R.success();
+    }
+
+
     @PostMapping("/regist")
     public R<TokenVo> regist(@RequestBody UserVo userVo){
+        if(StringUtils.isEmpty(userVo.getCheckCode())){
+            return R.error("请填写短信验证码!");
+        }
+        String key = CHEKC_CODE+userVo.getUser().getMobile();
+        if(!cacheManager.exists(key)){
+            return R.error("您的验证码已失效，请重新发送验证码！");
+        }
+        String checkCode = (String) cacheManager.getValue(key);
+        if(!userVo.getCheckCode().equals(checkCode)){
+            return R.error("验证码错误！");
+        }
+
         TokenVo tokenVo = userVo.getTokenVo();
         User user = userVo.getUser();
         user.setOpenId(tokenVo.getOpenId());

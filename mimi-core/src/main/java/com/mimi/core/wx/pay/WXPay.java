@@ -9,13 +9,13 @@ import com.mimi.core.express.entity.config.PayAccount;
 import com.mimi.core.express.entity.config.PublicAccount;
 import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.core.util.MapHelper;
-import com.mimi.core.util.http.HttpAPIService;
 import com.mimi.core.util.http.HttpResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.config.RequestConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import com.mimi.core.util.http.HttpAPIService;
 
 @Slf4j
 @Component
