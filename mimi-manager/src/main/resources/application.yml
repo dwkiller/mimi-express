@@ -8,7 +8,7 @@ spring:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
       username: root
-      password: 28dyKp8JX23NEMmA
+      password: ENC(W3Seehykt7vc6A2yocLfSvQnfaS4QNnkISaoXIYYTXw=)
   cache:
     type: ehcache
     ehcache:
@@ -35,3 +35,11 @@ http:
   connectionRequestTimeout: 500
   socketTimeout: 10000
   staleConnectionCheckEnabled: true
+
+
+jasypt:
+  encryptor:
+    #加密盐
+    password: +oE67TSCE/j7==
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator

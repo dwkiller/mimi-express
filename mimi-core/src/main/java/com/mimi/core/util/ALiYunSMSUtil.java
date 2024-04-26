@@ -20,9 +20,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ALiYunSMSUtil {
 
-	@Value("${ali.appId}")
+	@Value("${ali.appId:111}")
 	private String appId;
-	@Value("${ali.appKey}")
+	@Value("${ali.appKey:111}")
 	private String appKey;
 	@Value("${ali.sms.smsUrl:http://dysmsapi.aliyuncs.com}")
 	private String smsUrl="http://dysmsapi.aliyuncs.com";
