@@ -44,6 +44,6 @@ jasypt:
     iv-generator-classname: org.jasypt.iv.NoIvGenerator
 
 ali:
-  accessKeyId: ENC(ADD8NveA0RYJi5yj8lJBUVKvgykBgR8bw8s1OSI9jU3TXrcXbCFvwg==)
-  accessSecret: ENC(mVhlQRB1CH4u94p5GMCwvG1zlzefFPfShqnvV9EfS9mIcK2CmKcVmA==)
+  appId: ENC(ADD8NveA0RYJi5yj8lJBUVKvgykBgR8bw8s1OSI9jU3TXrcXbCFvwg==)
+  appKey: ENC(mVhlQRB1CH4u94p5GMCwvG1zlzefFPfShqnvV9EfS9mIcK2CmKcVmA==)
 

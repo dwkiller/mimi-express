@@ -20,10 +20,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ALiYunSMSUtil {
 
-	@Value("${ali.accessKeyId}")
-	private String accessKeyId;
-	@Value("${ali.accessSecret}")
-	private String accessSecret;
+	@Value("${ali.appId}")
+	private String appId;
+	@Value("${ali.appKey}")
+	private String appKey;
 	@Value("${ali.sms.smsUrl:http://dysmsapi.aliyuncs.com}")
 	private String smsUrl="http://dysmsapi.aliyuncs.com";
 
@@ -45,7 +45,7 @@ public class ALiYunSMSUtil {
 	    //系统参数
 	    paras.put("SignatureMethod", "HMAC-SHA1");
 	    paras.put("SignatureNonce", java.util.UUID.randomUUID().toString());
-	    paras.put("AccessKeyId", accessKeyId);
+	    paras.put("AccessKeyId", appId);
 	    paras.put("SignatureVersion", "1.0");
 	    paras.put("Timestamp", df.format(new java.util.Date()));
 	    paras.put("Format", "JSON");
@@ -81,7 +81,7 @@ public class ALiYunSMSUtil {
 		    stringToSign.append("GET").append("&");
 		    stringToSign.append(specialUrlEncode("/")).append("&");
 		    stringToSign.append(specialUrlEncode(sortedQueryString));
-		    String sign = sign(accessSecret + "&", stringToSign.toString());
+		    String sign = sign(appKey + "&", stringToSign.toString());
 		    
 		    String Signature = specialUrlEncode(sign);// zJDF%2BLrzhj%2FThnlvIToysFRq6t4%3D
 		    
