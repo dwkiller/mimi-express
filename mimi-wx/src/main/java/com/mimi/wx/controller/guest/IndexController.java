@@ -8,8 +8,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.mimi.core.common.R;
 import com.mimi.core.common.superpackage.redis.CacheManager;
 import com.mimi.core.express.entity.config.PublicAccount;
+import com.mimi.core.express.entity.config.School;
 import com.mimi.core.express.entity.user.User;
 import com.mimi.core.express.service.PublicAccountService;
+import com.mimi.core.express.service.SchoolService;
 import com.mimi.core.express.service.UserService;
 import com.mimi.core.util.ALiYunSMSUtil;
 import com.mimi.vo.CheckCodeVo;
@@ -50,6 +52,9 @@ public class IndexController {
 
     @Autowired
     private ALiYunSMSUtil aLiYunSMSUtil;
+
+    @Autowired
+    private SchoolService schoolService;
 
     @GetMapping("/test")
     public R<String> test(){
@@ -106,12 +111,12 @@ public class IndexController {
 
     @PostMapping("/refreshToken")
     public R<TokenVo> refreshToken(@RequestBody User user){
-        log.info("refreshToken schoolId: "+user.getSchoolId()+" ; authCode: "+user.getAuthCode()+" ; token: "+user.getToken());
-        TokenVo tokenVo = getToken(user.getSchoolId(),user.getAuthCode(),user.getToken());
+        log.info("refreshToken pubId: "+user.getPubId()+" ; authCode: "+user.getAuthCode()+" ; token: "+user.getToken());
+        TokenVo tokenVo = getToken(user.getPubId(),user.getAuthCode(),user.getToken());
         return R.success(tokenVo);
     }
 
-    private TokenVo getToken(String schoolId,String authCode,String token){
+    private TokenVo getToken(String pubId,String authCode,String token){
         TokenVo tokenVo = null;
         if(!StringUtils.isEmpty(token)){
             //tokenVo = redisCache.getCacheObject(token);
@@ -122,7 +127,7 @@ public class IndexController {
                 return tokenVo;
             }
         }else{
-            tokenVo = getTokenBySchoolId(schoolId,authCode);
+            tokenVo = getTokenByPubId(pubId,authCode);
             User user = userService.findByOpenId(tokenVo.getOpenId());
             if(user==null|| StringUtils.isEmpty(user.getSchoolId())){
                 tokenVo.setRsCode((short)0);
@@ -137,10 +142,14 @@ public class IndexController {
         return tokenVo;
     }
 
-    private TokenVo getTokenBySchoolId(String schoolId,String authCode){
-        PublicAccount publicAccount = publicAccountService.getBySchoolId(schoolId);
+    private TokenVo getTokenByPubId(String pubId,String authCode){
+        PublicAccount publicAccount = publicAccountService.getById(pubId);
         if(publicAccount==null){
-            throw new RuntimeException("该学校未绑定公众号！");
+            throw new RuntimeException("不存在该公众号:"+pubId);
+        }
+        School school = schoolService.getById(publicAccount.getSchoolId());
+        if(school==null){
+            throw new RuntimeException("该公众号未绑定学校！");
         }
         String url = String.format(code2SessionUrl,publicAccount.getAppId(),publicAccount.getAppSecret(),authCode );
         String strRs = HttpUtil.get(url);
@@ -149,16 +158,11 @@ public class IndexController {
             throw new RuntimeException("获取OPENID失败: 错误码:"+jo.getString("errcode")+", 内容: "+jo.getString("errmsg"));
         }
         TokenVo tokenVo = new TokenVo();
-        tokenVo.setSchoolId(schoolId);
+        tokenVo.setSchoolId(school.getId());
         tokenVo.setAppId(publicAccount.getAppId());
         tokenVo.setToken(jo.getString("access_token"));
         tokenVo.setOpenId(jo.getString("openid"));
         tokenVo.setExpiresIn(jo.getInteger("expires_in"));
-//        TokenVo tokenVo = new TokenVo();
-//        tokenVo.setSchoolId(schoolId);
-//        tokenVo.setToken("123456");
-//        tokenVo.setOpenId("oeI4a6l1zF20hc9fLhQiqvrpqeBE");
-//        tokenVo.setExpiresIn(120);
         return tokenVo;
     }
 }
