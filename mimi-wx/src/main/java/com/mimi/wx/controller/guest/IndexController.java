@@ -12,6 +12,7 @@ import com.mimi.core.express.entity.user.User;
 import com.mimi.core.express.service.PublicAccountService;
 import com.mimi.core.express.service.UserService;
 import com.mimi.core.util.ALiYunSMSUtil;
+import com.mimi.vo.CheckCodeVo;
 import com.mimi.vo.TokenVo;
 import com.mimi.vo.UserVo;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,7 +57,8 @@ public class IndexController {
     }
 
     @PostMapping("/getCheckCode")
-    public R<?> getCheckCode(@Pattern(regexp = "^1[3-9]\\d{9}$",message="请输入正确的手机号") String mobile){
+    public R<?> getCheckCode(@RequestBody CheckCodeVo checkCodeVo){
+        String mobile = checkCodeVo.getMobile();
         String key = CHEKC_CODE+mobile;
         if(cacheManager.exists(key)){
             return R.error("请不要频繁的发送验证码!");
