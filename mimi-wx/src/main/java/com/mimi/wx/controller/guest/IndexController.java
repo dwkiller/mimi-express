@@ -143,7 +143,7 @@ public class IndexController {
     }
 
     private TokenVo getTokenByPubId(String pubId,String authCode){
-        PublicAccount publicAccount = publicAccountService.getById(pubId);
+        PublicAccount publicAccount = publicAccountService.getByAppId(pubId);
         if(publicAccount==null){
             throw new RuntimeException("不存在该公众号:"+pubId);
         }

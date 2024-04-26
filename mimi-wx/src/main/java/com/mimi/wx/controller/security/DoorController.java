@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/guest/door")
+@RequestMapping("/security/door")
 @Tag(name = "门模块")
 public class DoorController {
 

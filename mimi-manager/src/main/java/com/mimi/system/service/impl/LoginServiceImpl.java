@@ -35,7 +35,7 @@ public class LoginServiceImpl implements LoginService {
     //public static Map<String,Object> cache = new HashMap<>();
 
     @Override
-    public Map<String,String> login(Employee user) {
+    public Map<String,Object> login(Employee user) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserName(),user.getPassword());
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
         if(Objects.isNull(authenticate)){
@@ -43,15 +43,16 @@ public class LoginServiceImpl implements LoginService {
         }
         //使用userid生成token
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
-        String userId = loginUser.getUser().getId().toString();
+        String userId = loginUser.getUser().getId();
         String jwt = JwtUtil.createJWT(userId);
         //authenticate存入redis
         cacheManager.setValue("login:"+userId,loginUser,3600);
         //redisCache.setCacheObject("login:"+userId,loginUser);
         //cache.put("login:"+userId,loginUser);
         //把token响应给前端
-        HashMap<String,String> map = new HashMap<>();
+        Map<String,Object> map = new HashMap<>();
         map.put("token",jwt);
+        map.put("updatedPassword",loginUser.getUser().isUpdatedPassword());
         return map;
     }
 

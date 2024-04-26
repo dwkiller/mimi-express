@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface LoginService {
 
-    public Map<String,String> login(Employee user);
+    public Map<String,Object> login(Employee user);
 
     public String loginOut();
 }

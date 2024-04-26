@@ -29,8 +29,8 @@ public class EmployeeController extends SuperController<ReadOnlyEmployeeService,
 
     @PostMapping("/login")
     @Operation(summary = "用户登录接口")
-    public R login(@RequestBody Employee user){
-        Map<String,String> rs = loginService.login(user);
+    public R<Map<String,Object>> login(@RequestBody Employee user){
+        Map<String,Object> rs = loginService.login(user);
         return R.success(rs);
     }
 

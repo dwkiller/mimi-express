@@ -65,6 +65,7 @@ public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Emplo
         }
         String encode = passwordEncoder.encode(newPassword);
         byId.setPassword(encode);
+        byId.setUpdatedPassword(true);
         return super.updateById(byId);
     }
 
@@ -75,6 +76,7 @@ public class EmployeeServiceImpl extends TenantServiceImpl<EmployeeMapper, Emplo
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encode = passwordEncoder.encode(password);
         employee.setPassword(encode);
+        employee.setUpdatedPassword(false);
         return super.updateById(employee);
     }
 
