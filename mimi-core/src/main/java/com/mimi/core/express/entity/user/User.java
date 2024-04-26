@@ -11,6 +11,7 @@ public class User extends TenantEntity {
     private String userName;
     private String mobile;
     private String openId;
+    private Integer schoolYear;
 
     @TableField(exist = false)
     private String authCode;
