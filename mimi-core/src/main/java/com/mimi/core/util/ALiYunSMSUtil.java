@@ -5,8 +5,12 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mimi.core.util.http.HttpAPIService;
+import com.ulisesbocchio.jasyptspringboot.encryptor.DefaultLazyEncryptor;
+import com.ulisesbocchio.jasyptspringboot.encryptor.SimplePBEStringEncryptor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.config.RequestConfig;
+import org.jasypt.encryption.StringEncryptor;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,10 +20,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ALiYunSMSUtil {
 
-	@Value("${ali.accessKeyId:LTAI5tCkMFb1JGBzgCvRWZFk}")
-	private String accessKeyId="LTAI5tCkMFb1JGBzgCvRWZFk";
-	@Value("${ali.accessSecret:rs2laMCX8YwtTT1QmtFyrLIhKT7kr7}")
-	private String accessSecret="rs2laMCX8YwtTT1QmtFyrLIhKT7kr7";
+	@Value("${ali.accessKeyId}")
+	private String accessKeyId;
+	@Value("${ali.accessSecret}")
+	private String accessSecret;
 	@Value("${ali.sms.smsUrl:http://dysmsapi.aliyuncs.com}")
 	private String smsUrl="http://dysmsapi.aliyuncs.com";
 
@@ -123,6 +127,8 @@ public class ALiYunSMSUtil {
         byte[] signData = mac.doFinal(stringToSign.getBytes("UTF-8"));
         return new sun.misc.BASE64Encoder().encode(signData);
     }
+
+
 
     public static void main(String[] args){
 		JSONObject param = new JSONObject();

@@ -8,11 +8,7 @@ spring:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
       username: root
-      password: 28dyKp8JX23NEMmA
-
-#      url: jdbc:mysql://localhost:3306/pig-school-config?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-#      username: root
-#      password: root
+      password: ENC(W3Seehykt7vc6A2yocLfSvQnfaS4QNnkISaoXIYYTXw=)
   cache:
     type: ehcache
     ehcache:
@@ -39,3 +35,15 @@ http:
   connectionRequestTimeout: 500
   socketTimeout: 10000
   staleConnectionCheckEnabled: true
+
+jasypt:
+  encryptor:
+    #加密盐
+    password: +oE67TSCE/j7==
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+
+ali:
+  accessKeyId: ENC(ADD8NveA0RYJi5yj8lJBUVKvgykBgR8bw8s1OSI9jU3TXrcXbCFvwg==)
+  accessSecret: ENC(mVhlQRB1CH4u94p5GMCwvG1zlzefFPfShqnvV9EfS9mIcK2CmKcVmA==)
+
