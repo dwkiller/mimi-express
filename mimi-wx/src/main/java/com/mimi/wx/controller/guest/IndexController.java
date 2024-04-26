@@ -63,7 +63,7 @@ public class IndexController {
         if(cacheManager.exists(key)){
             return R.error("请不要频繁的发送验证码!");
         }
-        String code = RandomUtil.randomNumbers(4);
+        String code = RandomUtil.randomNumbers(6);
         JSONObject param = new JSONObject();
         param.put("code",code);
         aLiYunSMSUtil.sendSMS(registCheckCode,mobile,param);
