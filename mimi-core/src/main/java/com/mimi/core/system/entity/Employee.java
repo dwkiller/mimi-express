@@ -39,6 +39,9 @@ public class Employee extends TenantEntity implements Serializable {
     @Schema(name = "公众号openId")
     private String openId;
 
+    @Schema(name = "是否已经改过密码")
+    private boolean updatedPassword;
+
     @TableField(exist = false)
     @Schema(name = "authCode")
     private String authCode;
