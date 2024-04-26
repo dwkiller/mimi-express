@@ -89,7 +89,7 @@ public class AreaServiceImpl extends TenantServiceImpl<AreaMapper, Area> impleme
             sysDict.setSchoolId(userInfoUtil.getSchoolId());
             sysDict.setSysDict((short) 1);
             sysDict.setType("userAddress");
-            sysDict.setTypeName("用户地址");
+            sysDict.setTypeName("送货地点");
             sysDictService.save(sysDict);
         }
         return sysDict;
