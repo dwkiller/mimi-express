@@ -130,13 +130,11 @@ public class UserController {
     public R<WxConfigVo> getWxConfig(String appId,String url){
         WxConfigVo wxConfigVo = new WxConfigVo();
         wxConfigVo.setAppId(appId);
-        Date date = new Date();
         String timestamp = Long.toString((new Date().getTime()) / 1000);
         wxConfigVo.setTimeStamp(timestamp);
         wxConfigVo.setNonceStr(WXPayUtil.generateNonceStr());
         PublicAccount publicAccount = publicAccountService.getByAppId(appId);
-        String token = wxAppService.getToken(publicAccount);
-        String ticket = wxAppService.getTicket(token);
+        String ticket = wxAppService.getTicket(publicAccount);
         wxConfigVo.setSignature(getsig(wxConfigVo.getNonceStr(),ticket,wxConfigVo.getTimeStamp(),url));
         log.info("签名结果: "+wxConfigVo.getSignature());
         return R.success(wxConfigVo);

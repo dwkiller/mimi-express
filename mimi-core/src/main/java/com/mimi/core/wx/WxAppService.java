@@ -23,14 +23,29 @@ public class WxAppService {
     @Autowired
     private CacheManager cacheManager;
 
-    public String getTicket(String token){
-        String url = String.format(TICKET_URL,token);
-        String rs = HttpUtil.get(url);
-        JSONObject rsJo = JSONObject.parseObject(rs);
-        if(rsJo.containsKey("errcode")&&rsJo.getInteger("errcode")!=0&&rsJo.containsKey("errmsg")){
-            throw new RuntimeException("获取Ticket失败: "+rsJo.getString("errmsg"));
+    @Autowired
+    private WxAppService wxAppService;
+
+    public String getTicket(PublicAccount publicAccount){
+        String key="getTicket_"+publicAccount.getSchoolId();
+
+        String ticket = null;
+        if(!cacheManager.exists(key)){
+            String token = wxAppService.getToken(publicAccount);
+            String url = String.format(TICKET_URL,token);
+            String rs = HttpUtil.get(url);
+            JSONObject rsJo = JSONObject.parseObject(rs);
+            if(rsJo.containsKey("errcode")&&rsJo.getInteger("errcode")!=0&&rsJo.containsKey("errmsg")){
+                throw new RuntimeException("获取Ticket失败: "+rsJo.getString("errmsg"));
+            }
+            ticket = rsJo.getString("ticket");
+            int expiresIn = rsJo.getInteger("expires_in")-60;
+            cacheManager.setValue(key,ticket,expiresIn);
+        }else{
+            ticket = (String) cacheManager.getValue(key);
         }
-        return rsJo.getString("ticket");
+
+        return ticket;
     }
 
     public String getToken(PublicAccount publicAccount){
