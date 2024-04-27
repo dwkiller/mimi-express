@@ -16,6 +16,9 @@ public class RedisCacheManager implements CacheManager {
 	@Autowired
     private RedisUtil redisUtil;
 
+	@Value("${server.port}")
+	private Integer port;
+
 	
 	@Override
 	public Object getValue(String key) {
@@ -119,5 +122,27 @@ public class RedisCacheManager implements CacheManager {
 	@Override
 	public void expire(String key, long expireTime) {
 		redisUtil.expire(key,expireTime);
+	}
+
+	@Override
+	public Object lock(String key,LockExecute lockExecute) {
+		String clientId = port+"";
+		while(!redisUtil.setLock(key,clientId, 60)) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				break;
+			}
+		}
+		Object result = null;
+		try {
+			result = lockExecute.execute();
+		}catch (Exception e){
+			throw e;
+		}finally {
+			redisUtil.releaseLock(key,clientId);
+		}
+		return result;
 	}
 }

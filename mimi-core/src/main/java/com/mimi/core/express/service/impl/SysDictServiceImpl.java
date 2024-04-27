@@ -38,9 +38,8 @@ public class SysDictServiceImpl extends TenantServiceImpl<SysDictMapper, SysDict
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeDict(String id) {
-        SysDict byId = this.getById(id);
         super.removeById(id);
-        dictItemMapper.delete(Wrappers.<SysDictItem>lambdaQuery().eq(SysDictItem::getType, byId.getType()));
+        dictItemMapper.delete(Wrappers.<SysDictItem>lambdaQuery().eq(SysDictItem::getDictId, id));
     }
 
     /**

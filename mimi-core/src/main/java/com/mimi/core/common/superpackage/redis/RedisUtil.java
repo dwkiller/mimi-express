@@ -1,21 +1,23 @@
 package com.mimi.core.common.superpackage.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
 public class RedisUtil{
-	
+
+	private static final String RELEASE_LOCK_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+
+
 	@SuppressWarnings("rawtypes")
 	@Autowired
 	private RedisTemplate redisTemplate;
@@ -39,8 +41,9 @@ public class RedisUtil{
 	@SuppressWarnings("unchecked")
 	public void removePattern(final String pattern) {
 		Set<String> keys = redisTemplate.keys(pattern);
-		if (keys.size() > 0)
-		redisTemplate.delete(keys);
+		if (keys.size() > 0){
+			redisTemplate.delete(keys);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -164,6 +167,47 @@ public class RedisUtil{
 
 	public void expire(String key,long expireTime){
 		redisTemplate.expire(key,expireTime,TimeUnit.SECONDS);
+	}
+
+	public boolean setLock(String key,String clientId, long expire) {
+		try {
+			RedisCallback<Boolean> callback = (connection) -> {
+				Jedis jedis = (Jedis) connection.getNativeConnection();
+				String result = jedis.set(key, clientId, "nx", "ex", expire);
+				if ("OK".equals(result)) {
+					return Boolean.TRUE;
+				}
+				String rs = jedis.get(key);
+				if(rs!=null&&rs.equals(clientId)) {
+					jedis.expire(key, (int) expire);
+					return Boolean.TRUE;
+				}
+				return Boolean.FALSE;
+			};
+			return (boolean) redisTemplate.execute(callback);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean releaseLock(String key,String clientId) {
+		return (boolean) redisTemplate.execute((RedisCallback<Boolean>) redisConnection -> {
+			Jedis jedis = (Jedis) redisConnection.getNativeConnection();
+			Object result = jedis.eval(RELEASE_LOCK_SCRIPT, Collections.singletonList(key),
+					Collections.singletonList(clientId));
+			if(result instanceof Long) {
+				long r = ((Long)result).longValue();
+				return r==1;
+			} else if(result instanceof Integer) {
+				int r = ((Integer)result).intValue();
+				return r==1;
+			}else if ("OK".equals(result)) {
+				return Boolean.TRUE;
+			}
+			return Boolean.FALSE;
+		});
 	}
 
 }

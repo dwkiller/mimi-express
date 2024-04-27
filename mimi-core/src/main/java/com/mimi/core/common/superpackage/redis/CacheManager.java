@@ -3,6 +3,7 @@ package com.mimi.core.common.superpackage.redis;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 public interface CacheManager {
 	
@@ -29,5 +30,7 @@ public interface CacheManager {
 	public Set<Object> getSetValue(String key);
 
 	public void expire(String key,long expireTime);
+
+	public Object lock(String key, LockExecute lockExecute);
 	
 }
