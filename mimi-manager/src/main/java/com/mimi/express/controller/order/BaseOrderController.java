@@ -44,6 +44,12 @@ public class BaseOrderController<S extends IBaseOrderService<T>,T extends BaseOr
         return R.success(superService.findPage(p));
     }
 
+    @Operation(summary = "统计数量")
+    @PostMapping("/count")
+    public R<Long> count(@RequestBody OrderParam<T> p) {
+        return R.success(superService.count(p));
+    }
+
     @Operation(summary = "批量发送消息")
     @PostMapping("/batchSendMsg")
     public R batchSendMsg(@RequestBody BatchSendMessageVo batchSendMessageVo) {

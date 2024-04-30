@@ -67,6 +67,11 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
     }
 
     @Override
+    public long count(OrderParam<T> param){
+        return baseMapper.findCount(param);
+    }
+
+    @Override
     public T findByOrderNum(String orderNum) throws Exception {
         Class<T> clazz = getEntityClazz();
         T baseOrder = clazz.newInstance();

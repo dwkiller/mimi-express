@@ -121,12 +121,8 @@ public class IndexController {
         if(!StringUtils.isEmpty(token)){
             //tokenVo = redisCache.getCacheObject(token);
             tokenVo = (TokenVo) cacheManager.getValue(token);
-            if(tokenVo==null){
-                tokenVo = new TokenVo();
-                tokenVo.setRsCode((short)-1);
-                return tokenVo;
-            }
-        }else{
+        }
+        if(tokenVo==null){
             tokenVo = getTokenByPubId(pubId,authCode);
             User user = userService.findByOpenId(tokenVo.getOpenId());
             if(user==null|| StringUtils.isEmpty(user.getSchoolId())){
@@ -136,9 +132,9 @@ public class IndexController {
             tokenVo.setUserId(user.getId());
             tokenVo.setPhone(user.getMobile());
             tokenVo.setRealName(user.getUserName());
+            tokenVo.setRsCode((short)1);
             cacheManager.setValue(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn());
         }
-        tokenVo.setRsCode((short)1);
         return tokenVo;
     }
 

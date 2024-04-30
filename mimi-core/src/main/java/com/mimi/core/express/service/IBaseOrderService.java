@@ -14,6 +14,8 @@ public interface IBaseOrderService<T extends BaseOrder> extends ISuperService<T>
 
     public IPage<T> findPage(OrderParam<T> param);
 
+    public long count(OrderParam<T> param);
+
     public String type();
 
     public T findByOrderNum(String orderNum) throws Exception;
