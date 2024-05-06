@@ -29,11 +29,7 @@ public class OrderOutService extends BaseOrderService<OrderOutMapper, OrderOut> 
 
     @Transactional
     public boolean saveBatch(Collection<OrderOut> entityList,String rootPath) throws Exception {
-        List<OrderOut> orderOutList = new ArrayList<>();
         for(OrderOut order : entityList){
-            if(findByOrderNum(order.getOrderNum())!=null){
-                continue;
-            }
             if(!StringUtils.isEmpty(order.getFileMd5())){
                 String filePath = rootPath+File.separator+order.getSchoolId();
                 FileUtil.mkdir(filePath);
@@ -43,10 +39,8 @@ public class OrderOutService extends BaseOrderService<OrderOutMapper, OrderOut> 
             order.setFileMd5(null);
             order.setUserName(userInfoUtil.getRealName());
             order.setMobile(userInfoUtil.getPhone());
-            orderOutList.add(order);
-
         }
-        return super.saveBatch(orderOutList);
+        return super.saveBatch(entityList);
     }
 
     private void setFile(OrderOut order){

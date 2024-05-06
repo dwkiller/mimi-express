@@ -83,7 +83,7 @@ public class BaseOrderController<S extends IBaseOrderService<T>,T extends BaseOr
 
     @Operation(summary = "根据订单号查订单")
     @GetMapping("/findByOrderNum")
-    public R<T> findByOrderNum(String orderNum) throws Exception {
+    public R<List<T>> findByOrderNum(String orderNum) throws Exception {
         return R.success(superService.findByOrderNum(orderNum));
     }
 

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @Tag(name = "出库")
@@ -25,11 +26,18 @@ public class OrderOutController extends ReadOnlySuperController<OrderOutService,
 
     @Operation(summary = "批量保存出库单")
     @PostMapping("/saveBatch")
-    public R saveBatch(@RequestBody Collection<OrderOut> entityList) throws Exception {
+    public R<Collection<OrderOut>> saveBatch(@RequestBody Collection<OrderOut> entityList) throws Exception {
         if(superService.saveBatch(entityList,rootPath)){
-            return R.success();
+            return R.success(entityList);
         }
         return R.error("保存失败!");
+    }
+
+    @Operation(summary = "批量更新出库单")
+    @PostMapping("/updateBatch")
+    public R updateBatch(@RequestBody List<OrderOut> orderList){
+        superService.updateBatchById(orderList);
+        return R.success();
     }
 
 }

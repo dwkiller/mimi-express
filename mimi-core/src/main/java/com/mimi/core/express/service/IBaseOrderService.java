@@ -18,7 +18,7 @@ public interface IBaseOrderService<T extends BaseOrder> extends ISuperService<T>
 
     public String type();
 
-    public T findByOrderNum(String orderNum) throws Exception;
+    public List<T> findByOrderNum(String orderNum) throws Exception;
 
     public List<T> findByOrderNumStart(String orderNum);
 }

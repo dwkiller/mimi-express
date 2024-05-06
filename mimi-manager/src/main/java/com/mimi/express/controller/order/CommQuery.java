@@ -32,13 +32,15 @@ public class CommQuery {
         Iterator<IBaseOrderService> beans = beanMaps.values().iterator();
         while(beans.hasNext()){
             IBaseOrderService bean = beans.next();
-            BaseOrder order = bean.findByOrderNum(orderNum);
-            if(order!=null){
-                CommOrderVo orderVo = new CommOrderVo();
-                orderVo.setOrderNum(order.getOrderNum());
-                orderVo.setType(bean.type());
-                orderVo.setCreateTime(order.getCreateTime());
-                result.add(orderVo);
+            List<BaseOrder> orderList = bean.findByOrderNum(orderNum);
+            if(orderList!=null&&orderList.size()>0){
+                for(BaseOrder order:orderList){
+                    CommOrderVo orderVo = new CommOrderVo();
+                    orderVo.setOrderNum(order.getOrderNum());
+                    orderVo.setType(bean.type());
+                    orderVo.setCreateTime(order.getCreateTime());
+                    result.add(orderVo);
+                }
             }
         }
         return R.success(result);

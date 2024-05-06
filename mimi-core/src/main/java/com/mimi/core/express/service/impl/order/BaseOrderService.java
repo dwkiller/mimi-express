@@ -72,7 +72,7 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
     }
 
     @Override
-    public T findByOrderNum(String orderNum) throws Exception {
+    public List<T> findByOrderNum(String orderNum) throws Exception {
         Class<T> clazz = getEntityClazz();
         T baseOrder = clazz.newInstance();
         baseOrder.setOrderNum(orderNum);
@@ -81,11 +81,7 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
         orderParam.setBusinessData(baseOrder);
 
         List<T> data = baseMapper.findPage(orderParam);
-        if(data!=null&&data.size()>0)
-        {
-            return data.get(0);
-        }
-        return null;
+        return data;
     }
 
     @Override
