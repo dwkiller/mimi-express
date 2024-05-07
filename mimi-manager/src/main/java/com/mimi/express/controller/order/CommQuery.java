@@ -32,7 +32,7 @@ public class CommQuery {
         Iterator<IBaseOrderService> beans = beanMaps.values().iterator();
         while(beans.hasNext()){
             IBaseOrderService bean = beans.next();
-            List<BaseOrder> orderList = bean.findByOrderNum(orderNum);
+            List<BaseOrder> orderList = bean.findMultipleByOrderNum(orderNum);
             if(orderList!=null&&orderList.size()>0){
                 for(BaseOrder order:orderList){
                     CommOrderVo orderVo = new CommOrderVo();
