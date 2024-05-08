@@ -26,17 +26,7 @@ public interface OrderMapper<T extends BaseOrder>  extends SuperMapper<T> {
                     "</if>"+
                     "<if test='orderNumLike != null'>"+
                     " AND order_num like  \"%\"#{orderNumLike}\"%\""+
-                    "</if>"+
-                    "<if test='today != null'>"+
-                    " AND DATE(t.create_time) = CURDATE()"+
                     "</if>";
-
-    public static final String TIME_CONDITION="<if test='startTime != null'>"+
-            " AND date_format(t.create_time,'%Y-%m-%d %H:%i:%s') &gt; #{startTime}"+
-            "</if>"+
-            "<if test='endTime != null'>"+
-            " AND date_format(t.create_time,'%Y-%m-%d %H:%i:%s') &lt; #{endTime}"+
-            "</if>";
 
     public static final String DONE_CONDITION= "<if test='businessData.done != null'>"+
             " AND done = #{businessData.done}"+
