@@ -9,4 +9,6 @@ import com.mimi.core.express.entity.config.School;
  */
 public interface SchoolService extends ISuperService<School> {
     public School findByPos(double longitude,double latitude);
+
+    public School findByName(String name);
 }

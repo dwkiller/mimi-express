@@ -10,6 +10,7 @@ import com.mimi.core.express.entity.order.BaseOrder;
 import com.mimi.core.express.entity.order.param.OrderParam;
 import com.mimi.core.express.mapper.order.OrderMapper;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.ParameterizedType;
@@ -52,7 +53,9 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
 
     @Override
     public IPage<T> findPage(OrderParam<T> param){
-        param.getBusinessData().setSchoolId(userInfoUtil.getSchoolId());
+        if(StringUtils.isEmpty(param.getBusinessData().getSchoolId())){
+            param.getBusinessData().setSchoolId(userInfoUtil.getSchoolId());
+        }
         List<T> data = baseMapper.findPage(param);
         long cnt = baseMapper.findCount(param);
         long pages = 0;
@@ -88,6 +91,7 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
         return null;
     }
 
+    @Override
     public List<T> findMultipleByOrderNum(String orderNum) throws Exception{
         Class<T> clazz = getEntityClazz();
         T baseOrder = clazz.newInstance();

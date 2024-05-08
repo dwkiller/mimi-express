@@ -70,7 +70,7 @@ public class DoorController {
         param.put("sn","Q8552d92e7b77757");
         param.put("type","0");
         param.put("cmd","setr");
-        param.put("param","setr=xx2xx2xx");
+        param.put("param","setr=22222222");
 
         String rs = HttpUtil.post(url,param);
         System.out.println(rs);

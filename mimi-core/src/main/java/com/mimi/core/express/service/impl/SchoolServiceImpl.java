@@ -1,5 +1,6 @@
 package com.mimi.core.express.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mimi.core.common.superpackage.service.impl.SuperServiceImpl;
 import com.mimi.core.express.entity.config.School;
 import com.mimi.core.express.entity.config.SysDict;
@@ -101,5 +102,16 @@ public class SchoolServiceImpl extends SuperServiceImpl<SchoolMapper, School> im
             }
         }
         return result;
+    }
+
+    @Override
+    public School findByName(String name) {
+        LambdaQueryWrapper<School> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(School::getName,name);
+        List<School> schools = superMapper.selectList(wrapper);
+        if(schools==null||schools.size()==0){
+            return null;
+        }
+        return schools.get(0);
     }
 }
