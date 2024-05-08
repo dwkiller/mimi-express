@@ -18,6 +18,7 @@ public class OrderParam<T extends BaseOrder> {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
     private String nullMobile;
+    private String today;
     private T businessData;
     private String orderBy;
     private String desc;

@@ -14,22 +14,15 @@ public interface OrderOutMapper extends OrderMapper<OrderOut>{
             " AND send_msg = #{businessData.sendMsg}"+
             "</if>";
 
-    public static final String TIME_CONDITION="<if test='startTime != null'>"+
-            " AND date_format(t_order_out.create_time,'%Y-%m-%d %H:%i:%s') &gt; #{startTime}"+
-            "</if>"+
-            "<if test='endTime != null'>"+
-            " AND date_format(t_order_out.create_time,'%Y-%m-%d %H:%i:%s') &lt; #{endTime}"+
-            "</if>";
-
     @Select({"<script>",
-            "SELECT t_order_out.* FROM t_order_out",
+            "SELECT t.* FROM t_order_out t",
             BASE_CONDITION,CONDITION,TIME_CONDITION,ORDER,
             "</script>"
     })
     @Override
     public List<OrderOut> findPage(OrderParam<OrderOut> param);
 
-    @Select({"<script>","SELECT count(0) FROM t_order_out",
+    @Select({"<script>","SELECT count(0) FROM t_order_out t",
             BASE_CONDITION,CONDITION,TIME_CONDITION,
             "</script>"
     })

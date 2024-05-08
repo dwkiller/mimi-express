@@ -45,6 +45,8 @@ public class OrderOutController extends BaseOrderController<OrderOutService, Ord
         OrderOut businessParam = new OrderOut();
         businessParam.setSchoolId(school.getId());
         orderParam.setOrderBy("create_time");
+        orderParam.setBusinessData(businessParam);
+        orderParam.setToday("1");
         IPage<OrderOut> rsPage = superService.findPage(orderParam);
         List<OrderOut> rsList = rsPage.getRecords();
         if(rsList==null||rsList.size()==0){

@@ -56,8 +56,8 @@ public class MybatisQueryIntercept  implements Interceptor {
             return invocation.proceed();
         }
 
-        newSql = newSql.replaceAll(" create_time"," "+tableName+".create_time");
-
+        newSql = newSql.replaceAll(" create_time"," t.create_time");
+        tableName = tableName+" t";
         newSql = addTenantSql(newSql,tableName,orderParam.getBusinessData(),isCount);
         if(orderParam.getBusinessData() instanceof HasExpressDelivery){
             HasExpressDelivery hasExpressDelivery = (HasExpressDelivery)orderParam.getBusinessData();
@@ -128,7 +128,7 @@ public class MybatisQueryIntercept  implements Interceptor {
             }
         }
 
-        newSqlBuffer.insert(insertConditionLocat," left join T_EMPLOYEE EMPLOYEE on "+tableName+".CREATE_BY=EMPLOYEE.id ");
+        newSqlBuffer.insert(insertConditionLocat," left join T_EMPLOYEE EMPLOYEE on t.CREATE_BY=EMPLOYEE.id ");
         if(!isCount){
             newSqlBuffer.insert(insertRsLocat,",EMPLOYEE.REAL_NAME as CREATE_BY_NAME ");
         }
@@ -164,7 +164,7 @@ public class MybatisQueryIntercept  implements Interceptor {
                 newSqlBuffer.append(newConditionBuffer);
             }
         }
-        newSqlBuffer.insert(insertConditionLocat," left join T_EXPRESS_DELIVERY ED on "+tableName+".EXPRESS_DELIVERY_ID=ED.id ");
+        newSqlBuffer.insert(insertConditionLocat," left join T_EXPRESS_DELIVERY ED on t.EXPRESS_DELIVERY_ID=ED.id ");
         if(!isCount){
             newSqlBuffer.insert(insertRsLocat,",ED.ADDRESS as EXPRESS_DELIVERY_NAME ");
         }
@@ -201,7 +201,7 @@ public class MybatisQueryIntercept  implements Interceptor {
             }
         }
 
-        newSqlBuffer.insert(insertConditionLocat," left join T_SCHOOL SCHOOL on "+tableName+".school_id=SCHOOL.id ");
+        newSqlBuffer.insert(insertConditionLocat," left join T_SCHOOL SCHOOL on t.school_id=SCHOOL.id ");
         if(!isCount){
             newSqlBuffer.insert(insertRsLocat,",SCHOOL.NAME as SCHOOL_NAME");
         }
