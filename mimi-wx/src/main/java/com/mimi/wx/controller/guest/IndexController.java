@@ -104,6 +104,7 @@ public class IndexController {
         if(publicAccount!=null){
             tokenVo.setAppId(publicAccount.getAppId());
         }
+        tokenVo.setRsCode((short)1);
         //redisCache.setCacheObject(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn(), TimeUnit.SECONDS);
         cacheManager.setValue(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn());
         return R.success(tokenVo);
@@ -121,9 +122,14 @@ public class IndexController {
         if(!StringUtils.isEmpty(token)){
             //tokenVo = redisCache.getCacheObject(token);
             tokenVo = (TokenVo) cacheManager.getValue(token);
+            log.info("获取到token: "+token);
+        }else{
+            log.info("无token");
         }
         if(tokenVo==null){
+            log.info("缓存不存在token");
             tokenVo = getTokenByPubId(pubId,authCode);
+            log.info("获取微信端openId:"+tokenVo.getOpenId());
             User user = userService.findByOpenId(tokenVo.getOpenId());
             if(user==null|| StringUtils.isEmpty(user.getSchoolId())){
                 tokenVo.setRsCode((short)0);
