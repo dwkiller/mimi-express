@@ -7,7 +7,7 @@ kd:
   outorder:
     fileroot: /root/outorder
   public:
-    fileroot: /root/public
+    fileroot: /root/gzh/dist
   pay:
     fileroot: /root/pay
   door:
