@@ -14,6 +14,7 @@ import com.mimi.express.controller.order.vo.AutoOutVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +35,7 @@ public class OrderOutController extends BaseOrderController<OrderOutService, Ord
 
     @Operation(summary = "批量生成运单")
     @PostMapping("/autoOut")
-    public List<String> autoOut(@RequestBody AutoOutVo autoOutVo){
+    public String autoOut(@RequestBody AutoOutVo autoOutVo){
         School school = schoolService.findByName(autoOutVo.getSchool());
         if(school==null){
             return null;
@@ -52,8 +53,8 @@ public class OrderOutController extends BaseOrderController<OrderOutService, Ord
         if(rsList==null||rsList.size()==0){
             return null;
         }
-        return rsList.stream().map(OrderOut::getOrderNum)
-                .collect(Collectors.toList());
+        return StringUtils.join(rsList.stream().map(OrderOut::getOrderNum)
+                .collect(Collectors.toList()),",");
     }
 
 }
