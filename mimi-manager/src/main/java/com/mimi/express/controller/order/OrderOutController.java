@@ -34,10 +34,10 @@ public class OrderOutController extends BaseOrderController<OrderOutService, Ord
 
     @Operation(summary = "批量生成运单")
     @PostMapping("/autoOut")
-    public R<List<String>> autoOut(@RequestBody AutoOutVo autoOutVo){
+    public List<String> autoOut(@RequestBody AutoOutVo autoOutVo){
         School school = schoolService.findByName(autoOutVo.getSchool());
         if(school==null){
-            return R.error("不存在学校:"+autoOutVo.getSchool());
+            return null;
         }
         OrderParam<OrderOut> orderParam = new OrderParam();
         orderParam.setPageNum(Integer.parseInt(autoOutVo.getPageNo()));
@@ -50,10 +50,10 @@ public class OrderOutController extends BaseOrderController<OrderOutService, Ord
         IPage<OrderOut> rsPage = superService.findPage(orderParam);
         List<OrderOut> rsList = rsPage.getRecords();
         if(rsList==null||rsList.size()==0){
-            return R.success(new ArrayList<>());
+            return null;
         }
-        return R.success( rsList.stream().map(OrderOut::getOrderNum)
-                .collect(Collectors.toList()));
+        return rsList.stream().map(OrderOut::getOrderNum)
+                .collect(Collectors.toList());
     }
 
 }
