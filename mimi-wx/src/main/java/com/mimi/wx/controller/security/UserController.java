@@ -10,10 +10,8 @@ import com.mimi.core.express.entity.order.OrderAgent;
 import com.mimi.core.express.entity.receive.Insurance;
 import com.mimi.core.express.entity.receive.Pricing;
 import com.mimi.core.express.entity.shop.ShopCouponInst;
-import com.mimi.core.express.service.InsuranceService;
-import com.mimi.core.express.service.PayAccountService;
-import com.mimi.core.express.service.PricingService;
-import com.mimi.core.express.service.PublicAccountService;
+import com.mimi.core.express.entity.user.User;
+import com.mimi.core.express.service.*;
 import com.mimi.core.express.service.impl.order.OrderAgentService;
 import com.mimi.core.express.service.shop.ShopCouponInstService;
 import com.mimi.core.express.type.PayState;
@@ -63,6 +61,8 @@ public class UserController {
     private WxAppService wxAppService;
     @Autowired
     private UserInfoUtil userInfoUtil;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private WXPay wxPay;
@@ -123,6 +123,16 @@ public class UserController {
         tempArr[1] = Digit[mByte & 0X0F];
         String s = new String(tempArr);
         return s;
+    }
+
+    @PostMapping("/update")
+    @ResponseBody
+    public R<?> update(@RequestBody User userParam){
+        User user = userService.getById(userInfoUtil.getUserId());
+        user.setUserName(userParam.getUserName());
+        user.setMobile(userParam.getMobile());
+        userService.updateById(user);
+        return R.success();
     }
 
     @GetMapping("/getWxConfig")

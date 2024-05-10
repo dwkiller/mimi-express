@@ -2,6 +2,7 @@ package com.mimi.core.express.service.impl.order;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.FileUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mimi.core.common.util.UserInfoUtil;
 import com.mimi.core.express.entity.order.OrderOut;
 import com.mimi.core.express.mapper.order.OrderOutMapper;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderOutService extends BaseOrderService<OrderOutMapper, OrderOut> {
@@ -25,6 +27,16 @@ public class OrderOutService extends BaseOrderService<OrderOutMapper, OrderOut> 
     @Override
     public String type() {
         return "出库单";
+    }
+
+    public List<String> existsOrderNum(List<String> orderNumList){
+        LambdaQueryWrapper<OrderOut> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(OrderOut::getOrderNum,orderNumList);
+        List<OrderOut> orderOutList = super.list(wrapper);
+        if(orderOutList==null||orderOutList.size()==0){
+            return null;
+        }
+        return orderOutList.stream().map(OrderOut::getOrderNum).collect(Collectors.toList());
     }
 
     @Transactional

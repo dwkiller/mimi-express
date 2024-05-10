@@ -3,9 +3,11 @@ package com.mimi.wx.controller.security;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mimi.core.common.R;
 import com.mimi.core.common.superpackage.controller.ReadOnlySuperController;
 import com.mimi.core.express.entity.order.OrderOut;
+import com.mimi.core.express.entity.order.param.OrderParam;
 import com.mimi.core.express.service.impl.order.OrderOutService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,6 +37,12 @@ public class OrderOutController extends ReadOnlySuperController<OrderOutService,
     @Value("${kd.door.url:https://api.netrelay.cn/api/v1/control}")
     private String url;
 
+    @Operation(summary = "分页查询")
+    @PostMapping("/findPage")
+    public R<IPage<OrderOut>> findPage(@RequestBody OrderParam<OrderOut> orderParam){
+        return R.success(superService.findPage(orderParam));
+    }
+
     @Operation(summary = "批量保存出库单")
     @PostMapping("/saveBatch")
     public R<Collection<OrderOut>> saveBatch(@RequestBody Collection<OrderOut> entityList) throws Exception {
@@ -55,9 +63,7 @@ public class OrderOutController extends ReadOnlySuperController<OrderOutService,
             return R.error("缺少闸口编号!");
         }
         outDoor(code);
-
         superService.updateBatchById(orderList);
-
         return R.success();
     }
 

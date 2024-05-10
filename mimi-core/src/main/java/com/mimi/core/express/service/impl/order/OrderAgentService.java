@@ -8,6 +8,8 @@ import com.mimi.core.wx.WxAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrderAgentService extends BaseOrderService<OrderAgentMapper,OrderAgent>{
 
@@ -17,6 +19,11 @@ public class OrderAgentService extends BaseOrderService<OrderAgentMapper,OrderAg
         return "代取运单";
     }
 
+    public List<OrderAgent> findByOrderNumList(List<String> orderNumList){
+        LambdaQueryWrapper<OrderAgent> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderAgent::getOrderNum,orderNumList);
+        return super.list(wrapper);
+    }
 
     public OrderAgent findByPayOrder(String payOrder){
         LambdaQueryWrapper<OrderAgent> wrapper = new LambdaQueryWrapper<>();

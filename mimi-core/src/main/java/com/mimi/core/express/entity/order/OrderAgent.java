@@ -105,7 +105,7 @@ public class OrderAgent extends BaseOrder implements HasExpressDelivery{
     @Schema(name = "支付状态")
     private Short payState;
 
-    @Schema(name = "处理状态")
+    @Schema(name = "处理状态 0：预付，1：受理成功，-1：受理失败，-2：受理失败退款失败，2：派送完成")
     private Short state;
 
     @Schema(name = "支付单号")
