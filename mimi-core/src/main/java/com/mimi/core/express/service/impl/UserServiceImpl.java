@@ -16,7 +16,7 @@ public class UserServiceImpl extends TenantServiceImpl<UserMapper, User> impleme
     public User findByMobile(String mobile){
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getMobile,mobile);
-        return baseMapper.selectOne(wrapper);
+        return super.getOne(wrapper);
     }
 
     @Override

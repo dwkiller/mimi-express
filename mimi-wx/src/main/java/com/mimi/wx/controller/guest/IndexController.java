@@ -93,12 +93,17 @@ public class IndexController {
 
         TokenVo tokenVo = userVo.getTokenVo();
         User user = userVo.getUser();
+
+        if(userService.findByMobile(user.getMobile())!=null){
+            return R.error("该电话号码["+user.getMobile()+"]已经存在");
+        }
+
         user.setOpenId(tokenVo.getOpenId());
         user.setSchoolId(tokenVo.getSchoolId());
-        user.setId(user.getMobile());
         userService.save(user);
         tokenVo.setUserId(user.getId());
         tokenVo.setPhone(user.getMobile());
+        tokenVo.setSchoolYear(user.getSchoolYear());
         tokenVo.setRealName(user.getUserName());
         PublicAccount publicAccount = publicAccountService.getBySchoolId(tokenVo.getSchoolId());
         if(publicAccount!=null){
@@ -137,6 +142,7 @@ public class IndexController {
             }
             tokenVo.setUserId(user.getId());
             tokenVo.setPhone(user.getMobile());
+            tokenVo.setSchoolYear(user.getSchoolYear());
             tokenVo.setRealName(user.getUserName());
             tokenVo.setRsCode((short)1);
             cacheManager.setValue(tokenVo.getToken(),tokenVo,tokenVo.getExpiresIn());

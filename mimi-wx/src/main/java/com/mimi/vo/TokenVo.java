@@ -15,4 +15,5 @@ public class TokenVo implements Serializable {
     private String realName;
     private String appId;
     private short rsCode;
+    private Integer schoolYear;
 }

@@ -145,7 +145,9 @@ public class UserController {
         wxConfigVo.setNonceStr(WXPayUtil.generateNonceStr());
         PublicAccount publicAccount = publicAccountService.getByAppId(appId);
         String ticket = wxAppService.getTicket(publicAccount);
-        wxConfigVo.setSignature(getsig(wxConfigVo.getNonceStr(),ticket,wxConfigVo.getTimeStamp(),url));
+        String signature = getsig(wxConfigVo.getNonceStr(),ticket,wxConfigVo.getTimeStamp(),url);
+        signature = signature.toLowerCase();
+        wxConfigVo.setSignature(signature);
         log.info("签名结果: "+wxConfigVo.getSignature());
         return R.success(wxConfigVo);
     }
