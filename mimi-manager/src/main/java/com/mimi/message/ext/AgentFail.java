@@ -3,10 +3,13 @@ package com.mimi.message.ext;
 import com.mimi.core.express.entity.config.MsgVariable;
 import com.mimi.core.express.entity.config.PayAccount;
 import com.mimi.core.express.entity.order.OrderAgent;
+import com.mimi.core.express.entity.shop.ShopCouponInst;
 import com.mimi.core.express.service.PayAccountService;
+import com.mimi.core.express.service.shop.ShopCouponInstService;
 import com.mimi.core.message.ISendMsgExt;
 import com.mimi.core.wx.pay.WXPay;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +26,9 @@ public class AgentFail implements ISendMsgExt<OrderAgent> {
     private WXPay wxPay;
     @Autowired
     private PayAccountService payAccountService;
+
+    @Autowired
+    private ShopCouponInstService shopCouponInstService;
 
     @Override
     public void execute(OrderAgent order, Map<String, String> sendParam, List<MsgVariable> msgVariableList) {
@@ -46,6 +52,12 @@ public class AgentFail implements ISendMsgExt<OrderAgent> {
 
         try {
             wxPay.refund(payAccount,param);
+            if(!StringUtils.isEmpty(order.getCouponInstId())){
+                ShopCouponInst shopCouponInst = shopCouponInstService.getById(order.getCouponInstId());
+                shopCouponInst.setState((short)0);
+                shopCouponInstService.updateById(shopCouponInst);
+            }
+
         } catch (Exception e) {
             log.error("代取退款失败："+e.getMessage());
             e.printStackTrace();

@@ -23,4 +23,6 @@ public class ShopCouponInst extends ShopCoupon{
     @Schema(name = "运单号")
     private String orderNum;
 
+    @Schema(name = "使用状态")
+    private short state;
 }

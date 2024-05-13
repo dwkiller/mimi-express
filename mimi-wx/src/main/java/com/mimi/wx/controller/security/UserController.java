@@ -243,6 +243,8 @@ public class UserController {
         orderAgent.setPrepayId(prePayId);
         if(shopCouponInst!=null){
             orderAgent.setCouponInstId(shopCouponInst.getShopCouponId());
+            shopCouponInst.setState((short)1);
+            shopCouponInstService.updateById(shopCouponInst);
         }
         orderAgent.setPayState(PayState.PRE_PAY.getCode());
         r = orderAgentService.updateById(orderAgent);
