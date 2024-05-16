@@ -21,6 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,6 +59,32 @@ public class OrderOutController extends BaseOrderController<OrderOutService, Ord
         }
         return StringUtils.join(rsList.stream().map(OrderOut::getOrderNum)
                 .collect(Collectors.toList()),",");
+    }
+
+    @Operation(summary = "导出")
+    @PostMapping("/export")
+    public void export(@RequestBody OrderParam<OrderOut> orderParam, HttpServletResponse response){
+        orderParam.setPageNum(1);
+        orderParam.setPageSize(99999);
+        IPage<OrderOut> rsPage = superService.findPage(orderParam);
+        List<OrderOut> rsList = rsPage.getRecords();
+        String content="";
+        if(rsList!=null&&rsList.size()>0){
+            content = rsList.stream().map(OrderOut::getOrderNum).collect(Collectors.joining(","));
+        }
+
+        response.setCharacterEncoding("utf-8");
+        //设置响应的内容类型
+        response.setContentType("text/plain");
+        //设置文件的名称和格式
+        response.addHeader("Content-Disposition", "attachment;filename=orderNum.txt");
+        ServletOutputStream outputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+            outputStream.write(content.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
