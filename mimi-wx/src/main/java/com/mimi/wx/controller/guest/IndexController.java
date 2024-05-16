@@ -94,7 +94,7 @@ public class IndexController {
         TokenVo tokenVo = userVo.getTokenVo();
         User user = userVo.getUser();
 
-        if(userService.findByMobile(user.getMobile())!=null){
+        if(userService.findByMobileAndSchool(user.getMobile(),tokenVo.getSchoolId())!=null){
             return R.error("该电话号码["+user.getMobile()+"]已经存在");
         }
 

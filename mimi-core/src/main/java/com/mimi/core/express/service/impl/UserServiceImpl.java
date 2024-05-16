@@ -13,6 +13,15 @@ import java.util.List;
 public class UserServiceImpl extends TenantServiceImpl<UserMapper, User> implements UserService {
 
     @Override
+    public User findByMobileAndSchool(String mobile, String schoolId) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getMobile,mobile);
+        wrapper.eq(User::getSchoolId,schoolId);
+        return super.getOne(wrapper);
+
+    }
+
+    @Override
     public User findByMobile(String mobile){
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getMobile,mobile);

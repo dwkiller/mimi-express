@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface UserService extends ISuperService<User> {
 
+    public User findByMobileAndSchool(String mobile,String schoolId);
+
     public User findByMobile(String mobile);
 
     public List<User> findByMobileLast4(String mobile);
