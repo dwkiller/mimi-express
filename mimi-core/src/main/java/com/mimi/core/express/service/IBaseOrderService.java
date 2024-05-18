@@ -23,4 +23,6 @@ public interface IBaseOrderService<T extends BaseOrder> extends ISuperService<T>
     public List<T> findMultipleByOrderNum(String orderNum) throws Exception;
 
     public List<T> findByOrderNumStart(String orderNum);
+
+    public List<String> existsOrderNum(String schoolId,List<String> orderNumList);
 }

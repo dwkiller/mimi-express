@@ -56,8 +56,8 @@ public class UserServiceImpl extends TenantServiceImpl<UserMapper, User> impleme
 
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         if(mobilePartList.size()==2){
-            wrapper.likeLeft(User::getMobile,mobilePartList.get(0));
-            wrapper.likeRight(User::getMobile,mobilePartList.get(1));
+            wrapper.likeRight(User::getMobile,mobilePartList.get(0));
+            wrapper.likeLeft(User::getMobile,mobilePartList.get(1));
         }else if(mobilePartList.size()==1){
             wrapper.like(User::getMobile,mobilePartList.get(0));
         }else{

@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseOrder> extends TenantServiceImpl<M,T> implements IBaseOrderService<T> {
 
@@ -109,6 +110,18 @@ public abstract class BaseOrderService<M extends OrderMapper<T>, T extends BaseO
         LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper<>();
         wrapper.likeLeft(T::getOrderNum,orderNum);
         return baseMapper.selectList(wrapper);
+    }
+
+    @Override
+    public List<String> existsOrderNum(String schoolId,List<String> orderNumList) {
+        LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(T::getOrderNum,orderNumList);
+        wrapper.eq(T::getSchoolId,schoolId);
+        List<T> orderInList = baseMapper.selectList(wrapper);
+        if(orderInList==null){
+            return null;
+        }
+        return orderInList.stream().map(T::getOrderNum).collect(Collectors.toList());
     }
 
     private Class<T> getEntityClazz(){

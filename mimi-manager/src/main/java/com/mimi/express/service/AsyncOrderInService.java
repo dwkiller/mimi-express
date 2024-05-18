@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,8 +34,13 @@ public class AsyncOrderInService {
     public void run(String schoolId, List<GrabOrderInVo> orderInVos){
         long now = System.currentTimeMillis();
         List<OrderIn> orderInList = new ArrayList<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List<String> orderNumList = orderInVos.stream().map(GrabOrderInVo::getOrderNum).collect(Collectors.toList());
+        List<String> existsOrderNumList = orderInService.existsOrderNum(schoolId,orderNumList);
         for(GrabOrderInVo grabOrderInVo:orderInVos){
+            if(existsOrderNumList!=null&&existsOrderNumList.contains(grabOrderInVo.getOrderNum())){
+                continue;
+            }
             User user = null;
             if(!StringUtils.isEmpty(grabOrderInVo.getTelephone())
             &&grabOrderInVo.getTelephone().contains("*")){
@@ -59,7 +65,9 @@ public class AsyncOrderInService {
             }
             orderInList.add(orderIn);
         }
-        orderInService.saveBatch(orderInList);
+        if(orderInList.size()>0){
+            orderInService.saveBatch(orderInList);
+        }
         orderInList.clear();
         long dual = System.currentTimeMillis()-now;
         log.info("爬虫入库数据条数:"+orderInVos.size()+" , 耗时:"+dual+"毫秒");

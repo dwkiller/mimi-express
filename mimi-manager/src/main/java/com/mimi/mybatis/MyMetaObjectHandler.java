@@ -22,11 +22,18 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         log.info("start insert fill ....");
         //三个参数：字段名，字段值，元对象参数
-        this.setFieldValByName("createTime",new Date(),metaObject);
-        this.setFieldValByName("updateTime",new Date(),metaObject);
-
-        this.setFieldValByName("createBy", LoginUtil.getUserId(),metaObject);
-        this.setFieldValByName("updateBY", LoginUtil.getUserId(),metaObject);
+        if(metaObject.getValue("createTime")==null){
+            this.setFieldValByName("createTime",new Date(),metaObject);
+        }
+        if(metaObject.getValue("updateTime")==null){
+            this.setFieldValByName("updateTime",new Date(),metaObject);
+        }
+        if(metaObject.getValue("createBy")==null){
+            this.setFieldValByName("createBy", LoginUtil.getUserId(),metaObject);
+        }
+        if(metaObject.getValue("updateBy")==null) {
+            this.setFieldValByName("updateBy", LoginUtil.getUserId(), metaObject);
+        }
     }
     //修改时的填充策略
     @Override

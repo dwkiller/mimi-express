@@ -28,6 +28,9 @@ public class LoginUtil {
 
     public static String getUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication==null){
+            return null;
+        }
         LoginUser user = (LoginUser) authentication.getPrincipal();
         return (String) Optional.ofNullable(user).map((o) -> {
             return o.getUser().getId();
