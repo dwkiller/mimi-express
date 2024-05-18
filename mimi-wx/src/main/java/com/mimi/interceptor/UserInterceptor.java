@@ -44,11 +44,6 @@ public class UserInterceptor implements HandlerInterceptor {
             cacheManager = SpringUtil.getBean(CacheManager.class);
         }
         TokenVo tokenVo = (TokenVo) cacheManager.getValue(accessToken);
-        // tokenVo = redisCache.getCacheObject(accessToken);
-//        TokenVo tokenVo = new TokenVo();
-//        tokenVo.setOpenId("oeI4a6lElS00HRWEsnq7WB6GvZ14");
-//        tokenVo.setToken("123456");
-//        tokenVo.setSchoolId("a5629f5c54f53dca61f21fdc190c929a");
         if(tokenVo==null){
             write(response,R.unLogin());
             return false;
