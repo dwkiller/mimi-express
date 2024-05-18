@@ -16,6 +16,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -43,7 +45,7 @@ public class AsyncOrderInService {
             }
             OrderIn orderIn = new OrderIn();
             orderIn.setSchoolId(schoolId);
-            orderIn.setExpressCompany(grabOrderInVo.getCompany());
+            orderIn.setExpressCompany(unicodeToCN(grabOrderInVo.getCompany()));
             orderIn.setOrderNum(grabOrderInVo.getOrderNum());
             orderIn.setRackNo(grabOrderInVo.getEntityNum());
             try {
@@ -63,5 +65,20 @@ public class AsyncOrderInService {
         log.info("爬虫入库数据条数:"+orderInVos.size()+" , 耗时:"+dual+"毫秒");
     }
 
-
+    public static String unicodeToCN(String str) {
+        Pattern pattern = Pattern.compile("(\\\\u(\\p{XDigit}{4}))");
+        Matcher matcher = pattern.matcher(str);
+        char ch;
+        while (matcher.find()) {
+            ch = (char) Integer.parseInt(matcher.group(2), 16);
+            str = str.replace(matcher.group(1), ch + "");
+        }
+        return str;
+    }
+    public static void main(String[] args){
+        String s = unicodeToCN("\u7533\u901a\u5feb\u9012");
+        String s1 = unicodeToCN("我是");
+        System.out.println(s);
+        System.out.println(s1);
+    }
 }
