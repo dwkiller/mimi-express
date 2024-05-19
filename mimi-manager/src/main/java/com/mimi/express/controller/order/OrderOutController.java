@@ -69,15 +69,13 @@ public class OrderOutController extends BaseOrderController<OrderOutService, Ord
             throw new RuntimeException("开始时间与结束时间必填!");
         }
 
-        
-
         orderParam.setPageNum(1);
         orderParam.setPageSize(99999);
         IPage<OrderOut> rsPage = superService.findPage(orderParam);
         List<OrderOut> rsList = rsPage.getRecords();
         String content="";
         if(rsList!=null&&rsList.size()>0){
-            content = rsList.stream().map(OrderOut::getOrderNum).collect(Collectors.joining(","));
+            content = rsList.stream().map(OrderOut::getOrderNum).collect(Collectors.joining("\n"));
         }
 
         response.setCharacterEncoding("utf-8");
