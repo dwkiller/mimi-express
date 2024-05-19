@@ -64,6 +64,13 @@ public class OrderOutController extends BaseOrderController<OrderOutService, Ord
     @Operation(summary = "导出")
     @PostMapping("/export")
     public void export(@RequestBody OrderParam<OrderOut> orderParam, HttpServletResponse response){
+
+        if(orderParam.getStartTime()==null||orderParam.getEndTime()==null){
+            throw new RuntimeException("开始时间与结束时间必填!");
+        }
+
+        
+
         orderParam.setPageNum(1);
         orderParam.setPageSize(99999);
         IPage<OrderOut> rsPage = superService.findPage(orderParam);

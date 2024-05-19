@@ -7,6 +7,7 @@ import com.mimi.core.common.superpackage.controller.ReadOnlySuperController;
 import com.mimi.core.common.superpackage.param.PageParam;
 import com.mimi.core.express.entity.order.OrderAgent;
 import com.mimi.core.express.entity.order.OrderIn;
+import com.mimi.core.express.entity.order.OrderOut;
 import com.mimi.core.express.entity.order.param.OrderParam;
 import com.mimi.core.express.service.impl.order.OrderAgentService;
 import com.mimi.core.express.service.impl.order.OrderInService;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -59,28 +61,35 @@ public class OrderInController extends ReadOnlySuperController<OrderInService, O
             result.getRecords().add(orderInStateVo);
         }
 
-        List<String> existsOutList = orderOutService.existsOrderNum(orderNumList);
-        if(existsOutList!=null&&existsOutList.size()>0){
-            result.getRecords().stream().filter(
-                    o->existsOutList.contains(o.getOrderNum())).forEach(o->o.setState("已出库"));
-        }
-
+        List<OrderOut> existsOutList = orderOutService.existsOrderNum(orderNumList);
         List<OrderAgent> orderAgentList = orderAgentService.findByOrderNumList(orderNumList);
-        if(orderAgentList==null){
-            orderAgentList=new ArrayList<>();
-        }
-        List<String> existsAgentIngList = orderAgentList.stream().filter(o->o.getState()==1)
-                .map(OrderAgent::getOrderNum).collect(Collectors.toList());
-        List<String> existsAgentDoneList = orderAgentList.stream().filter(o->o.getState()==2)
-                .map(OrderAgent::getOrderNum).collect(Collectors.toList());
-        if(existsAgentIngList!=null){
-            result.getRecords().stream().filter(
-                    o->existsAgentIngList.contains(o.getOrderNum())).forEach(o->o.setState("取件派送中"));
-        }
-        if(existsAgentDoneList!=null){
-            result.getRecords().stream().filter(
-                    o->existsAgentDoneList.contains(o.getOrderNum())).forEach(o->o.setState("取件派送完成"));
-        }
+
+        result.getRecords().forEach(orderInStateVo -> {
+            if(existsOutList!=null){
+                Optional<OrderOut> optional = existsOutList.stream().filter(eo->eo.getOrderNum().equals(
+                        orderInStateVo.getOrderNum())).findFirst();
+                if(optional.isPresent()){
+                    OrderOut orderOut = optional.get();
+                    orderInStateVo.setState("已出库");
+                    orderInStateVo.setOutUser(orderOut.getUserName());
+                    orderInStateVo.setOutMobile(orderOut.getMobile());
+                }
+            }
+            if(orderAgentList!=null){
+                Optional<OrderAgent> optional = orderAgentList.stream().filter(eo->eo.getOrderNum().equals(
+                        orderInStateVo.getOrderNum())).findFirst();
+                if(optional.isPresent()){
+                    OrderAgent orderAgent = optional.get();
+                    if(orderAgent.getState()==1){
+                        orderInStateVo.setState("取件派送中");
+                    }else if(orderAgent.getState()==2){
+                        orderInStateVo.setState("取件派送完成");
+                    }
+                    orderInStateVo.setAgentUser(orderAgent.getAgentName());
+                    orderInStateVo.setAgentMobile(orderAgent.getAgentMobile());
+                }
+            }
+        });
         return R.success(result);
     }
 
