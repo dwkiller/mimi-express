@@ -93,7 +93,7 @@ public class OrderOutController extends ReadOnlySuperController<OrderOutService,
         int rsCode = jo.getInteger("code");
         if(rsCode!=0){
             String msg = jo.getString("message");
-            throw new RuntimeException("调用接口失败："+msg+"。 错误码:"+code);
+            throw new RuntimeException("调用接口失败："+msg+"。 错误码:"+rsCode);
         }
     }
 
