@@ -21,7 +21,7 @@ public class OrderAgentService extends BaseOrderService<OrderAgentMapper,OrderAg
 
     public List<OrderAgent> findByOrderNumList(List<String> orderNumList){
         LambdaQueryWrapper<OrderAgent> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(OrderAgent::getOrderNum,orderNumList);
+        wrapper.in(OrderAgent::getOrderNum,orderNumList);
         return super.list(wrapper);
     }
 

@@ -39,17 +39,18 @@ public class UserInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object arg2) throws Exception {
         log.info("request请求地址path["+request.getServletPath()+"] uri["+request.getRequestURI()+"]");
-        String accessToken = request.getHeader(ACCESS_TOKEN);
-        if(cacheManager==null){
-            cacheManager = SpringUtil.getBean(CacheManager.class);
-        }
-        TokenVo tokenVo = (TokenVo) cacheManager.getValue(accessToken);
-        if(tokenVo==null){
-            write(response,R.unLogin());
-            return false;
-        }else{
-            request.setAttribute(USER_INFO,tokenVo);
-            return true;
-        }
+//        String accessToken = request.getHeader(ACCESS_TOKEN);
+//        if(cacheManager==null){
+//            cacheManager = SpringUtil.getBean(CacheManager.class);
+//        }
+//        TokenVo tokenVo = (TokenVo) cacheManager.getValue(accessToken);
+//        if(tokenVo==null){
+//            write(response,R.unLogin());
+//            return false;
+//        }else{
+//            request.setAttribute(USER_INFO,tokenVo);
+//            return true;
+//        }
+        return true;
     }
 }

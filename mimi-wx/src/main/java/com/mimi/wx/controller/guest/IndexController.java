@@ -72,7 +72,7 @@ public class IndexController {
         JSONObject param = new JSONObject();
         param.put("code",code);
         aLiYunSMSUtil.sendSMS(registCheckCode,mobile,param);
-        cacheManager.setValue(key,code,60);
+        cacheManager.setValue(key,code,300);
         return R.success();
     }
 
