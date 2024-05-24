@@ -13,6 +13,9 @@ public interface OrderOutMapper extends OrderMapper<OrderOut>{
     static final String CONDITION="<if test='businessData.sendMsg != null'>"+
             " AND send_msg = #{businessData.sendMsg}"+
             "</if>"+
+            "<if test='businessData.realOut != null'>"+
+            " AND real_out = #{businessData.realOut}"+
+            "</if>"+
             "<if test='today != null'>"+
             " AND DATE(t_order_out.create_time) = CURDATE()"+
             "</if>";

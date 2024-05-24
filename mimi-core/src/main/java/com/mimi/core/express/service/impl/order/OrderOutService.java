@@ -11,11 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +34,13 @@ public class OrderOutService extends BaseOrderService<OrderOutMapper, OrderOut> 
         return orderOutList;
     }
 
+    @Override
+    @Transactional
+    public boolean save(@Valid OrderOut t) {
+        t.setRealOut((short)0);
+        return super.save(t);
+    }
+
     @Transactional
     public boolean saveBatch(Collection<OrderOut> entityList,String rootPath) throws Exception {
         for(OrderOut order : entityList){
@@ -48,6 +53,7 @@ public class OrderOutService extends BaseOrderService<OrderOutMapper, OrderOut> 
             order.setFileMd5(null);
             order.setUserName(userInfoUtil.getRealName());
             order.setMobile(userInfoUtil.getPhone());
+            order.setRealOut((short)0);
         }
         return super.saveBatch(entityList);
     }

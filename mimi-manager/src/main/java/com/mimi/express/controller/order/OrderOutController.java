@@ -48,6 +48,7 @@ public class OrderOutController extends BaseOrderController<OrderOutService, Ord
         orderParam.setPageNum(Integer.parseInt(autoOutVo.getPageNo()));
         orderParam.setPageSize(Integer.parseInt(autoOutVo.getPageSize()));
         OrderOut businessParam = new OrderOut();
+        businessParam.setRealOut((short)0);
         businessParam.setSchoolId(school.getId());
         orderParam.setOrderBy("create_time");
         orderParam.setBusinessData(businessParam);
@@ -57,6 +58,13 @@ public class OrderOutController extends BaseOrderController<OrderOutService, Ord
         if(rsList==null||rsList.size()==0){
             return null;
         }
+
+        rsList.stream().forEach(o->{
+            o.setRealOut((short)1);
+        });
+
+        superService.updateBatchById(rsList);
+
         return StringUtils.join(rsList.stream().map(OrderOut::getOrderNum)
                 .collect(Collectors.toList()),",");
     }

@@ -26,6 +26,9 @@ public class OrderOut extends BaseOrder{
     @Schema(name = "文件")
     private String file;
 
+    @Schema(name = "是否出库到对端系统")
+    private Short realOut;
+
     @TableField(exist = false)
     @Schema(name = "文件md5")
     private String fileMd5;
