@@ -17,4 +17,6 @@ public interface UserService extends ISuperService<User> {
 
     public User findByLikeHeadBottom(String schoolId,String mobile);
 
+    public List<User> findAll();
+
 }

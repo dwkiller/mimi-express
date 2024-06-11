@@ -57,7 +57,7 @@ public class MessageService<T extends BaseOrder> {
 
     public List<String> sendAllUser(String templateId,Map<String,String> sendParam){
         List<String> result = new ArrayList<>();
-        List<User> userList = userService.list();
+        List<User> userList = userService.findAll();
         NoticeTemp noticeTemp = noticeTempService.findByTemplateId(templateId);
         List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
         WxMpServiceImpl wxMpService = null;

@@ -71,4 +71,11 @@ public class UserServiceImpl extends TenantServiceImpl<UserMapper, User> impleme
         return null;
     }
 
+    @Override
+    public List<User> findAll() {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getSchoolId,userInfoUtil.getSchoolId());
+        return baseMapper.selectList(wrapper);
+    }
+
 }
