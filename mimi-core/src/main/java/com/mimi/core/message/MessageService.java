@@ -55,6 +55,115 @@ public class MessageService<T extends BaseOrder> {
     @Autowired
     private UserInfoUtil userInfoUtil;
 
+    public List<String> sendAllUser(String templateId,Map<String,String> sendParam){
+        List<String> result = new ArrayList<>();
+        List<User> userList = userService.list();
+        NoticeTemp noticeTemp = noticeTempService.findByTemplateId(templateId);
+        List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
+        WxMpServiceImpl wxMpService = null;
+        PublicAccount publicAccount = null;
+        String token = null;
+        String callBackUrl = null;
+        for(User user:userList){
+            if(StringUtils.isEmpty(user.getOpenId())){
+                log.error("该用户: "+user.getUserName()+"未绑定公众号！");
+                result.add("该用户: "+user.getUserName()+"未绑定公众号！");
+                continue;
+            }
+            String schoolId=user.getSchoolId();
+            if(publicAccount==null){
+                publicAccount = publicAccountService.getBySchoolId(schoolId);
+                if(publicAccount==null){
+                    throw new RuntimeException("该学校未绑定公众号！");
+                }
+                token = wxAppService.getToken(publicAccount);
+            }
+            if(callBackUrl==null&&noticeTemp!=null&&!StringUtils.isEmpty(noticeTemp.getUrl())){
+                callBackUrl = noticeTemp.getUrl();
+            }
+
+            if(wxMpService==null){
+                wxMpService = new WxMpServiceImpl();
+                WxMpDefaultConfigImpl wxStorage = new WxMpDefaultConfigImpl();
+                wxStorage.setAppId(publicAccount.getAppId());
+                wxStorage.setSecret(publicAccount.getAppSecret());
+                wxStorage.setToken(token);
+                wxMpService.setWxMpConfigStorage(wxStorage);
+            }
+
+            WxMpTemplateMessage templateMessage = WxMpTemplateMessage.builder()
+                    .toUser(user.getOpenId())
+                    .templateId(templateId)
+                    .url(callBackUrl)
+                    .build();
+
+            if(variableList!=null){
+                for(MsgVariable msgVariable:variableList){
+                    String value = "";
+                    if(!msgVariable.getType().equals(VariableTypeEnum.INNER.getDescription())){
+                        continue;
+                    }
+                    if(StringUtils.isEmpty(msgVariable.getValue())){
+                        continue;
+                    }else if(InnerVariable.CURRENT_TIME.getValue().equals(msgVariable.getValue())){
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        value = sdf.format(new Date());
+                    }else if(InnerVariable.LOGIN_EMPLOYEE.getValue().equals(msgVariable.getValue())){
+                        value = userInfoUtil.getRealName();
+                    }else if(InnerVariable.EMPLOYEE_MOBILE.getValue().equals(msgVariable.getValue())){
+                        value = userInfoUtil.getPhone();
+                    }
+                    templateMessage.addData(new WxMpTemplateData(msgVariable.getVariable()
+                            .replaceFirst(".DATA",""),value));
+                }
+            }
+            if(sendParam!=null){
+                Iterator<Map.Entry<String, String>> iterator = sendParam.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry<String, String> entry = iterator.next();
+                    String value = entry.getValue();
+                    if(value.equals("30分钟以内")){
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        String time1 = dateFormat.format(calendar.getTime());
+                        calendar.add(Calendar.MINUTE,30);
+                        String time2 = dateFormat.format(calendar.getTime());
+                        value = time1+" ~ "+time2;
+                    }else if(value.equals("1小时以内")){
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        String time1 = dateFormat.format(calendar.getTime());
+                        calendar.add(Calendar.HOUR_OF_DAY,1);
+                        String time2 = dateFormat.format(calendar.getTime());
+                        value = time1+" ~ "+time2;
+                    }else if((value.contains("今天")||value.contains("明天"))&&value.contains("~")){
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        if(value.contains("今天")){
+                            String todayDate = dateFormat.format(calendar.getTime());
+                            value = value.replaceAll("今天",todayDate);
+                        }
+                        if(value.contains("明天")){
+                            calendar.add(Calendar.DAY_OF_MONTH, 1);
+                            String tomorrowDate = dateFormat.format(calendar.getTime());
+                            value = value.replaceAll("明天",tomorrowDate);
+                        }
+                    }
+                    templateMessage.addData(new WxMpTemplateData(entry.getKey()
+                            .replaceFirst(".DATA",""),value));
+                }
+            }
+            try {
+                wxMpService.getTemplateMsgService().sendTemplateMsg(templateMessage);
+            } catch (WxErrorException e) {
+                log.error("发送消息给: "+user.getUserName()+"失败:"+e.getMessage());
+                result.add("发送消息给: "+user.getUserName()+"失败:"+e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
     public void sendMsg(String templateId, T order, Map<String,String> sendParam) throws WxErrorException {
         NoticeTemp noticeTemp = noticeTempService.findByTemplateId(templateId);
         List<MsgVariable> variableList = msgVariableService.findByTemplateId(templateId);
